@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -38,6 +38,7 @@ interface SidebarContentProps {
 }
 
 function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarContentProps) {
+  const navigate = useNavigate();
   return (
     <div className="flex h-full flex-col bg-sidebar">
       {/* Logo */}
@@ -113,7 +114,9 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
             <Button
               variant="ghost"
               size="icon"
+              onClick={() => navigate("/auth")}
               className="h-8 w-8 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              title="Login"
             >
               <LogOut className="h-4 w-4" />
             </Button>
