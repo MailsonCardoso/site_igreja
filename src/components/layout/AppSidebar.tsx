@@ -12,7 +12,6 @@ import {
   Settings,
   Cross,
   Menu,
-  X,
   LogOut,
   ChevronLeft,
 } from "lucide-react";
@@ -35,10 +34,10 @@ const navigationItems = [
 interface SidebarContentProps {
   collapsed?: boolean;
   onCollapse?: () => void;
+  currentPath: string;
 }
 
-function SidebarContent({ collapsed = false, onCollapse }: SidebarContentProps) {
-  const location = useLocation();
+function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarContentProps) {
 
   return (
     <div className="flex h-full flex-col bg-sidebar">
@@ -73,7 +72,7 @@ function SidebarContent({ collapsed = false, onCollapse }: SidebarContentProps) 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navigationItems.map((item) => {
-          const isActive = location.pathname === item.href;
+          const isActive = currentPath === item.href;
           return (
             <Link
               key={item.name}
@@ -129,6 +128,8 @@ function SidebarContent({ collapsed = false, onCollapse }: SidebarContentProps) 
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   return (
     <>
@@ -144,7 +145,7 @@ export function AppSidebar() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-64 p-0 bg-sidebar border-sidebar-border">
-            <SidebarContent />
+            <SidebarContent currentPath={currentPath} />
           </SheetContent>
         </Sheet>
       </div>
@@ -156,7 +157,7 @@ export function AppSidebar() {
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className="fixed inset-y-0 left-0 z-40 hidden border-r border-sidebar-border lg:block"
       >
-        <SidebarContent collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} />
+        <SidebarContent collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} currentPath={currentPath} />
       </motion.aside>
 
       {/* Collapsed expand button */}
