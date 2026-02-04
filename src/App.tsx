@@ -11,6 +11,7 @@ import Agenda from "./pages/Agenda";
 import Ministerios from "./pages/Ministerios";
 import Ensino from "./pages/Ensino";
 import Configuracoes from "./pages/Configuracoes";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
         <Sonner />
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/secretaria" element={<Secretaria />} />
           <Route path="/financeiro" element={<Financeiro />} />
           <Route path="/celulas" element={<Celulas />} />
