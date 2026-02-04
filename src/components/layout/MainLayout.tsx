@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import { AppSidebar } from "./AppSidebar";
 import { PageHeader } from "./PageHeader";
 
@@ -9,9 +10,12 @@ interface MainLayoutProps {
 }
 
 export function MainLayout({ children, title, breadcrumbs }: MainLayoutProps) {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
   return (
     <div className="min-h-screen bg-background">
-      <AppSidebar />
+      <AppSidebar currentPath={currentPath} />
       
       {/* Main Content */}
       <div className="lg:pl-64 min-h-screen">
