@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard,
@@ -38,7 +38,6 @@ interface SidebarContentProps {
 }
 
 function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarContentProps) {
-
   return (
     <div className="flex h-full flex-col bg-sidebar">
       {/* Logo */}
@@ -125,11 +124,13 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
   );
 }
 
-export function AppSidebar() {
+interface AppSidebarProps {
+  currentPath: string;
+}
+
+export function AppSidebar({ currentPath }: AppSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const location = useLocation();
-  const currentPath = location.pathname;
 
   return (
     <>
@@ -173,9 +174,4 @@ export function AppSidebar() {
       )}
     </>
   );
-}
-
-export function useSidebarWidth() {
-  // This hook could be enhanced with context if needed
-  return { collapsed: false, width: 256 };
 }
