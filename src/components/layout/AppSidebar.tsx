@@ -1,0 +1,180 @@
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { motion } from "framer-motion";
+import {
+  LayoutDashboard,
+  Users,
+  DollarSign,
+  CircleDot,
+  Calendar,
+  Music,
+  GraduationCap,
+  Settings,
+  Cross,
+  Menu,
+  X,
+  LogOut,
+  ChevronLeft,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+
+const navigationItems = [
+  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Secretaria", href: "/secretaria", icon: Users },
+  { name: "Financeiro", href: "/financeiro", icon: DollarSign },
+  { name: "Células", href: "/celulas", icon: CircleDot },
+  { name: "Agenda", href: "/agenda", icon: Calendar },
+  { name: "Ministérios", href: "/ministerios", icon: Music },
+  { name: "Ensino", href: "/ensino", icon: GraduationCap },
+  { name: "Configurações", href: "/configuracoes", icon: Settings },
+];
+
+interface SidebarContentProps {
+  collapsed?: boolean;
+  onCollapse?: () => void;
+}
+
+function SidebarContent({ collapsed = false, onCollapse }: SidebarContentProps) {
+  const location = useLocation();
+
+  return (
+    <div className="flex h-full flex-col bg-sidebar">
+      {/* Logo */}
+      <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
+        <Link to="/" className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
+            <Cross className="h-5 w-5 text-primary-foreground" />
+          </div>
+          {!collapsed && (
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-lg font-bold text-sidebar-foreground"
+            >
+              Igreja Central
+            </motion.span>
+          )}
+        </Link>
+        {onCollapse && !collapsed && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onCollapse}
+            className="h-8 w-8 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 space-y-1 px-3 py-4">
+        {navigationItems.map((item) => {
+          const isActive = location.pathname === item.href;
+          return (
+            <Link
+              key={item.name}
+              to={item.href}
+              className={cn(
+                "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                isActive
+                  ? "bg-sidebar-accent text-sidebar-primary border-l-2 border-sidebar-primary"
+                  : "text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
+              )}
+            >
+              <item.icon
+                className={cn(
+                  "h-5 w-5 flex-shrink-0 transition-colors",
+                  isActive ? "text-sidebar-primary" : "text-sidebar-muted group-hover:text-sidebar-foreground"
+                )}
+              />
+              {!collapsed && <span>{item.name}</span>}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* User Profile */}
+      <div className="border-t border-sidebar-border p-4">
+        <div className={cn("flex items-center gap-3", collapsed && "justify-center")}>
+          <Avatar className="h-9 w-9 border-2 border-sidebar-border">
+            <AvatarFallback className="bg-sidebar-accent text-sidebar-foreground text-sm font-medium">
+              PC
+            </AvatarFallback>
+          </Avatar>
+          {!collapsed && (
+            <div className="flex-1 min-w-0">
+              <p className="truncate text-sm font-medium text-sidebar-foreground">Pastor Carlos</p>
+              <p className="truncate text-xs text-sidebar-muted">Administrador</p>
+            </div>
+          )}
+          {!collapsed && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function AppSidebar() {
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <>
+      {/* Mobile Menu Button */}
+      <div className="fixed left-4 top-4 z-50 lg:hidden">
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <Button
+              size="icon"
+              className="h-10 w-10 bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0 bg-sidebar border-sidebar-border">
+            <SidebarContent />
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <motion.aside
+        initial={false}
+        animate={{ width: collapsed ? 72 : 256 }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+        className="fixed inset-y-0 left-0 z-40 hidden border-r border-sidebar-border lg:block"
+      >
+        <SidebarContent collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} />
+      </motion.aside>
+
+      {/* Collapsed expand button */}
+      {collapsed && (
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setCollapsed(false)}
+          className="fixed left-[80px] top-4 z-50 hidden h-8 w-8 bg-sidebar text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground lg:flex"
+        >
+          <Menu className="h-4 w-4" />
+        </Button>
+      )}
+    </>
+  );
+}
+
+export function useSidebarWidth() {
+  // This hook could be enhanced with context if needed
+  return { collapsed: false, width: 256 };
+}
