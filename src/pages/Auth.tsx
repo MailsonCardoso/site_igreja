@@ -61,12 +61,15 @@ export default function Auth() {
           password: formData.password,
         });
 
-        localStorage.setItem("auth_token", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
+        const token = response.access_token || response.token;
+        const userData = response.user;
+
+        localStorage.setItem("auth_token", token);
+        localStorage.setItem("user", JSON.stringify(userData));
 
         toast({
           title: "Login realizado!",
-          description: `Bem-vindo de volta, ${response.user.name}!`,
+          description: `Bem-vindo de volta, ${userData.name}!`,
         });
       } else {
         const response = await api.post("/register", {
@@ -76,8 +79,11 @@ export default function Auth() {
           password_confirmation: formData.password,
         });
 
-        localStorage.setItem("auth_token", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
+        const token = response.access_token || response.token;
+        const userData = response.user;
+
+        localStorage.setItem("auth_token", token);
+        localStorage.setItem("user", JSON.stringify(userData));
 
         toast({
           title: "Cadastro realizado!",
