@@ -1,10 +1,11 @@
-import { Users, DollarSign, UserPlus, CircleDot } from "lucide-react";
+import { Users, DollarSign, UserPlus, CircleDot, Loader2 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { AttendanceChart } from "@/components/dashboard/AttendanceChart";
 import { BirthdaysList } from "@/components/dashboard/BirthdaysList";
 import { AgeDistributionChart } from "@/components/dashboard/AgeDistributionChart";
-import { kpiData } from "@/data/mockData";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
 
 function formatCurrency(value: number): string {
   return new Intl.NumberFormat("pt-BR", {
@@ -15,36 +16,60 @@ function formatCurrency(value: number): string {
 }
 
 export default function Dashboard() {
+  const { data: dashboardData, isLoading } = useQuery({
+    queryKey: ["dashboard"],
+    queryFn: () => api.get("/dashboard"),
+  });
+
+  if (isLoading) {
+    return (
+      <MainLayout title="Dashboard">
+        <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
+          <Loader2 className="h-10 w-10 animate-spin mb-4 text-primary" />
+          <p className="text-lg">Preparando painel de controle...</p>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  // Fallback values if API is empty or connecting
+  const stats = dashboardData || {
+    members_count: 0,
+    income: 0,
+    visitors_count: 0, // Assuming visitors will be added later
+    cells_count: 0,
+  };
+
   return (
     <MainLayout title="Dashboard">
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
         <StatsCard
           title="Membros Ativos"
-          value={kpiData.membrosAtivos.toLocaleString("pt-BR")}
+          value={(stats.members_count || 0).toLocaleString("pt-BR")}
           icon={<Users className="h-6 w-6" />}
-          trend={{ value: 3.2, isPositive: true }}
+          trend={{ value: 0, isPositive: true }}
           delay={0}
         />
         <StatsCard
           title="Entradas do Mês"
-          value={formatCurrency(kpiData.entradasMes)}
+          value={formatCurrency(stats.income || 0)}
           icon={<DollarSign className="h-6 w-6" />}
-          trend={{ value: 8.1, isPositive: true }}
+          trend={{ value: 0, isPositive: true }}
           delay={0.05}
         />
         <StatsCard
           title="Novos Visitantes"
-          value={kpiData.novosVisitantes}
+          value={stats.visitors_count || 0}
           icon={<UserPlus className="h-6 w-6" />}
-          trend={{ value: 12, isPositive: true }}
+          trend={{ value: 0, isPositive: true }}
           delay={0.1}
         />
         <StatsCard
           title="Células"
-          value={kpiData.celulas}
+          value={stats.cells_count || 0}
           icon={<CircleDot className="h-6 w-6" />}
-          trend={{ value: 2, isPositive: true }}
+          trend={{ value: 0, isPositive: true }}
           delay={0.15}
         />
       </div>
@@ -62,3 +87,4 @@ export default function Dashboard() {
     </MainLayout>
   );
 }
+

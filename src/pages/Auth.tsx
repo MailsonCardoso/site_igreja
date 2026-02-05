@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { api } from "@/lib/api";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -53,17 +54,47 @@ export default function Auth() {
       return;
     }
 
-    // Simulação de autenticação (sem backend)
-    setTimeout(() => {
-      toast({
-        title: isLogin ? "Login realizado!" : "Cadastro realizado!",
-        description: isLogin
-          ? "Bem-vindo de volta!"
-          : "Sua conta foi criada com sucesso.",
-      });
-      setIsLoading(false);
+    try {
+      if (isLogin) {
+        const response = await api.login({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        localStorage.setItem("auth_token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
+
+        toast({
+          title: "Login realizado!",
+          description: `Bem-vindo de volta, ${response.user.name}!`,
+        });
+      } else {
+        const response = await api.post("/register", {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          password_confirmation: formData.password,
+        });
+
+        localStorage.setItem("auth_token", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
+
+        toast({
+          title: "Cadastro realizado!",
+          description: "Sua conta foi criada com sucesso.",
+        });
+      }
+
       navigate("/");
-    }, 1500);
+    } catch (error: any) {
+      toast({
+        title: "Erro na autenticação",
+        description: error.message || "Verifique suas credenciais e tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -96,7 +127,6 @@ export default function Auth() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
                   className="space-y-2"
                 >
                   <Label htmlFor="name">Nome completo</Label>
@@ -110,6 +140,7 @@ export default function Auth() {
                       value={formData.name}
                       onChange={handleInputChange}
                       className="pl-10"
+                      required={!isLogin}
                     />
                   </div>
                 </motion.div>
@@ -127,6 +158,7 @@ export default function Auth() {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="pl-10"
+                    required
                   />
                 </div>
               </div>
@@ -143,6 +175,7 @@ export default function Auth() {
                     value={formData.password}
                     onChange={handleInputChange}
                     className="pl-10 pr-10"
+                    required
                   />
                   <button
                     type="button"
@@ -162,7 +195,6 @@ export default function Auth() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
                   className="space-y-2"
                 >
                   <Label htmlFor="confirmPassword">Confirmar senha</Label>
@@ -176,6 +208,7 @@ export default function Auth() {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       className="pl-10"
+                      required={!isLogin}
                     />
                   </div>
                 </motion.div>
@@ -235,3 +268,4 @@ export default function Auth() {
     </div>
   );
 }
+
