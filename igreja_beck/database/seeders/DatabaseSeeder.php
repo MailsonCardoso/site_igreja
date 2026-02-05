@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Member;
 use App\Models\Transaction;
 use App\Models\Event;
@@ -11,6 +13,15 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Administrador Principal
+        User::updateOrCreate(
+            ['email' => 'adm@iprjaguarema.com.br'],
+            [
+                'name' => 'Pastor Administrador',
+                'password' => Hash::make('@Secur1t1@'),
+            ]
+        );
+
         Member::create([
             'name' => 'João Silva',
             'email' => 'joao@email.com',
