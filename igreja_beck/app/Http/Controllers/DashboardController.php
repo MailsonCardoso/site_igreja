@@ -49,6 +49,21 @@ class DashboardController extends Controller
                 ];
             });
 
+        // Crescimento de membros nos últimos 6 meses
+        $memberGrowth = Member::selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as count')
+            ->where('created_at', '>=', now()->subMonths(5)->startOfMonth())
+            ->groupBy('year', 'month')
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get()
+            ->map(function ($row) {
+                $monthName = \Carbon\Carbon::createFromDate($row->year, $row->month, 1)->locale('pt_BR')->monthName;
+                return [
+                    'mes' => ucfirst($monthName),
+                    'novos' => $row->count
+                ];
+            });
+
         return response()->json([
             'members_count' => $totalMembers,
             'visitors_count' => $totalVisitors,
@@ -57,6 +72,7 @@ class DashboardController extends Controller
             'expense' => $totalExpense,
             'cells_count' => $totalCells,
             'birthdays' => $birthdays,
+            'member_growth' => $memberGrowth,
             'upcoming_events' => $upcomingEvents
         ]);
     }

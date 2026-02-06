@@ -1,7 +1,7 @@
 import { Users, DollarSign, UserPlus, CircleDot, Loader2 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
-import { AttendanceChart } from "@/components/dashboard/AttendanceChart";
+import { MemberGrowthChart } from "@/components/dashboard/MemberGrowthChart";
 import { BirthdaysList } from "@/components/dashboard/BirthdaysList";
 import { AgeDistributionChart } from "@/components/dashboard/AgeDistributionChart";
 import { useQuery } from "@tanstack/react-query";
@@ -36,7 +36,7 @@ export default function Dashboard() {
   const stats = dashboardData || {
     members_count: 0,
     income: 0,
-    visitors_count: 0, // Assuming visitors will be added later
+    visitors_count: 0,
     cells_count: 0,
   };
 
@@ -76,7 +76,7 @@ export default function Dashboard() {
 
       {/* Main Chart */}
       <div className="mb-6">
-        <AttendanceChart />
+        <MemberGrowthChart />
       </div>
 
       {/* Bottom Grid */}
