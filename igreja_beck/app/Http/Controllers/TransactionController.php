@@ -7,9 +7,55 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Transaction::orderBy('date', 'desc')->get());
+        $query = Transaction::query();
+
+        if ($request->has('month') && $request->has('year')) {
+            $query->whereMonth('date', $request->month)
+                  ->whereYear('date', $request->year);
+        }
+
+        return response()->json($query->orderBy('date', 'desc')->get());
+    }
+
+    public function report(Request $request)
+    {
+        $month = $request->query('month', now()->month);
+        $year = $request->query('year', now()->year);
+
+        // Saldo anterior (tudo antes do mês selecionado)
+        $previousBalance = Transaction::where(function ($q) use ($month, $year) {
+            $q->whereYear('date', '<', $year)
+              ->orWhere(function ($sq) use ($month, $year) {
+                  $sq->whereYear('date', $year)
+                     ->whereMonth('date', '<', $month);
+              });
+        })->selectRaw("SUM(CASE WHEN type = 'entrada' THEN amount ELSE -amount END) as balance")
+          ->value('balance') ?? 0;
+
+        $transactions = Transaction::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->get();
+
+        $grouped = $transactions->groupBy('type')->map(function ($group) {
+            return $group->groupBy('category_name')->map(function ($catGroup) {
+                return [
+                    'total' => (float)$catGroup->sum('amount'),
+                    'count' => $catGroup->count()
+                ];
+            });
+        });
+
+        return response()->json([
+            'month' => (int)$month,
+            'year' => (int)$year,
+            'previous_balance' => (float)$previousBalance,
+            'grouped_data' => $grouped,
+            'total_income' => (float)$transactions->where('type', 'entrada')->sum('amount'),
+            'total_expense' => (float)$transactions->where('type', 'saida')->sum('amount'),
+            'current_balance' => (float)($transactions->where('type', 'entrada')->sum('amount') - $transactions->where('type', 'saida')->sum('amount')),
+        ]);
     }
 
     public function store(Request $request)

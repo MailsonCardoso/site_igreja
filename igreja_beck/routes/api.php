@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('upload', [UploadController::class, 'upload']);
 
     Route::apiResource('members', MemberController::class);
+    Route::get('transactions/report', [TransactionController::class, 'report']);
     Route::apiResource('transactions', TransactionController::class);
     Route::apiResource('events', EventController::class);
 
