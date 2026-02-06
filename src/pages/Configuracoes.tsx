@@ -55,8 +55,11 @@ export default function Configuracoes() {
     email: "",
     password: "",
     role: "Administrador",
-    status: "Ativo"
+    status: "Ativo",
+    memberId: ""
   });
+  const [availableMembers, setAvailableMembers] = useState<any[]>([]);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(false);
 
   // Fetch Settings
   const { data: settings = {}, isLoading: loadingSettings } = useQuery({
@@ -101,7 +104,7 @@ export default function Configuracoes() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setIsUserModalOpen(false);
-      setUserFormData({ name: "", email: "", password: "", role: "Administrador", status: "Ativo" });
+      setUserFormData({ name: "", email: "", password: "", role: "Administrador", status: "Ativo", memberId: "" });
       toast({
         title: "Sucesso!",
         description: "Novo usuário criado com sucesso.",
@@ -146,6 +149,51 @@ export default function Configuracoes() {
   const onUserSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createUserMutation.mutate(userFormData);
+  };
+
+  const fetchMembersByRole = async (role: string) => {
+    if (role === "Administrador") {
+      setAvailableMembers([]);
+      return;
+    }
+
+    setIsLoadingMembers(true);
+    try {
+      const members = await api.get(`/members/find-by-role?role=${role}`);
+      setAvailableMembers(Array.isArray(members) ? members : []);
+      if (!Array.isArray(members)) {
+        toast({
+          title: "Atenção",
+          description: "Nenhum membro encontrado com este cargo ou cargo sem CPF.",
+        });
+      }
+    } catch (error) {
+      setAvailableMembers([]);
+      toast({
+        title: "Atenção",
+        description: "Nenhum membro cadastrado com este cargo ou cargo sem CPF.",
+        variant: "default",
+      });
+    } finally {
+      setIsLoadingMembers(false);
+    }
+  };
+
+  const handleMemberSelect = (memberId: string) => {
+    const member = availableMembers.find(m => m.id.toString() === memberId);
+    if (member) {
+      setUserFormData(prev => ({
+        ...prev,
+        memberId: member.id.toString(),
+        name: member.name,
+        email: member.email || "",
+        password: member.cpf ? member.cpf.replace(/\D/g, '') : ""
+      }));
+      toast({
+        title: "Membro Selecionado",
+        description: `Dados de ${member.name} carregados com sucesso.`,
+      });
+    }
   };
 
   return (
@@ -426,8 +474,14 @@ export default function Configuracoes() {
       </motion.div>
 
       {/* Modal Novo Usuário */}
-      <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
-        <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+      <Dialog open={isUserModalOpen} onOpenChange={(open) => {
+        setIsUserModalOpen(open);
+        if (!open) {
+          setUserFormData({ name: "", email: "", password: "", role: "Administrador", status: "Ativo", memberId: "" });
+          setAvailableMembers([]);
+        }
+      }}>
+        <DialogContent className="sm:max-w-[480px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
           <div className="p-8 bg-primary/5 flex items-center gap-5 border-b">
             <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
               <UserPlus className="h-8 w-8" />
@@ -440,38 +494,15 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          <form onSubmit={onUserSubmit} className="p-8 space-y-6 bg-card">
+          <form onSubmit={onUserSubmit} className="p-8 space-y-5 bg-card">
             <div className="space-y-4">
-              {/* PAPEL PRIMEIRO */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Papel / Função</Label>
                   <Select
-                    onValueChange={async (v) => {
-                      setUserFormData({ ...userFormData, role: v });
-                      // Regra de negócio: Se selecionar um papel, tenta carregar dados do membro
-                      try {
-                        const member = await api.get(`/members/find-by-role?role=${v}`);
-                        if (member) {
-                          setUserFormData(prev => ({
-                            ...prev,
-                            role: v,
-                            name: member.name,
-                            email: member.email || "",
-                            password: member.cpf ? member.cpf.replace(/\D/g, '') : "" // CPF como senha provisória (apenas números)
-                          }));
-                          toast({
-                            title: "Membro Localizado",
-                            description: `Dados de ${member.name} carregados automaticamente.`,
-                          });
-                        }
-                      } catch (error) {
-                        toast({
-                          title: "Atenção",
-                          description: "Nenhum membro cadastrado com este cargo ou cargo sem CPF.",
-                          variant: "default",
-                        });
-                      }
+                    onValueChange={(v) => {
+                      setUserFormData({ ...userFormData, role: v, memberId: "", name: "", email: "", password: "" });
+                      fetchMembersByRole(v);
                     }}
                     value={userFormData.role}
                   >
@@ -481,8 +512,9 @@ export default function Configuracoes() {
                     <SelectContent className="rounded-xl">
                       <SelectItem value="Administrador" className="font-bold">Administrador</SelectItem>
                       <SelectItem value="Pastor" className="font-bold">Pastor</SelectItem>
-                      <SelectItem value="Tesoureiro" className="font-bold">Tesoureiro</SelectItem>
-                      <SelectItem value="Secretário" className="font-bold">Secretário</SelectItem>
+                      <SelectItem value="Financeiro" className="font-bold">Financeiro</SelectItem>
+                      <SelectItem value="Secretaria" className="font-bold">Secretaria</SelectItem>
+                      <SelectItem value="Lider de pequeno grupo" className="font-bold">Líder de Pequeno Grupo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -503,22 +535,55 @@ export default function Configuracoes() {
                 </div>
               </div>
 
+              {availableMembers.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-2"
+                >
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary ml-1">Selecionar Membro ({userFormData.role})</Label>
+                  <Select
+                    onValueChange={handleMemberSelect}
+                    value={userFormData.memberId}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl bg-primary/5 border-primary/30 font-bold text-primary">
+                      {isLoadingMembers ? <Loader2 className="h-4 w-4 animate-spin" /> : <SelectValue placeholder="Escolha um membro da lista" />}
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      {availableMembers.map((member) => (
+                        <SelectItem key={member.id} value={member.id.toString()} className="font-medium">
+                          {member.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[9px] text-muted-foreground ml-1 font-bold italic">* Exibindo apenas membros com cargo '{userFormData.role}' e CPF cadastrado.</p>
+                </motion.div>
+              )}
+
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Nome Completo</Label>
+                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">
+                  Nome Completo
+                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-primary/10 text-primary border-none">VINCULADO</Badge>}
+                </Label>
                 <div className="relative">
                   <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     value={userFormData.name}
                     onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
                     placeholder="Ex: João da Silva"
-                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30"
+                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10' : ''}`}
                     required
+                    readOnly={!!userFormData.memberId}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">E-mail de Login</Label>
+                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">
+                  E-mail de Login
+                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-bold">AUTOMÁTICO</Badge>}
+                </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -526,14 +591,18 @@ export default function Configuracoes() {
                     value={userFormData.email}
                     onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
                     placeholder="joao@igreja.com"
-                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30"
+                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
                     required
+                    readOnly={!!userFormData.memberId}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Senha Provisória (CPF)</Label>
+                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">
+                  Senha Provisória (CPF)
+                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-bold">GERADA PELO CPF</Badge>}
+                </Label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -541,20 +610,21 @@ export default function Configuracoes() {
                     value={userFormData.password}
                     onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
                     placeholder="Senha ou CPF sem pontos"
-                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30"
+                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
                     required
+                    readOnly={!!userFormData.memberId}
                   />
                 </div>
               </div>
             </div>
 
             <DialogFooter className="pt-4 gap-3">
-              <Button type="button" variant="ghost" onClick={() => setIsUserModalOpen(false)} className="flex-1 font-bold h-12 rounded-xl border-secondary/20">
+              <Button type="button" variant="ghost" onClick={() => setIsUserModalOpen(false)} className="flex-1 font-bold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
                 CANCELAR
               </Button>
               <Button
                 type="submit"
-                className="flex-1 font-black h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20"
+                className="flex-1 font-black h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20 transition-all active:scale-95"
                 disabled={createUserMutation.isPending}
               >
                 {createUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "CONCEDER ACESSO"}

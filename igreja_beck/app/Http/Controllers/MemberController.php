@@ -107,23 +107,33 @@ class MemberController extends Controller
             return response()->json(['message' => 'O cargo é obrigatório'], 400);
         }
 
-        // Flexibiliza a busca: remove o final da palavra para aceitar variações (o/a)
-        $flexibleRole = rtrim($role, 'oáéíóú');
-        if (strlen($flexibleRole) > 4) {
-            $flexibleRole = substr($flexibleRole, 0, -1);
+        $query = Member::query();
+
+        // Custom logic for specific roles to ensure better matching
+        if (strtolower($role) === 'lider de pequeno grupo') {
+            $query->where(function ($q) {
+                $q->where('role', 'LIKE', '%Lider%')
+                    ->where('role', 'LIKE', '%Grupo%');
+            });
+        } else {
+            // Flexible matching for other roles
+            $flexibleRole = rtrim($role, 'oáéíóú');
+            if (strlen($flexibleRole) > 4) {
+                $flexibleRole = substr($flexibleRole, 0, -1);
+            }
+
+            $query->where(function ($q) use ($role, $flexibleRole) {
+                $q->where('role', 'LIKE', '%' . $role . '%')
+                    ->orWhere('role', 'LIKE', '%' . $flexibleRole . '%');
+            });
         }
 
-        $member = Member::where(function ($query) use ($role, $flexibleRole) {
-            $query->where('role', 'LIKE', '%' . $role . '%')
-                ->orWhere('role', 'LIKE', '%' . $flexibleRole . '%');
-        })
-            ->whereNotNull('cpf')
-            ->first();
+        $members = $query->whereNotNull('cpf')->get(['id', 'name', 'email', 'cpf', 'role']);
 
-        if (!$member) {
+        if ($members->isEmpty()) {
             return response()->json(['message' => 'Nenhum membro encontrado com este cargo ou cargo sem CPF cadastrado'], 404);
         }
 
-        return response()->json($member);
+        return response()->json($members);
     }
 }
