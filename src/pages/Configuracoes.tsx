@@ -549,20 +549,20 @@ export default function Configuracoes() {
           setAvailableMembers([]);
         }
       }}>
-        <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="p-8 bg-primary/5 flex items-center gap-5 border-b">
-            <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
-              <UserPlus className="h-8 w-8" />
+        <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="p-6 bg-primary/5 flex items-center gap-4 border-b">
+            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
+              <UserPlus className="h-6 w-6" />
             </div>
             <div>
-              <DialogTitle className="text-2xl font-black text-foreground">Novo Acesso</DialogTitle>
-              <DialogDescription className="font-bold text-primary">
-                Libere a gestão administrativa para novos usuários.
+              <DialogTitle className="text-xl font-black text-foreground">Novo Acesso</DialogTitle>
+              <DialogDescription className="text-xs font-bold text-primary">
+                Libere a gestão para novos usuários.
               </DialogDescription>
             </div>
           </div>
 
-          <form onSubmit={onUserSubmit} className="p-8 space-y-5 bg-card">
+          <form onSubmit={onUserSubmit} className="p-6 space-y-4 bg-card">
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -703,20 +703,20 @@ export default function Configuracoes() {
       </Dialog>
       {/* Modal Editar Usuário */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="p-8 bg-primary/5 flex items-center gap-5 border-b">
-            <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
-              <UserIcon className="h-8 w-8" />
+        <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="p-6 bg-primary/5 flex items-center gap-4 border-b">
+            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
+              <UserIcon className="h-6 w-6" />
             </div>
             <div>
-              <DialogTitle className="text-2xl font-black text-foreground">Editar Acesso</DialogTitle>
-              <DialogDescription className="font-bold text-primary">
-                Atualize as permissões ou dados do usuário.
+              <DialogTitle className="text-xl font-black text-foreground">Editar Acesso</DialogTitle>
+              <DialogDescription className="text-xs font-bold text-primary">
+                Atualize os dados do usuário.
               </DialogDescription>
             </div>
           </div>
 
-          <form onSubmit={onEditSubmit} className="p-8 space-y-6 bg-card">
+          <form onSubmit={onEditSubmit} className="p-6 space-y-4 bg-card">
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
