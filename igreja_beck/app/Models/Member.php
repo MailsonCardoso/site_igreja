@@ -14,13 +14,45 @@ class Member extends Model
         'email',
         'phone',
         'birth_date',
-        'category', // membro, visitante
-        'status',   // ativo, inativo, disciplina
+        'category',
+        'status',
         'address',
-        'photo_url'
+        'photo_url',
+        'sex',
+        'marital_status',
+        'cpf',
+        'cep',
+        'logradouro',
+        'bairro',
+        'cidade',
+        'uf',
+        'baptism_date',
+        'role',
+        'origin_church',
+        'father_name',
+        'mother_name',
+        'father_id',
+        'mother_id',
+        'spouse_id'
     ];
 
     protected $casts = [
         'birth_date' => 'date',
+        'baptism_date' => 'date',
     ];
+
+    public function father()
+    {
+        return $this->belongsTo(Member::class, 'father_id');
+    }
+
+    public function mother()
+    {
+        return $this->belongsTo(Member::class, 'mother_id');
+    }
+
+    public function spouse()
+    {
+        return $this->belongsTo(Member::class, 'spouse_id');
+    }
 }

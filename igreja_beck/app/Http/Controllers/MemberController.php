@@ -19,9 +19,25 @@ class MemberController extends Controller
             'email' => 'nullable|email|unique:members,email',
             'phone' => 'nullable|string',
             'birth_date' => 'nullable|date',
-            'category' => 'required|in:membro,visitante',
-            'status' => 'required|in:ativo,inativo,disciplina',
+            'category' => 'required|string',
+            'status' => 'required|string',
             'address' => 'nullable|string',
+            'sex' => 'nullable|string',
+            'marital_status' => 'nullable|string',
+            'cpf' => 'nullable|string|unique:members,cpf',
+            'cep' => 'nullable|string',
+            'logradouro' => 'nullable|string',
+            'bairro' => 'nullable|string',
+            'cidade' => 'nullable|string',
+            'uf' => 'nullable|string',
+            'baptism_date' => 'nullable|date',
+            'role' => 'nullable|string',
+            'origin_church' => 'nullable|string',
+            'father_name' => 'nullable|string',
+            'mother_name' => 'nullable|string',
+            'father_id' => 'nullable|exists:members,id',
+            'mother_id' => 'nullable|exists:members,id',
+            'spouse_id' => 'nullable|exists:members,id',
         ]);
 
         $member = Member::create($validated);
@@ -30,7 +46,7 @@ class MemberController extends Controller
 
     public function show(Member $member)
     {
-        return response()->json($member);
+        return response()->json($member->load(['father', 'mother', 'spouse']));
     }
 
     public function update(Request $request, Member $member)
@@ -40,9 +56,25 @@ class MemberController extends Controller
             'email' => 'nullable|email|unique:members,email,' . $member->id,
             'phone' => 'nullable|string',
             'birth_date' => 'nullable|date',
-            'category' => 'in:membro,visitante',
-            'status' => 'in:ativo,inativo,disciplina',
+            'category' => 'string',
+            'status' => 'string',
             'address' => 'nullable|string',
+            'sex' => 'nullable|string',
+            'marital_status' => 'nullable|string',
+            'cpf' => 'nullable|string|unique:members,cpf,' . $member->id,
+            'cep' => 'nullable|string',
+            'logradouro' => 'nullable|string',
+            'bairro' => 'nullable|string',
+            'cidade' => 'nullable|string',
+            'uf' => 'nullable|string',
+            'baptism_date' => 'nullable|date',
+            'role' => 'nullable|string',
+            'origin_church' => 'nullable|string',
+            'father_name' => 'nullable|string',
+            'mother_name' => 'nullable|string',
+            'father_id' => 'nullable|exists:members,id',
+            'mother_id' => 'nullable|exists:members,id',
+            'spouse_id' => 'nullable|exists:members,id',
         ]);
 
         $member->update($validated);
