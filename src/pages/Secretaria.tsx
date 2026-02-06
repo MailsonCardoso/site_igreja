@@ -782,43 +782,6 @@ export default function Secretaria() {
                 </section>
               </div>
 
-              {/* Address Data */}
-              <section>
-                <div className="flex items-center gap-2 mb-4 border-b pb-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <h4 className="font-semibold text-foreground">Endereço Residencial</h4>
-                </div>
-                <div className="bg-secondary/10 p-5 rounded-2xl">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Logradouro / Rua</p>
-                      <p className="text-sm font-semibold text-foreground">
-                        {selectedMember?.logradouro?.trim() || selectedMember?.address?.trim() || "Não informado"}
-                      </p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Bairro</p>
-                      <p className="text-sm font-semibold text-foreground">
-                        {selectedMember?.bairro?.trim() || "Não informado"}
-                      </p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Cidade / UF</p>
-                      <p className="text-sm font-semibold text-foreground">
-                        {selectedMember?.cidade?.trim() ?
-                          `${selectedMember.cidade.trim()}${selectedMember?.uf?.trim() ? ` - ${selectedMember.uf.trim().toUpperCase()}` : ''}`
-                          : "Não informada"}
-                      </p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">CEP</p>
-                      <p className="text-sm font-semibold text-foreground">
-                        {selectedMember?.cep?.trim() || "Não informado"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </section>
 
               {/* Family Data */}
               <section>
