@@ -64,7 +64,7 @@ export default function Dashboard() {
           trend={{ value: 0, isPositive: true }}
           delay={0}
         />
-        {userRole !== "Secretaria" && (
+        {!["secretaria", "secretário"].includes(userRole.toLowerCase()) && (
           <StatsCard
             title="Entradas do Mês"
             value={formatCurrency(stats.income || 0)}

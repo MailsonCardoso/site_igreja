@@ -39,12 +39,23 @@ const RoleRoute = ({ children, allowedRoles }: { children: React.ReactNode, allo
 
   if (!token) return <Navigate to="/auth" replace />;
 
-  if (allowedRoles.includes(userRole)) {
+  const normalizedUserRole = userRole.toLowerCase();
+  const normalizedAllowedRoles = allowedRoles.map(r => r.toLowerCase());
+
+  // Check if role is allowed (including variants for Secretaria)
+  const hasAccess = normalizedAllowedRoles.some(role => {
+    if (role === "secretaria") {
+      return ["secretaria", "secretária", "secretário"].includes(normalizedUserRole);
+    }
+    return role === normalizedUserRole;
+  });
+
+  if (hasAccess) {
     return <>{children}</>;
   }
 
   // Redirecionamento padrão se não tiver acesso
-  if (userRole === "Financeiro") return <Navigate to="/financeiro" replace />;
+  if (normalizedUserRole === "financeiro") return <Navigate to="/financeiro" replace />;
   return <Navigate to="/" replace />;
 };
 
