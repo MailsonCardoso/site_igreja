@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Clock, Plus, Loader2, Save, X, Users } from "lucide-react";
+import { User, Clock, Plus, Loader2, Save, X, Users, Pencil, Trash2 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -24,9 +24,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function Celulas() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedCell, setSelectedCell] = useState<any>(null);
   const queryClient = useQueryClient();
 
   // Fetch Cells
@@ -41,6 +54,14 @@ export default function Celulas() {
     queryFn: () => api.get("/members"),
   });
 
+  // Filtrar membros que são líderes
+  const leaders = members.filter((m: any) =>
+    (m.role || "").toLowerCase().includes("lider") ||
+    (m.role || "").toLowerCase().includes("líder") ||
+    (m.role || "").toLowerCase().includes("lider de pequeno grupo") ||
+    (m.role || "").toLowerCase().includes("líder de pequeno grupo")
+  );
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -52,24 +73,61 @@ export default function Celulas() {
     }
   });
 
-  const { reset, setValue, watch } = form;
+  const { reset, setValue, watch, handleSubmit } = form;
 
-  // Create Cell Mutation
-  const createCellMutation = useMutation({
-    mutationFn: (newCell: any) => api.post("/cells", newCell),
+  // Create/Update Cell Mutation
+  const saveCellMutation = useMutation({
+    mutationFn: (data: any) => isEditMode && selectedCell
+      ? api.put(`/cells/${selectedCell.id}`, data)
+      : api.post("/cells", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cells"] });
-      toast.success("Célula criada com sucesso!");
+      toast.success(isEditMode ? "Célula atualizada!" : "Célula criada!");
       setIsDialogOpen(false);
+      setIsEditMode(false);
+      setSelectedCell(null);
       reset();
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Erro ao criar célula");
+      toast.error(error.message || "Erro ao salvar célula");
+    },
+  });
+
+  // Delete Cell Mutation
+  const deleteCellMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/cells/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cells"] });
+      toast.success("Célula excluída!");
+      setIsDeleteOpen(false);
+      setSelectedCell(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao excluir célula");
     },
   });
 
   const onSubmit = (data: any) => {
-    createCellMutation.mutate(data);
+    saveCellMutation.mutate(data);
+  };
+
+  const handleEdit = (celula: any) => {
+    setSelectedCell(celula);
+    setIsEditMode(true);
+    reset({
+      name: celula.name || "",
+      leader_id: celula.leader_id?.toString() || "",
+      meeting_day: celula.meeting_day || "",
+      meeting_time: celula.meeting_time || "",
+      capacity: celula.capacity || 15,
+      description: celula.description || ""
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleDelete = (celula: any) => {
+    setSelectedCell(celula);
+    setIsDeleteOpen(true);
   };
 
   return (
@@ -129,14 +187,29 @@ export default function Celulas() {
                 className="group rounded-[2rem] bg-card p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-border/50 hover:border-primary/30"
               >
                 <div className="flex items-start justify-between mb-8">
-                  <div>
-                    <h3 className="text-2xl font-black text-foreground group-hover:text-primary transition-colors leading-none">{celula.name}</h3>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-black text-foreground group-hover:text-primary transition-colors leading-none truncate pr-2">{celula.name}</h3>
                     <Badge variant="outline" className="mt-2 border-primary/20 text-primary uppercase text-[8px] font-black tracking-widest px-2 py-0">
-                      {celula.meeting_day || "Samba-feira"}
+                      {celula.meeting_day || "Não definido"}
                     </Badge>
                   </div>
-                  <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                    <User className="h-6 w-6 text-primary" />
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEdit(celula)}
+                      className="h-9 w-9 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(celula)}
+                      className="h-9 w-9 rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-200"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
 
@@ -189,10 +262,12 @@ export default function Celulas() {
           <div className="bg-primary/5 p-8 border-b relative">
             <div className="flex items-center gap-4">
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                <Users className="h-8 w-8 text-primary" />
+                {isEditMode ? <Pencil className="h-8 w-8 text-primary" /> : <Users className="h-8 w-8 text-primary" />}
               </div>
               <div>
-                <DialogTitle className="text-2xl font-black text-foreground">Nova Célula</DialogTitle>
+                <DialogTitle className="text-2xl font-black text-foreground">
+                  {isEditMode ? "Editar Célula" : "Nova Célula"}
+                </DialogTitle>
                 <DialogDescription className="text-muted-foreground font-medium">
                   Preencha os dados abaixo para organizar seu pequeno grupo.
                 </DialogDescription>
@@ -244,9 +319,13 @@ export default function Celulas() {
                   <SelectValue placeholder="Selecione um líder" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-primary/10">
-                  {members.map((m: any) => (
-                    <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
-                  ))}
+                  {leaders.length === 0 ? (
+                    <div className="p-4 text-xs text-center text-muted-foreground">Nenhum líder cadastrado nos membros</div>
+                  ) : (
+                    leaders.map((m: any) => (
+                      <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -265,22 +344,49 @@ export default function Celulas() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsDialogOpen(false)}
+                onClick={() => {
+                  setIsDialogOpen(false);
+                  setIsEditMode(false);
+                  setSelectedCell(null);
+                  reset();
+                }}
                 className="flex-1 h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                disabled={createCellMutation.isPending}
+                disabled={saveCellMutation.isPending}
                 className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
               >
-                {createCellMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-5 w-5" /> Salvar Célula</>}
+                {saveCellMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-5 w-5" /> {isEditMode ? "Atualizar" : "Salvar"} Célula</>}
               </Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Confirmação de Exclusão */}
+      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <AlertDialogContent className="rounded-[2rem]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl font-black">Excluir Célula</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir a célula <strong>{selectedCell?.name}</strong>?
+              Esta ação removerá o vínculo de todos os membros deste grupo.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 pt-4">
+            <AlertDialogCancel className="rounded-xl font-bold">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => selectedCell && deleteCellMutation.mutate(selectedCell.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-bold"
+            >
+              {deleteCellMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirmar Exclusão"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MainLayout>
   );
 }

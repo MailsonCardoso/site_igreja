@@ -29,7 +29,12 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
       }
     }
 
-    const data = await response.json();
+    if (response.status === 204) {
+      return null;
+    }
+
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : {};
 
     if (!response.ok) {
       console.error(`[API Error] ${response.status}`, data);
