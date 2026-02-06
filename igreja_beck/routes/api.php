@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MinistryController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
