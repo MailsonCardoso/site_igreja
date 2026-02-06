@@ -474,6 +474,9 @@ export default function Secretaria() {
                               <SelectItem value="Ministro de Louvor">Ministro de Louvor</SelectItem>
                               <SelectItem value="Pastor">Pastor</SelectItem>
                               <SelectItem value="Instrumentista">Instrumentista</SelectItem>
+                              <SelectItem value="Financeiro">Financeiro</SelectItem>
+                              <SelectItem value="Secretaria">Secretaria</SelectItem>
+                              <SelectItem value="Líder de Pequeno Grupo">Líder de Pequeno Grupo</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
