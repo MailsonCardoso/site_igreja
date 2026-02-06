@@ -5,7 +5,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { api } from "@/lib/api";
-import { Plus, Loader2, MapPin, Calendar as CalendarIcon, Clock, Pencil, Trash2, Save } from "lucide-react";
+import { Plus, Loader2, MapPin, Calendar as CalendarIcon, Clock, Pencil, Trash2, Save, Eye, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -36,6 +36,7 @@ export default function Agenda() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
@@ -106,6 +107,11 @@ export default function Agenda() {
       color: evento.color || "#ecb318"
     });
     setIsDialogOpen(true);
+  };
+
+  const handleView = (evento: any) => {
+    setSelectedEvent(evento);
+    setIsViewOpen(true);
   };
 
   const handleDelete = (evento: any) => {
@@ -242,10 +248,13 @@ export default function Agenda() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(evento)} className="rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary">
+                      <Button variant="ghost" size="icon" onClick={() => handleView(evento)} className="rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => handleEdit(evento)} className="rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200">
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(evento)} className="rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive">
+                      <Button variant="ghost" size="icon" onClick={() => handleDelete(evento)} className="rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-200">
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -408,6 +417,76 @@ export default function Agenda() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {/* Modal de Visualização de Evento */}
+      <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
+        <DialogContent className="sm:max-w-[600px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="p-0 relative">
+            {/* Header com a cor do evento */}
+            <div className="h-32 w-full relative" style={{ backgroundColor: selectedEvent?.color || '#ecb318' }}>
+              <div className="absolute inset-0 bg-black/10" />
+              <button
+                onClick={() => setIsViewOpen(false)}
+                className="absolute top-6 right-6 h-10 w-10 rounded-xl bg-black/20 hover:bg-black/30 text-white flex items-center justify-center backdrop-blur-md transition-all border border-white/10"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="px-8 pb-8 -mt-10 relative">
+              <div className="h-20 w-20 rounded-3xl bg-card shadow-2xl border border-border flex items-center justify-center mb-6">
+                <CalendarIcon className="h-10 w-10" style={{ color: selectedEvent?.color || '#ecb318' }} />
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-3xl font-black text-foreground leading-tight">{selectedEvent?.title}</h2>
+                  <div className="flex flex-wrap items-center gap-4 mt-3">
+                    <Badge variant="outline" className="rounded-lg border-primary/20 text-primary font-bold py-1 px-3">
+                      {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "dd 'de' MMMM", { locale: ptBR })}
+                    </Badge>
+                    <span className="flex items-center gap-1.5 text-muted-foreground font-bold text-sm">
+                      <Clock className="h-4 w-4 text-primary" /> {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "HH:mm")}h
+                    </span>
+                    {selectedEvent?.location && (
+                      <span className="flex items-center gap-1.5 text-muted-foreground font-bold text-sm">
+                        <MapPin className="h-4 w-4 text-primary" /> {selectedEvent.location}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {selectedEvent?.description && (
+                  <div className="bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-3">Sobre o Evento</span>
+                    <p className="text-foreground font-medium leading-relaxed whitespace-pre-wrap">
+                      {selectedEvent.description}
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex gap-4 pt-4">
+                  <Button
+                    onClick={() => {
+                      setIsViewOpen(false);
+                      handleEdit(selectedEvent);
+                    }}
+                    className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground border-none"
+                  >
+                    <Pencil className="h-5 w-5 mr-2" /> Editar Evento
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsViewOpen(false)}
+                    className="flex-1 h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5"
+                  >
+                    Fechar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 }
