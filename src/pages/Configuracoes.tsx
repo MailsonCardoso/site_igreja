@@ -49,6 +49,19 @@ export default function Configuracoes() {
     email_marketing_enabled: "0"
   });
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [userToEdit, setUserToEdit] = useState<any>(null);
+  const [userToDelete, setUserToDelete] = useState<any>(null);
+
+  const [editFormData, setEditFormData] = useState({
+    id: "",
+    name: "",
+    email: "",
+    role: "",
+    status: ""
+  });
+
   // User Tab State
   const [userFormData, setUserFormData] = useState({
     name: "",
@@ -119,14 +132,42 @@ export default function Configuracoes() {
     }
   });
 
+  // Update User Mutation
+  const updateUserMutation = useMutation({
+    mutationFn: (data: any) => api.put(`/users/${data.id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setIsEditModalOpen(false);
+      toast({
+        title: "Sucesso!",
+        description: "Usuário atualizado com sucesso.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao atualizar usuário.",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Delete User Mutation
   const deleteUserMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/users/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      setIsDeleteModalOpen(false);
       toast({
         title: "Removido!",
         description: "Usuário excluído do sistema.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao excluir usuário.",
+        variant: "destructive",
       });
     }
   });
@@ -149,6 +190,27 @@ export default function Configuracoes() {
   const onUserSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     createUserMutation.mutate(userFormData);
+  };
+
+  const onEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateUserMutation.mutate(editFormData);
+  };
+
+  const openEditModal = (user: any) => {
+    setEditFormData({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role || "Administrador",
+      status: user.status || "Ativo"
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const openDeleteModal = (user: any) => {
+    setUserToDelete(user);
+    setIsDeleteModalOpen(true);
   };
 
   const fetchMembersByRole = async (role: string) => {
@@ -390,18 +452,24 @@ export default function Configuracoes() {
                               </Badge>
                             </TableCell>
                             <TableCell className="p-6">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-10 w-10 text-destructive/50 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all"
-                                onClick={() => {
-                                  if (confirm(`Excluir acesso de ${usuario.name}?`)) {
-                                    deleteUserMutation.mutate(usuario.id);
-                                  }
-                                }}
-                              >
-                                <Trash2 className="h-5 w-5" />
-                              </Button>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-10 w-10 text-primary/50 hover:text-primary hover:bg-primary/10 rounded-xl transition-all"
+                                  onClick={() => openEditModal(usuario)}
+                                >
+                                  <Save className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-10 w-10 text-destructive/50 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all"
+                                  onClick={() => openDeleteModal(usuario)}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </TableCell>
                           </motion.tr>
                         ))}
@@ -631,6 +699,141 @@ export default function Configuracoes() {
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+      {/* Modal Editar Usuário */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="p-8 bg-primary/5 flex items-center gap-5 border-b">
+            <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
+              <UserIcon className="h-8 w-8" />
+            </div>
+            <div>
+              <DialogTitle className="text-2xl font-black text-foreground">Editar Acesso</DialogTitle>
+              <DialogDescription className="font-bold text-primary">
+                Atualize as permissões ou dados do usuário.
+              </DialogDescription>
+            </div>
+          </div>
+
+          <form onSubmit={onEditSubmit} className="p-8 space-y-6 bg-card">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Papel / Função</Label>
+                  <Select
+                    onValueChange={(v) => setEditFormData({ ...editFormData, role: v })}
+                    value={editFormData.role}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Administrador" className="font-bold">Administrador</SelectItem>
+                      <SelectItem value="Pastor" className="font-bold">Pastor</SelectItem>
+                      <SelectItem value="Financeiro" className="font-bold">Financeiro</SelectItem>
+                      <SelectItem value="Secretaria" className="font-bold">Secretaria</SelectItem>
+                      <SelectItem value="Lider de pequeno grupo" className="font-bold">Líder de Pequeno Grupo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Status</Label>
+                  <Select
+                    onValueChange={(v) => setEditFormData({ ...editFormData, status: v })}
+                    value={editFormData.status}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Ativo" className="font-bold text-success">Ativo</SelectItem>
+                      <SelectItem value="Inativo" className="font-bold text-destructive">Inativo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Nome Completo</Label>
+                <div className="relative">
+                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={editFormData.name}
+                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">E-mail de Login</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="email"
+                    value={editFormData.email}
+                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30"
+                    required
+                  />
+                </div>
+              </div>
+
+              <p className="text-[10px] text-muted-foreground italic font-medium">* A senha não pode ser alterada por este painel por motivos de segurança.</p>
+            </div>
+
+            <DialogFooter className="pt-4 gap-3">
+              <Button type="button" variant="ghost" onClick={() => setIsEditModalOpen(false)} className="flex-1 font-bold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
+                CANCELAR
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 font-black h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20"
+                disabled={updateUserMutation.isPending}
+              >
+                {updateUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "SALVAR ALTERAÇÕES"}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Confirmar Exclusão */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent className="sm:max-w-[400px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="p-8 bg-destructive/5 flex flex-col items-center text-center gap-4 border-b">
+            <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center border-2 border-destructive/20 text-destructive">
+              <Trash2 className="h-10 w-10" />
+            </div>
+            <div>
+              <DialogTitle className="text-2xl font-black text-foreground">Remover Acesso?</DialogTitle>
+              <DialogDescription className="font-bold text-destructive mt-1">
+                Esta ação é irreversível e o usuário perderá acesso imediato ao sistema.
+              </DialogDescription>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-6 bg-card text-center">
+            <p className="text-foreground font-medium">
+              Tem certeza que deseja excluir o acesso de <span className="font-black text-primary">{userToDelete?.name}</span>?
+            </p>
+
+            <DialogFooter className="flex-col sm:flex-row gap-3 pt-2">
+              <Button type="button" variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="w-full font-bold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
+                MANTER ACESSO
+              </Button>
+              <Button
+                type="button"
+                className="w-full font-black h-12 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xl shadow-destructive/20"
+                onClick={() => deleteUserMutation.mutate(userToDelete?.id)}
+                disabled={deleteUserMutation.isPending}
+              >
+                {deleteUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "SIM, EXCLUIR"}
+              </Button>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
     </MainLayout>
