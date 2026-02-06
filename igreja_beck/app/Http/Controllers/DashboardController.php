@@ -13,8 +13,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Total de membros ativos
-        $totalMembers = Member::where('status', 'ativo')->count();
+        // Total de membros ativos (considerando apenas Membros e Congregados)
+        $totalMembers = Member::whereIn('status', ['ativo', 'membro', 'congregado', 'disciplina'])->count();
+
+        // Total de visitantes
+        $totalVisitors = Member::where('status', 'visitante')->count();
 
         // Finanças
         $totalIncome = Transaction::where('type', 'entrada')->sum('amount');
@@ -31,9 +34,10 @@ class DashboardController extends Controller
         $totalCells = Cell::count();
 
         // Aniversariantes do mês atual
+        $activeStatuses = ['ativo', 'membro', 'congregado', 'visitante', 'disciplina'];
         $currentMonth = now()->month;
         $birthdays = Member::whereRaw('MONTH(birth_date) = ?', [$currentMonth])
-            ->where('status', 'ativo')
+            ->whereIn('status', $activeStatuses)
             ->orderByRaw('DAY(birth_date)')
             ->get(['id', 'name', 'birth_date'])
             ->map(function ($member) {
@@ -47,6 +51,7 @@ class DashboardController extends Controller
 
         return response()->json([
             'members_count' => $totalMembers,
+            'visitors_count' => $totalVisitors,
             'balance' => $balance,
             'income' => $totalIncome,
             'expense' => $totalExpense,
