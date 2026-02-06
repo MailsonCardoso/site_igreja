@@ -18,8 +18,17 @@ function formatCurrency(value: number): string {
 }
 
 export default function Dashboard() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const userRole = user.role || "Administrador";
+  let user = { role: "Administrador" };
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      user = JSON.parse(storedUser);
+    }
+  } catch (e) {
+    console.error("Error parsing user in dashboard", e);
+  }
+  
+  const userRole = user?.role || "Administrador";
   const navigate = useNavigate();
 
   useEffect(() => {

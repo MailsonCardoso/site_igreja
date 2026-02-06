@@ -39,8 +39,18 @@ interface SidebarContentProps {
 
 function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarContentProps) {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const userRole = user.role || "Administrador";
+  let user = { name: "Usuário", role: "Administrador" };
+
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      user = JSON.parse(storedUser);
+    }
+  } catch (e) {
+    console.error("Error parsing user in sidebar", e);
+  }
+
+  const userRole = user?.role || "Administrador";
 
   const filteredNavigation = navigationItems.filter(item => {
     const normalizedRole = userRole.toLowerCase();

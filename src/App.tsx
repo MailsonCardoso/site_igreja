@@ -2,6 +2,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Secretaria from "./pages/Secretaria";
@@ -34,15 +36,24 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
 
 const RoleRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles: string[] }) => {
   const token = localStorage.getItem("auth_token");
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const userRole = user.role || "Administrador";
+  let user = { role: "Administrador" };
+
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      user = JSON.parse(storedUser);
+    }
+  } catch (e) {
+    console.error("Error parsing user", e);
+  }
+
+  const userRole = user?.role || "Administrador";
 
   if (!token) return <Navigate to="/auth" replace />;
 
-  const normalizedUserRole = userRole.toLowerCase();
+  const normalizedUserRole = String(userRole).toLowerCase();
   const normalizedAllowedRoles = allowedRoles.map(r => r.toLowerCase());
 
-  // Check if role is allowed (including variants for Secretaria)
   const hasAccess = normalizedAllowedRoles.some(role => {
     if (role === "secretaria") {
       return ["secretaria", "secretária", "secretário"].includes(normalizedUserRole);
@@ -54,7 +65,6 @@ const RoleRoute = ({ children, allowedRoles }: { children: React.ReactNode, allo
     return <>{children}</>;
   }
 
-  // Redirecionamento padrão se não tiver acesso
   if (normalizedUserRole === "financeiro") return <Navigate to="/financeiro" replace />;
   return <Navigate to="/" replace />;
 };
