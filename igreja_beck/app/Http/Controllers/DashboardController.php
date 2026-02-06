@@ -64,6 +64,32 @@ class DashboardController extends Controller
                 ];
             });
 
+        // Distribuição por faixa etária
+        $ageDistribution = [
+            ['faixa' => 'Infantil (0-12)', 'quantidade' => 0, 'fill' => 'hsl(142, 71%, 45%)'], // Verde
+            ['faixa' => 'Adolescente (13-17)', 'quantidade' => 0, 'fill' => 'hsl(262, 83%, 58%)'], // Roxo
+            ['faixa' => 'Adulto (18-64)', 'quantidade' => 0, 'fill' => 'hsl(43, 96%, 56%)'], // Âmbar (Marca)
+            ['faixa' => 'Idoso (65+)', 'quantidade' => 0, 'fill' => 'hsl(215, 25%, 27%)'], // Azul escuro
+        ];
+
+        $membersWithBirthDate = Member::whereIn('status', $activeStatuses)
+            ->whereNotNull('birth_date')
+            ->get(['birth_date']);
+
+        foreach ($membersWithBirthDate as $member) {
+            $age = \Carbon\Carbon::parse($member->birth_date)->age;
+
+            if ($age <= 12) {
+                $ageDistribution[0]['quantidade']++;
+            } elseif ($age <= 17) {
+                $ageDistribution[1]['quantidade']++;
+            } elseif ($age <= 64) {
+                $ageDistribution[2]['quantidade']++;
+            } else {
+                $ageDistribution[3]['quantidade']++;
+            }
+        }
+
         return response()->json([
             'members_count' => $totalMembers,
             'visitors_count' => $totalVisitors,
@@ -73,6 +99,7 @@ class DashboardController extends Controller
             'cells_count' => $totalCells,
             'birthdays' => $birthdays,
             'member_growth' => $memberGrowth,
+            'age_distribution' => $ageDistribution,
             'upcoming_events' => $upcomingEvents
         ]);
     }
