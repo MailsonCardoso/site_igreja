@@ -192,18 +192,17 @@ export default function Celulas() {
         </div>
       )}
 
-      {/* Modal de Cadastro */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl [&>button]:text-white">
-          <div className="bg-primary p-8 text-primary-foreground relative">
+        <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="bg-primary/5 p-8 border-b relative">
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center border border-white/30">
-                <Users className="h-8 w-8 text-white" />
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <Users className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-2xl font-black text-white">Nova Célula</DialogTitle>
-                <DialogDescription className="text-white/80 font-medium">
-                  Preencha os dados abaixo para criar um novo pequeno grupo.
+                <DialogTitle className="text-2xl font-black text-foreground">Nova Célula</DialogTitle>
+                <DialogDescription className="text-muted-foreground font-medium">
+                  Preencha os dados abaixo para organizar seu pequeno grupo.
                 </DialogDescription>
               </div>
             </div>

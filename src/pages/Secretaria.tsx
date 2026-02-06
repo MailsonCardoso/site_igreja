@@ -334,17 +334,17 @@ export default function Secretaria() {
                 Novo Membro
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl [&>button]:text-white">
-              <div className="bg-primary p-6 text-primary-foreground">
+            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl">
+              <div className="bg-primary/5 p-6 border-b">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-white/20 flex items-center justify-center border border-white/30">
-                    <User className="h-6 w-6 text-white" />
+                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                    <User className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <DialogTitle className="text-xl font-black text-white">
+                    <DialogTitle className="text-xl font-black text-foreground">
                       {isEditMode ? "Editar Membro" : "Adicionar Novo Membro"}
                     </DialogTitle>
-                    <DialogDescription className="text-white/80">
+                    <DialogDescription className="text-muted-foreground">
                       {isEditMode ? "Atualize os dados do membro da igreja." : "Preencha os dados do novo membro da igreja em etapas."}
                     </DialogDescription>
                   </div>
