@@ -296,88 +296,94 @@ export default function Agenda() {
 
       {/* Modal de Cadastro/Edição */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="bg-primary/5 p-8 border-b relative">
+        <DialogContent className="sm:max-w-[750px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="bg-primary/5 p-6 border-b relative">
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                {isEditMode ? <Pencil className="h-8 w-8 text-primary" /> : <CalendarIcon className="h-8 w-8 text-primary" />}
+              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                {isEditMode ? <Pencil className="h-7 w-7 text-primary" /> : <CalendarIcon className="h-7 w-7 text-primary" />}
               </div>
               <div>
-                <DialogTitle className="text-2xl font-black text-foreground">
+                <DialogTitle className="text-xl font-black text-foreground">
                   {isEditMode ? "Editar Evento" : "Novo Evento"}
                 </DialogTitle>
-                <DialogDescription className="text-muted-foreground font-medium">
+                <DialogDescription className="text-muted-foreground font-medium text-xs">
                   Planeje e organize as atividades da igreja.
                 </DialogDescription>
               </div>
             </div>
           </div>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="p-8 space-y-6 bg-card">
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Título do Evento</Label>
-              <Input
-                {...form.register("title", { required: true })}
-                placeholder="Ex: Culto de Celebração"
-                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold transition-all focus:border-primary/50"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Data</Label>
-                <Input
-                  type="date"
-                  {...form.register("start_date", { required: true })}
-                  className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Horário</Label>
-                <Input
-                  type="time"
-                  {...form.register("horario")}
-                  className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Local</Label>
-              <Input
-                {...form.register("location")}
-                placeholder="Ex: Templo Principal"
-                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cor de Identificação</Label>
-              <div className="flex gap-3">
-                {["#ecb318", "#ef4444", "#3b82f6", "#22c55e", "#a855f7"].map(c => (
-                  <button
-                    key={c}
-                    type="button"
-                    onClick={() => setValue("color", c)}
-                    className={`h-10 w-10 rounded-xl border-4 transition-all ${watch("color") === c ? 'border-primary shadow-lg scale-110' : 'border-transparent opacity-50'}`}
-                    style={{ backgroundColor: c }}
+          <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-5 bg-card">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Título do Evento</Label>
+                  <Input
+                    {...form.register("title", { required: true })}
+                    placeholder="Ex: Culto de Celebração"
+                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold transition-all focus:border-primary/50"
                   />
-                ))}
-              </div>
-            </div>
+                </div>
 
-            <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Descrição (Opcional)</Label>
-              <Textarea
-                {...form.register("description")}
-                placeholder="Detalhes sobre o evento..."
-                className="rounded-xl border-secondary/30 bg-secondary/5 min-h-[100px] font-medium"
-              />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Data</Label>
+                    <Input
+                      type="date"
+                      {...form.register("start_date", { required: true })}
+                      className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Horário</Label>
+                    <Input
+                      type="time"
+                      {...form.register("horario")}
+                      className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Local</Label>
+                  <Input
+                    {...form.register("location")}
+                    placeholder="Ex: Templo Principal"
+                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Descrição (Opcional)</Label>
+                  <Textarea
+                    {...form.register("description")}
+                    placeholder="Detalhes sobre o evento..."
+                    className="rounded-xl border-secondary/30 bg-secondary/5 min-h-[110px] font-medium text-sm resize-none"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cor de Identificação</Label>
+                  <div className="flex gap-2.5">
+                    {["#ecb318", "#ef4444", "#3b82f6", "#22c55e", "#a855f7"].map(c => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setValue("color", c)}
+                        className={`h-9 w-9 rounded-xl border-4 transition-all ${watch("color") === c ? 'border-primary shadow-lg scale-110' : 'border-transparent opacity-50'}`}
+                        style={{ backgroundColor: c }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-4 pt-4 border-t border-border/50">
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1 h-12 rounded-xl font-bold">Cancelar</Button>
-              <Button type="submit" disabled={saveEventMutation.isPending} className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20">
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1 h-11 rounded-xl font-bold">Cancelar</Button>
+              <Button type="submit" disabled={saveEventMutation.isPending} className="flex-1 h-11 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20">
                 {saveEventMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-5 w-5 mr-2" /> {isEditMode ? "Atualizar" : "Agendar"}</>}
               </Button>
             </div>
