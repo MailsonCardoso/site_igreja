@@ -788,29 +788,27 @@ export default function Secretaria() {
                   <MapPin className="h-5 w-5 text-primary" />
                   <h4 className="font-semibold text-foreground">Endereço Residencial</h4>
                 </div>
-                <div className="bg-secondary/10 p-5 rounded-2xl min-h-[80px] flex flex-col justify-center">
-                  {selectedMember?.logradouro || selectedMember?.address ? (
-                    <div className="space-y-1">
-                      <p className="font-bold text-sm text-foreground">
-                        {selectedMember?.logradouro || selectedMember?.address}
-                      </p>
-                      {(selectedMember?.bairro || selectedMember?.cidade || selectedMember?.uf) && (
-                        <p className="text-sm text-muted-foreground flex items-center gap-2">
-                          {selectedMember?.bairro && <span>{selectedMember.bairro}</span>}
-                          {selectedMember?.bairro && (selectedMember?.cidade || selectedMember?.uf) && <span className="opacity-30">•</span>}
-                          {selectedMember?.cidade && <span>{selectedMember.cidade}</span>}
-                          {selectedMember?.uf && <span className="opacity-50"> - {selectedMember.uf}</span>}
-                        </p>
-                      )}
-                      {selectedMember?.cep && (
-                        <p className="text-[11px] text-muted-foreground/70 mt-1">
-                          <span className="font-bold mr-1">CEP:</span> {selectedMember.cep}
-                        </p>
-                      )}
+                <div className="bg-secondary/10 p-5 rounded-2xl">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Logradouro / Rua</p>
+                      <p className="text-sm font-medium">{selectedMember?.logradouro || selectedMember?.address || "Não informado"}</p>
                     </div>
-                  ) : (
-                    <p className="text-muted-foreground italic text-sm">Endereço não cadastrado</p>
-                  )}
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Bairro</p>
+                      <p className="text-sm font-medium">{selectedMember?.bairro || "Não informado"}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Cidade / UF</p>
+                      <p className="text-sm font-medium">
+                        {selectedMember?.cidade ? `${selectedMember.cidade}${selectedMember?.uf ? ` - ${selectedMember.uf}` : ''}` : "Não informada"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">CEP</p>
+                      <p className="text-sm font-medium">{selectedMember?.cep || "Não informado"}</p>
+                    </div>
+                  </div>
                 </div>
               </section>
 
