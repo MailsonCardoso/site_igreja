@@ -12,7 +12,9 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::orderBy('created_at', 'desc')->get();
+        $courses = Course::with(['students', 'lessons'])
+            ->orderBy('created_at', 'desc')
+            ->get();
         return response()->json($courses);
     }
 
@@ -76,5 +78,36 @@ class CourseController extends Controller
         $course = Course::findOrFail($id);
         $course->delete();
         return response()->json(['message' => 'Course deleted successfully']);
+    }
+
+    /**
+     * Enroll a student in the course
+     */
+    public function enrollStudent(Request $request, $id)
+    {
+        $course = Course::findOrFail($id);
+
+        $validated = $request->validate([
+            'member_id' => 'required|exists:members,id',
+            'enrolled_at' => 'nullable|date',
+        ]);
+
+        $course->students()->syncWithoutDetaching([
+            $validated['member_id'] => [
+                'enrolled_at' => $validated['enrolled_at'] ?? now()
+            ]
+        ]);
+
+        return response()->json(['message' => 'Student enrolled successfully']);
+    }
+
+    /**
+     * Remove a student from the course
+     */
+    public function removeStudent($id, $memberId)
+    {
+        $course = Course::findOrFail($id);
+        $course->students()->detach($memberId);
+        return response()->json(['message' => 'Student removed successfully']);
     }
 }

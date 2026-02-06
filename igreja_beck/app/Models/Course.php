@@ -22,4 +22,16 @@ class Course extends Model
         'start_date' => 'date',
         'end_date' => 'date',
     ];
+
+    public function lessons()
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
+    public function students()
+    {
+        return $this->belongsToMany(Member::class, 'course_students')
+            ->withPivot('enrolled_at')
+            ->withTimestamps();
+    }
 }
