@@ -549,7 +549,7 @@ export default function Configuracoes() {
           setAvailableMembers([]);
         }
       }}>
-        <DialogContent className="sm:max-w-[480px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+        <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
           <div className="p-8 bg-primary/5 flex items-center gap-5 border-b">
             <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
               <UserPlus className="h-8 w-8" />
@@ -703,7 +703,7 @@ export default function Configuracoes() {
       </Dialog>
       {/* Modal Editar Usuário */}
       <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="sm:max-w-[450px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+        <DialogContent className="sm:max-w-[600px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
           <div className="p-8 bg-primary/5 flex items-center gap-5 border-b">
             <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
               <UserIcon className="h-8 w-8" />
@@ -802,7 +802,7 @@ export default function Configuracoes() {
 
       {/* Modal Confirmar Exclusão */}
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent className="sm:max-w-[400px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
           <div className="p-8 bg-destructive/5 flex flex-col items-center text-center gap-4 border-b">
             <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center border-2 border-destructive/20 text-destructive">
               <Trash2 className="h-10 w-10" />
