@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { User, Clock, Plus, Loader2, Save, X, Users, Pencil, Trash2 } from "lucide-react";
+import { User, Clock, Plus, Loader2, Save, X, Users, Pencil, Trash2, Eye } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -14,6 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -38,6 +40,7 @@ import {
 export default function Celulas() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isViewOpen, setIsViewOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedCell, setSelectedCell] = useState<any>(null);
   const queryClient = useQueryClient();
@@ -125,6 +128,11 @@ export default function Celulas() {
     setIsDialogOpen(true);
   };
 
+  const handleView = (celula: any) => {
+    setSelectedCell(celula);
+    setIsViewOpen(true);
+  };
+
   const handleDelete = (celula: any) => {
     setSelectedCell(celula);
     setIsDeleteOpen(true);
@@ -194,6 +202,14 @@ export default function Celulas() {
                     </Badge>
                   </div>
                   <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleView(celula)}
+                      className="h-9 w-9 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -387,6 +403,91 @@ export default function Celulas() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Modal de Detalhes da Célula */}
+      <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl">
+          <div className="bg-primary/5 p-8 border-b">
+            <div className="flex items-center gap-6">
+              <div className="h-20 w-20 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <Users className="h-10 w-10 text-primary" />
+              </div>
+              <div>
+                <DialogTitle className="text-3xl font-black text-foreground leading-tight">{selectedCell?.name}</DialogTitle>
+                <div className="flex items-center gap-3 mt-2">
+                  <Badge className="bg-primary text-white hover:bg-primary">
+                    {selectedCell?.meeting_day || "Não definido"}
+                  </Badge>
+                  <span className="text-muted-foreground font-bold">•</span>
+                  <span className="text-muted-foreground font-bold">{selectedCell?.meeting_time || "19:30"}h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ScrollArea className="flex-1">
+            <div className="p-8 space-y-8">
+              {/* Liderança e Capacidade */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-secondary/10 p-5 rounded-2xl border border-secondary/20">
+                  <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block mb-1">Líder</span>
+                  <span className="text-lg font-bold text-foreground block">{selectedCell?.leader?.name || "Não atribuído"}</span>
+                </div>
+                <div className="bg-secondary/10 p-5 rounded-2xl border border-secondary/20">
+                  <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block mb-1">Capacidade</span>
+                  <span className="text-lg font-bold text-foreground block">{selectedCell?.capacity || 15} pessoas</span>
+                </div>
+              </div>
+
+              {/* Lista de Membros */}
+              <section>
+                <div className="flex items-center justify-between mb-6">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                    <User className="h-4 w-4" /> Membros ({selectedCell?.members?.length || 0})
+                  </h4>
+                </div>
+
+                <div className="grid gap-4">
+                  {(!selectedCell?.members || selectedCell.members.length === 0) ? (
+                    <div className="text-center py-10 bg-secondary/5 rounded-2xl border border-dashed border-secondary/20">
+                      <p className="text-muted-foreground font-medium italic">Nenhum membro vinculado a esta célula ainda.</p>
+                    </div>
+                  ) : (
+                    selectedCell.members.map((membro: any) => (
+                      <div key={membro.id} className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border/50 hover:bg-secondary/5 transition-colors">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-12 w-12 border-2 border-background shadow-sm">
+                            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
+                              {(membro.name || "?").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-bold text-foreground leading-none mb-1">{membro.name}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-wider">{membro.role || "Membro"}</p>
+                          </div>
+                        </div>
+                        <Badge variant="ghost" className="text-[10px] text-muted-foreground">
+                          {membro.phone || "Sem contato"}
+                        </Badge>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
+            </div>
+          </ScrollArea>
+
+          <div className="p-8 border-t bg-background">
+            <Button
+              variant="outline"
+              className="w-full h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
+              onClick={() => setIsViewOpen(false)}
+            >
+              Fechar Detalhes
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 }
