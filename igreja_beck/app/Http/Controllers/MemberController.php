@@ -107,8 +107,16 @@ class MemberController extends Controller
             return response()->json(['message' => 'O cargo é obrigatório'], 400);
         }
 
-        // Search for members whose role field contains the specified role
-        $member = Member::where('role', 'LIKE', '%' . $role . '%')
+        // Flexibiliza a busca: remove o final da palavra para aceitar variações (o/a)
+        $flexibleRole = rtrim($role, 'oáéíóú');
+        if (strlen($flexibleRole) > 4) {
+            $flexibleRole = substr($flexibleRole, 0, -1);
+        }
+
+        $member = Member::where(function ($query) use ($role, $flexibleRole) {
+            $query->where('role', 'LIKE', '%' . $role . '%')
+                ->orWhere('role', 'LIKE', '%' . $flexibleRole . '%');
+        })
             ->whereNotNull('cpf')
             ->first();
 

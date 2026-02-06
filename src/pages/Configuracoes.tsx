@@ -466,8 +466,11 @@ export default function Configuracoes() {
                           });
                         }
                       } catch (error) {
-                        // Se não achar, apenas mantém o papel selecionado
-                        console.log("Membro não localizado para este papel");
+                        toast({
+                          title: "Atenção",
+                          description: "Nenhum membro cadastrado com este cargo ou cargo sem CPF.",
+                          variant: "default",
+                        });
                       }
                     }}
                     value={userFormData.role}
