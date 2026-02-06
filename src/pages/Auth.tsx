@@ -69,7 +69,7 @@ export default function Auth() {
 
         toast({
           title: "Login realizado!",
-          description: `Bem-vindo de volta, ${userData.name}!`,
+          description: `Bem-vindo, ${userData.name}!`,
         });
       } else {
         const response = await api.post("/register", {
@@ -118,7 +118,7 @@ export default function Auth() {
             </div>
             <div>
               <CardTitle className="text-2xl font-bold">
-                {isLogin ? "Bem-vindo de volta" : "Criar conta"}
+                {isLogin ? "Bem-vindo" : "Criar conta"}
               </CardTitle>
               <CardDescription className="mt-2">
                 {isLogin
