@@ -194,41 +194,48 @@ export default function Celulas() {
 
       {/* Modal de Cadastro */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="bg-primary p-8 text-primary-foreground relative">
+        <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="bg-primary/5 p-8 border-b relative">
+            <div className="flex items-center gap-4">
+              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-black text-foreground">Nova Célula</DialogTitle>
+                <DialogDescription className="text-muted-foreground font-medium">
+                  Preencha os dados abaixo para criar um novo pequeno grupo.
+                </DialogDescription>
+              </div>
+            </div>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsDialogOpen(false)}
-              className="absolute right-4 top-4 hover:bg-white/20 text-white rounded-full"
+              className="absolute right-4 top-4 hover:bg-primary/10 text-primary rounded-full transition-colors"
             >
               <X className="h-5 w-5" />
             </Button>
-            <DialogTitle className="text-3xl font-black mb-2">Nova Célula</DialogTitle>
-            <DialogDescription className="text-primary-foreground/80 font-medium">
-              Preencha os dados abaixo para criar um novo pequeno grupo.
-            </DialogDescription>
           </div>
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-8 space-y-6 bg-card">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Nome da Célula</Label>
+              <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nome da Célula</Label>
               <Input
                 id="name"
                 {...form.register("name", { required: true })}
                 placeholder="Ex: Célula Esperança"
-                className="h-12 rounded-xl border-secondary bg-secondary/10 focus:bg-background font-bold"
+                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 focus:bg-background font-bold transition-all focus:border-primary/50"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Dia da Semana</Label>
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Dia da Semana</Label>
                 <Select onValueChange={(val) => setValue("meeting_day", val)} value={watch("meeting_day")}>
-                  <SelectTrigger className="h-12 rounded-xl border-secondary bg-secondary/10 font-bold">
+                  <SelectTrigger className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold focus:border-primary/50">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="rounded-xl border-primary/10">
                     {["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"].map(dia => (
                       <SelectItem key={dia} value={dia}>{dia}</SelectItem>
                     ))}
@@ -237,53 +244,53 @@ export default function Celulas() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="meeting_time" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Horário</Label>
+                <Label htmlFor="meeting_time" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Horário</Label>
                 <Input
                   id="meeting_time"
                   type="time"
                   {...form.register("meeting_time")}
-                  className="h-12 rounded-xl border-secondary bg-secondary/10 font-bold"
+                  className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold focus:border-primary/50"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">Líder da Célula</Label>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Líder da Célula</Label>
               <Select onValueChange={(val) => setValue("leader_id", val)} value={watch("leader_id")}>
-                <SelectTrigger className="h-12 rounded-xl border-secondary bg-secondary/10 font-bold">
+                <SelectTrigger className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold focus:border-primary/50">
                   <SelectValue placeholder="Selecione um líder" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border-primary/10">
                   {members.map((m: any) => (
-                    <SelectItem key={m.id} value={m.id.toString()}>{m.name}</SelectItem>
+                    <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="capacity" className="text-xs font-black uppercase tracking-widest text-muted-foreground">Capacidade Máxima</Label>
+              <Label htmlFor="capacity" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Capacidade Máxima</Label>
               <Input
                 id="capacity"
                 type="number"
                 {...form.register("capacity")}
-                className="h-12 rounded-xl border-secondary bg-secondary/10 font-bold"
+                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold focus:border-primary/50"
               />
             </div>
 
-            <div className="flex gap-3 pt-4">
+            <div className="flex gap-4 pt-6 border-t border-border/50">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
-                className="flex-1 h-12 rounded-xl font-bold border-secondary text-muted-foreground"
+                className="flex-1 h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={createCellMutation.isPending}
-                className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 shadow-lg"
+                className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
               >
                 {createCellMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-5 w-5" /> Salvar Célula</>}
               </Button>
