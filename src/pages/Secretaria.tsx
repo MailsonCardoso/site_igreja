@@ -719,96 +719,108 @@ export default function Secretaria() {
             </div>
           </DialogHeader>
           <ScrollArea className="flex-1">
-            <div className="p-8 space-y-8">
+            <div className="p-8 space-y-10">
               {/* Personal Data */}
               <section>
-                <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                <div className="flex items-center gap-2 mb-6 border-b pb-2">
                   <User className="h-5 w-5 text-primary" />
-                  <h4 className="font-semibold text-foreground">Informações Pessoais</h4>
+                  <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Informações Pessoais</h4>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 bg-secondary/10 p-5 rounded-2xl">
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">CPF</p>
-                    <p className="text-sm font-medium">{selectedMember?.cpf || "Não informado"}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 bg-secondary/5 p-6 rounded-2xl border border-secondary/20">
+                  <div className="space-y-1">
+                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">CPF</p>
+                    <p className="text-base font-bold text-foreground">{selectedMember?.cpf || "Não informado"}</p>
                   </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Data de Nascimento</p>
-                    <p className="text-sm font-medium">
+                  <div className="space-y-1">
+                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Nascimento</p>
+                    <p className="text-base font-bold text-foreground">
                       {selectedMember?.birth_date ? new Date(selectedMember.birth_date).toLocaleDateString('pt-BR') : "Não informada"}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Gênero</p>
-                    <p className="text-sm font-medium capitalize">{selectedMember?.sex || "Não informado"}</p>
+                  <div className="space-y-1">
+                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Gênero</p>
+                    <p className="text-base font-bold text-foreground capitalize">{selectedMember?.sex || "Não informado"}</p>
                   </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Estado Civil</p>
-                    <p className="text-sm font-medium capitalize">{selectedMember?.marital_status || "Não informado"}</p>
+                  <div className="space-y-1">
+                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Estado Civil</p>
+                    <p className="text-base font-bold text-foreground capitalize">{selectedMember?.marital_status || "Não informado"}</p>
                   </div>
                 </div>
               </section>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 {/* Contact Data */}
                 <section>
-                  <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                  <div className="flex items-center gap-2 mb-6 border-b pb-2">
                     <Phone className="h-5 w-5 text-primary" />
-                    <h4 className="font-semibold text-foreground">Contato</h4>
+                    <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Contato</h4>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 bg-secondary/10 p-5 rounded-2xl h-full">
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">WhatsApp</p>
-                      <p className="text-sm font-medium">{selectedMember?.phone || "Não informado"}</p>
+                  <div className="grid grid-cols-1 gap-6 bg-secondary/5 p-6 rounded-2xl border border-secondary/20 min-h-[140px]">
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">WhatsApp / Telefone</p>
+                      <p className="text-base font-bold text-foreground">{selectedMember?.phone || "Não informado"}</p>
                     </div>
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">E-mail</p>
-                      <p className="text-sm font-medium truncate" title={selectedMember?.email}>{selectedMember?.email || "Não informado"}</p>
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">E-mail</p>
+                      <p className="text-base font-bold text-foreground truncate" title={selectedMember?.email}>{selectedMember?.email || "Não informado"}</p>
                     </div>
                   </div>
                 </section>
 
                 {/* Ecclesiastical Data */}
                 <section>
-                  <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                  <div className="flex items-center gap-2 mb-6 border-b pb-2">
                     <Church className="h-5 w-5 text-primary" />
-                    <h4 className="font-semibold text-foreground">Dados Eclesiásticos</h4>
+                    <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Dados Eclesiásticos</h4>
                   </div>
-                  <div className="grid grid-cols-1 gap-4 bg-secondary/10 p-5 rounded-2xl h-full">
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Igreja de Origem</p>
-                      <p className="text-sm font-medium">{selectedMember?.origin_church || "Esta Igreja"}</p>
+                  <div className="grid grid-cols-1 gap-6 bg-secondary/5 p-6 rounded-2xl border border-secondary/20 min-h-[140px]">
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Cargo / Função</p>
+                      <p className="text-base font-bold text-foreground">{selectedMember?.role || "Membro"}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Igreja de Origem</p>
+                      <p className="text-base font-bold text-foreground">{selectedMember?.origin_church || "Esta Igreja"}</p>
                     </div>
                   </div>
                 </section>
               </div>
 
-
               {/* Family Data */}
-              <section>
-                <div className="flex items-center gap-2 mb-4 border-b pb-2">
+              <section className="pb-8">
+                <div className="flex items-center gap-2 mb-6 border-b pb-2">
                   <Users className="h-5 w-5 text-primary" />
-                  <h4 className="font-semibold text-foreground">Família e Vínculos</h4>
+                  <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Família e Filiação</h4>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-secondary/10 p-5 rounded-2xl">
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Pai</p>
-                    <p className="text-sm font-medium">{selectedMember?.father?.name || selectedMember?.father_name || "Não informado"}</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-primary/5 p-6 rounded-2xl border border-primary/10">
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Pai</p>
+                    <p className="text-base font-bold text-foreground leading-tight">
+                      {selectedMember?.father?.name || selectedMember?.father_name || "Não informado"}
+                    </p>
+                    {selectedMember?.father?.name && <Badge variant="outline" className="text-[10px] h-4">Membro</Badge>}
                   </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Mãe</p>
-                    <p className="text-sm font-medium">{selectedMember?.mother?.name || selectedMember?.mother_name || "Não informada"}</p>
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Mãe</p>
+                    <p className="text-base font-bold text-foreground leading-tight">
+                      {selectedMember?.mother?.name || selectedMember?.mother_name || "Não informada"}
+                    </p>
+                    {selectedMember?.mother?.name && <Badge variant="outline" className="text-[10px] h-4">Membro</Badge>}
                   </div>
-                  <div>
-                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Cônjuge</p>
-                    <p className="text-sm font-medium">{selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Não vinculado" : "N/A")}</p>
+                  <div className="space-y-2">
+                    <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Cônjuge</p>
+                    <p className="text-base font-bold text-foreground leading-tight">
+                      {selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Não vinculado" : "N/A")}
+                    </p>
+                    {selectedMember?.spouse?.name && <Badge variant="outline" className="text-[10px] h-4">Membro</Badge>}
                   </div>
                 </div>
               </section>
             </div>
           </ScrollArea>
-          <div className="p-6 border-t bg-primary/5 flex justify-end gap-3">
-            <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>Fechar</Button>
-            <Button className="bg-primary text-primary-foreground" onClick={() => {
+          <div className="p-8 border-t bg-background flex justify-end gap-4">
+            <Button variant="outline" className="px-8 shadow-sm" onClick={() => setIsViewDialogOpen(false)}>Fechar</Button>
+            <Button className="bg-amber-500 hover:bg-amber-600 text-white px-8 shadow-md transition-all active:scale-95" onClick={() => {
               setIsViewDialogOpen(false);
               handleEdit(selectedMember);
             }}>
