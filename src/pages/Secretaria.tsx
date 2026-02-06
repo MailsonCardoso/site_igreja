@@ -792,28 +792,56 @@ export default function Secretaria() {
                   <Users className="h-5 w-5 text-primary" />
                   <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Família e Filiação</h4>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-primary/5 p-6 rounded-2xl border border-primary/10">
-                  <div className="space-y-2">
-                    <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Pai</p>
-                    <p className="text-base font-bold text-foreground leading-tight">
-                      {selectedMember?.father?.name || selectedMember?.father_name || "Não informado"}
-                    </p>
-                    {selectedMember?.father?.name && <Badge variant="outline" className="text-[10px] h-4">Membro</Badge>}
+
+                <div className="space-y-6">
+                  {/* Parents and Spouse */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-primary/5 p-6 rounded-2xl border border-primary/10">
+                    <div className="space-y-2">
+                      <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Pai</p>
+                      <p className="text-base font-bold text-foreground leading-tight">
+                        {selectedMember?.father?.name || selectedMember?.father_name || "Não informado"}
+                      </p>
+                      {selectedMember?.father?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10">Membro</Badge>}
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Mãe</p>
+                      <p className="text-base font-bold text-foreground leading-tight">
+                        {selectedMember?.mother?.name || selectedMember?.mother_name || "Não informada"}
+                      </p>
+                      {selectedMember?.mother?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10">Membro</Badge>}
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Cônjuge</p>
+                      <p className="text-base font-bold text-foreground leading-tight">
+                        {selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Nome não vinculado" : "N/A")}
+                      </p>
+                      {selectedMember?.spouse?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10">Membro</Badge>}
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Mãe</p>
-                    <p className="text-base font-bold text-foreground leading-tight">
-                      {selectedMember?.mother?.name || selectedMember?.mother_name || "Não informada"}
-                    </p>
-                    {selectedMember?.mother?.name && <Badge variant="outline" className="text-[10px] h-4">Membro</Badge>}
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Cônjuge</p>
-                    <p className="text-base font-bold text-foreground leading-tight">
-                      {selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Não vinculado" : "N/A")}
-                    </p>
-                    {selectedMember?.spouse?.name && <Badge variant="outline" className="text-[10px] h-4">Membro</Badge>}
-                  </div>
+
+                  {/* Children (Dynamic Discovery) */}
+                  {members.filter((m: any) => m.father_id === selectedMember?.id || m.mother_id === selectedMember?.id).length > 0 && (
+                    <div className="bg-success/5 p-6 rounded-2xl border border-success/20">
+                      <p className="text-[10px] text-success uppercase font-black tracking-tighter mb-4">Filhos (Membros Cadastrados)</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {members
+                          .filter((m: any) => m.father_id === selectedMember?.id || m.mother_id === selectedMember?.id)
+                          .map((filho: any) => (
+                            <div key={filho.id} className="flex items-center gap-3 p-2 rounded-lg bg-background border border-border/50">
+                              <Avatar className="h-8 w-8">
+                                <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-bold">
+                                  {(filho.name || "?").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex flex-col">
+                                <span className="text-sm font-bold text-foreground">{filho.name}</span>
+                                <span className="text-[10px] text-muted-foreground uppercase">{filho.role || "Membro"}</span>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </section>
             </div>
