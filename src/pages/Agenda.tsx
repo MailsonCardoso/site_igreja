@@ -1,3 +1,10 @@
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { MainLayout } from "@/components/layout/MainLayout";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { api } from "@/lib/api";
 import { Plus, Loader2, MapPin, Calendar as CalendarIcon, Clock, Pencil, Trash2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
