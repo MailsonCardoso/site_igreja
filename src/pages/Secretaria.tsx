@@ -99,6 +99,7 @@ export default function Secretaria() {
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -259,6 +260,11 @@ export default function Secretaria() {
       spouse_id: member.spouse_id?.toString() || "",
     });
     setIsDialogOpen(true);
+  };
+
+  const handleView = (member: any) => {
+    setSelectedMember(member);
+    setIsViewDialogOpen(true);
   };
 
   const handleToggleStatus = (member: any) => {
@@ -666,6 +672,10 @@ export default function Secretaria() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-card">
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleView(membro)}>
+                              <Eye className="mr-2 h-4 w-4" />
+                              Ver Detalhes
+                            </DropdownMenuItem>
                             <DropdownMenuItem className="cursor-pointer" onClick={() => handleEdit(membro)}>
                               <Pencil className="mr-2 h-4 w-4" />
                               Editar
@@ -693,6 +703,126 @@ export default function Secretaria() {
           </div>
         )}
       </motion.div>
+
+      {/* View Modal */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-6 pb-0">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-12 w-12">
+                <AvatarFallback className="bg-primary/10 text-primary text-lg font-bold">
+                  {(selectedMember?.name || "?").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <DialogTitle className="text-xl">{selectedMember?.name}</DialogTitle>
+                <DialogDescription className="flex items-center gap-2">
+                  <Badge variant="outline" className={statusStyles[selectedMember?.status]}>
+                    {selectedMember?.status}
+                  </Badge>
+                  <span>•</span>
+                  <span>{selectedMember?.role || "Membro"}</span>
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+          <ScrollArea className="flex-1 px-6 py-6">
+            <div className="grid gap-8">
+              {/* Personal Data */}
+              <section>
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+                  <User className="h-4 w-4" /> Dados Pessoais
+                </h4>
+                <div className="grid grid-cols-2 gap-4 bg-secondary/20 p-4 rounded-xl">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase">CPF</p>
+                    <p className="font-medium">{selectedMember?.cpf || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase">Nascimento</p>
+                    <p className="font-medium">{selectedMember?.birth_date ? new Date(selectedMember.birth_date).toLocaleDateString('pt-BR') : "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase">Sexo</p>
+                    <p className="font-medium capitalize">{selectedMember?.sex || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase">Estado Civil</p>
+                    <p className="font-medium capitalize">{selectedMember?.marital_status || "-"}</p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Contact Data */}
+              <section>
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+                  <Phone className="h-4 w-4" /> Contato e Endereço
+                </h4>
+                <div className="grid grid-cols-2 gap-4 bg-secondary/20 p-4 rounded-xl">
+                  <div className="col-span-1">
+                    <p className="text-xs text-muted-foreground uppercase">WhatsApp</p>
+                    <p className="font-medium">{selectedMember?.phone || "-"}</p>
+                  </div>
+                  <div className="col-span-1">
+                    <p className="text-xs text-muted-foreground uppercase">E-mail</p>
+                    <p className="font-medium">{selectedMember?.email || "-"}</p>
+                  </div>
+                  <div className="col-span-2 border-t border-secondary pt-2">
+                    <p className="text-xs text-muted-foreground uppercase">Endereço</p>
+                    <p className="font-medium">
+                      {selectedMember?.logradouro}, {selectedMember?.bairro}<br />
+                      {selectedMember?.cidade} - {selectedMember?.uf} | {selectedMember?.cep}
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Ecclesiastical Data */}
+              <section>
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+                  <Church className="h-4 w-4" /> Igreja
+                </h4>
+                <div className="grid grid-cols-2 gap-4 bg-secondary/20 p-4 rounded-xl">
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase">Data de Batismo</p>
+                    <p className="font-medium">{selectedMember?.baptism_date ? new Date(selectedMember.baptism_date).toLocaleDateString('pt-BR') : "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground uppercase">Igreja de Origem</p>
+                    <p className="font-medium">{selectedMember?.origin_church || "-"}</p>
+                  </div>
+                </div>
+              </section>
+
+              {/* Family Data */}
+              <section>
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
+                  <Users className="h-4 w-4" /> Família
+                </h4>
+                <div className="grid grid-cols-1 gap-3 bg-secondary/20 p-4 rounded-xl">
+                  <div className="flex justify-between items-center">
+                    <p className="text-xs text-muted-foreground uppercase">Pai</p>
+                    <p className="font-medium">{selectedMember?.father_name || selectedMember?.father?.name || "-"}</p>
+                  </div>
+                  <div className="flex justify-between items-center border-t border-secondary pt-2">
+                    <p className="text-xs text-muted-foreground uppercase">Mãe</p>
+                    <p className="font-medium">{selectedMember?.mother_name || selectedMember?.mother?.name || "-"}</p>
+                  </div>
+                  {selectedMember?.marital_status === 'casado' && (
+                    <div className="flex justify-between items-center border-t border-secondary pt-2">
+                      <p className="text-xs text-muted-foreground uppercase">Cônjuge</p>
+                      <p className="font-medium">{selectedMember?.spouse?.name || "-"}</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
+          </ScrollArea>
+          <div className="p-6 border-t bg-secondary/10 flex justify-end">
+            <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>Fechar</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
