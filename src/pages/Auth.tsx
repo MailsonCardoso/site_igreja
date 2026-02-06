@@ -220,17 +220,6 @@ export default function Auth() {
                 </motion.div>
               )}
 
-              {isLogin && (
-                <div className="flex justify-end">
-                  <button
-                    type="button"
-                    className="text-sm text-primary hover:underline"
-                  >
-                    Esqueceu a senha?
-                  </button>
-                </div>
-              )}
-
               <Button
                 type="submit"
                 className="w-full"
@@ -250,19 +239,6 @@ export default function Auth() {
                 )}
               </Button>
             </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}{" "}
-                <button
-                  type="button"
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="text-primary font-medium hover:underline"
-                >
-                  {isLogin ? "Criar conta" : "Fazer login"}
-                </button>
-              </p>
-            </div>
           </CardContent>
         </Card>
 

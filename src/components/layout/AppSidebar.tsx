@@ -110,17 +110,19 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
               <p className="truncate text-xs text-sidebar-muted">Administrador</p>
             </div>
           )}
-          {!collapsed && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/auth")}
-              className="h-8 w-8 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
-              title="Login"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              localStorage.removeItem("auth_token");
+              localStorage.removeItem("user");
+              navigate("/auth");
+            }}
+            className="h-8 w-8 text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            title="Sair"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </div>
