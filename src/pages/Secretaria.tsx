@@ -176,6 +176,7 @@ export default function Secretaria() {
     mutationFn: (newMember: any) => api.post("/members", newMember),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["members"] });
+      queryClient.invalidateQueries({ queryKey: ["cells"] });
       toast.success("Membro cadastrado com sucesso!");
       setIsDialogOpen(false);
       reset();
@@ -190,6 +191,7 @@ export default function Secretaria() {
     mutationFn: (data: any) => api.put(`/members/${data.id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["members"] });
+      queryClient.invalidateQueries({ queryKey: ["cells"] });
       toast.success("Membro atualizado com sucesso!");
       setIsDialogOpen(false);
       reset();
@@ -205,6 +207,7 @@ export default function Secretaria() {
     mutationFn: (id: number) => api.delete(`/members/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["members"] });
+      queryClient.invalidateQueries({ queryKey: ["cells"] });
       toast.success("Membro excluído com sucesso!");
       setIsDeleteDialogOpen(false);
       setSelectedMember(null);

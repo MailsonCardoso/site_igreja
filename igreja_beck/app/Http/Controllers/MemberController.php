@@ -38,6 +38,7 @@ class MemberController extends Controller
             'father_id' => 'nullable|exists:members,id',
             'mother_id' => 'nullable|exists:members,id',
             'spouse_id' => 'nullable|exists:members,id',
+            'cell_id' => 'nullable|exists:cells,id',
         ]);
 
         $member = Member::create($validated);
@@ -75,6 +76,7 @@ class MemberController extends Controller
             'father_id' => 'nullable|exists:members,id',
             'mother_id' => 'nullable|exists:members,id',
             'spouse_id' => 'nullable|exists:members,id',
+            'cell_id' => 'nullable|exists:cells,id',
         ]);
 
         $member->update($validated);
