@@ -353,7 +353,7 @@ export default function Secretaria() {
                           <Label htmlFor="birth_date">Data de Nascimento</Label>
                           <Input id="birth_date" type="date" {...form.register("birth_date")} />
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 p-0.5">
                           <Label htmlFor="sex">Sexo</Label>
                           <Select onValueChange={(val) => setValue("sex", val)} value={watch("sex")}>
                             <SelectTrigger>
@@ -365,7 +365,7 @@ export default function Secretaria() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 p-0.5">
                           <Label htmlFor="marital_status">Estado Civil</Label>
                           <Select onValueChange={(val) => setValue("marital_status", val)} value={watch("marital_status")}>
                             <SelectTrigger>
@@ -447,7 +447,7 @@ export default function Secretaria() {
 
                     <TabsContent value="eclesiastico" className="space-y-4">
                       <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-2">
+                        <div className="space-y-2 p-0.5">
                           <Label htmlFor="status">Situação / Status</Label>
                           <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
                             <SelectTrigger>
@@ -461,18 +461,7 @@ export default function Secretaria() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="baptism_date" className={statusValue !== "membro" ? "text-muted-foreground" : ""}>
-                            Data de Batismo
-                          </Label>
-                          <Input
-                            id="baptism_date"
-                            type="date"
-                            {...form.register("baptism_date")}
-                            disabled={statusValue !== "membro"}
-                          />
-                        </div>
-                        <div className="space-y-2">
+                        <div className="space-y-2 p-0.5">
                           <Label htmlFor="role">Função / Cargo</Label>
                           <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
                             <SelectTrigger>
@@ -482,7 +471,7 @@ export default function Secretaria() {
                               <SelectItem value="Membro">Membro</SelectItem>
                               <SelectItem value="Diácono">Diácono</SelectItem>
                               <SelectItem value="Obreiro">Obreiro</SelectItem>
-                              <SelectItem value="Ungido">Ungido</SelectItem>
+                              <SelectItem value="Ministro de Louvor">Ministro de Louvor</SelectItem>
                               <SelectItem value="Pastor">Pastor</SelectItem>
                               <SelectItem value="Instrumentista">Instrumentista</SelectItem>
                             </SelectContent>
@@ -781,13 +770,7 @@ export default function Secretaria() {
                     <Church className="h-5 w-5 text-primary" />
                     <h4 className="font-semibold text-foreground">Dados Eclesiásticos</h4>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 bg-secondary/10 p-5 rounded-2xl h-full">
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Membro desde</p>
-                      <p className="text-sm font-medium">
-                        {selectedMember?.baptism_date ? new Date(selectedMember.baptism_date).toLocaleDateString('pt-BR') : "Não batizado"}
-                      </p>
-                    </div>
+                  <div className="grid grid-cols-1 gap-4 bg-secondary/10 p-5 rounded-2xl h-full">
                     <div>
                       <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Igreja de Origem</p>
                       <p className="text-sm font-medium">{selectedMember?.origin_church || "Esta Igreja"}</p>
