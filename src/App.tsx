@@ -32,6 +32,22 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+const RoleRoute = ({ children, allowedRoles }: { children: React.ReactNode, allowedRoles: string[] }) => {
+  const token = localStorage.getItem("auth_token");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userRole = user.role || "Administrador";
+
+  if (!token) return <Navigate to="/auth" replace />;
+
+  if (allowedRoles.includes(userRole)) {
+    return <>{children}</>;
+  }
+
+  // Redirecionamento padrão se não tiver acesso
+  if (userRole === "Financeiro") return <Navigate to="/financeiro" replace />;
+  return <Navigate to="/" replace />;
+};
+
 const App = () => (
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
@@ -41,14 +57,55 @@ const App = () => (
         <Routes>
           <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
 
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/secretaria" element={<ProtectedRoute><Secretaria /></ProtectedRoute>} />
-          <Route path="/financeiro" element={<ProtectedRoute><Financeiro /></ProtectedRoute>} />
-          <Route path="/celulas" element={<ProtectedRoute><Celulas /></ProtectedRoute>} />
-          <Route path="/agenda" element={<ProtectedRoute><Agenda /></ProtectedRoute>} />
-          <Route path="/ministerios" element={<ProtectedRoute><Ministerios /></ProtectedRoute>} />
-          <Route path="/ensino" element={<ProtectedRoute><Ensino /></ProtectedRoute>} />
-          <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
+          {/* Telas que todos (exceto Financeiro puro) podem ver ou que têm filtro interno */}
+          <Route path="/" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
+              <Dashboard />
+            </RoleRoute>
+          } />
+
+          {/* Secretaria e Admins */}
+          <Route path="/secretaria" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+              <Secretaria />
+            </RoleRoute>
+          } />
+
+          {/* Financeiro e Admins */}
+          <Route path="/financeiro" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Financeiro"]}>
+              <Financeiro />
+            </RoleRoute>
+          } />
+
+          {/* Outras telas operacionais */}
+          <Route path="/celulas" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
+              <Celulas />
+            </RoleRoute>
+          } />
+          <Route path="/agenda" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
+              <Agenda />
+            </RoleRoute>
+          } />
+          <Route path="/ministerios" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+              <Ministerios />
+            </RoleRoute>
+          } />
+          <Route path="/ensino" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+              <Ensino />
+            </RoleRoute>
+          } />
+
+          {/* Somente Admin e Pastor */}
+          <Route path="/configuracoes" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+              <Configuracoes />
+            </RoleRoute>
+          } />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

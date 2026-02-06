@@ -43,11 +43,23 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
   const userRole = user.role || "Administrador";
 
   const filteredNavigation = navigationItems.filter(item => {
-    if (userRole === "Secretário") {
-      // Secretário só vê Dashboard, Membros, Celulas e Agenda
-      return ["Dashboard", "Membros", "Células", "Agenda"].includes(item.name);
+    // Administrador e Pastor veem tudo
+    if (userRole === "Administrador" || userRole === "Pastor") {
+      return true;
     }
-    return true; // Administrador/Pastor vê tudo
+
+    if (userRole === "Secretaria") {
+      // Secretaria não vê Financeiro nem Configurações
+      return !["Financeiro", "Configurações"].includes(item.name);
+    }
+
+    if (userRole === "Financeiro") {
+      // Financeiro vê apenas a tela de Financeiro
+      return item.name === "Financeiro";
+    }
+
+    // Outros papéis (ex: Líder de pequeno grupo) - definir padrão ou restringir
+    return ["Dashboard", "Agenda", "Células"].includes(item.name);
   });
 
   return (

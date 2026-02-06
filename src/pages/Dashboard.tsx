@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Users, DollarSign, UserPlus, CircleDot, Loader2 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { StatsCard } from "@/components/dashboard/StatsCard";
@@ -18,10 +20,18 @@ function formatCurrency(value: number): string {
 export default function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const userRole = user.role || "Administrador";
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userRole === "Financeiro") {
+      navigate("/financeiro", { replace: true });
+    }
+  }, [userRole, navigate]);
 
   const { data: dashboardData, isLoading } = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => api.get("/dashboard"),
+    enabled: userRole !== "Financeiro"
   });
 
   if (isLoading) {
@@ -54,7 +64,7 @@ export default function Dashboard() {
           trend={{ value: 0, isPositive: true }}
           delay={0}
         />
-        {userRole !== "Secretário" && (
+        {userRole !== "Secretaria" && (
           <StatsCard
             title="Entradas do Mês"
             value={formatCurrency(stats.income || 0)}
