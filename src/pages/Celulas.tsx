@@ -194,27 +194,19 @@ export default function Celulas() {
 
       {/* Modal de Cadastro */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="bg-primary/5 p-8 border-b relative">
+        <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl [&>button]:text-white">
+          <div className="bg-primary p-8 text-primary-foreground relative">
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                <Users className="h-8 w-8 text-primary" />
+              <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center border border-white/30">
+                <Users className="h-8 w-8 text-white" />
               </div>
               <div>
-                <DialogTitle className="text-2xl font-black text-foreground">Nova Célula</DialogTitle>
-                <DialogDescription className="text-muted-foreground font-medium">
+                <DialogTitle className="text-2xl font-black text-white">Nova Célula</DialogTitle>
+                <DialogDescription className="text-white/80 font-medium">
                   Preencha os dados abaixo para criar um novo pequeno grupo.
                 </DialogDescription>
               </div>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsDialogOpen(false)}
-              className="absolute right-4 top-4 hover:bg-primary/10 text-primary rounded-full transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </Button>
           </div>
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-8 space-y-6 bg-card">

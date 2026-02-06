@@ -334,13 +334,22 @@ export default function Secretaria() {
                 Novo Membro
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-              <DialogHeader className="p-6 pb-0">
-                <DialogTitle>{isEditMode ? "Editar Membro" : "Adicionar Novo Membro"}</DialogTitle>
-                <DialogDescription>
-                  {isEditMode ? "Atualize os dados do membro da igreja." : "Preencha os dados do novo membro da igreja em etapas."}
-                </DialogDescription>
-              </DialogHeader>
+            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl [&>button]:text-white">
+              <div className="bg-primary p-6 text-primary-foreground">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-xl bg-white/20 flex items-center justify-center border border-white/30">
+                    <User className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-xl font-black text-white">
+                      {isEditMode ? "Editar Membro" : "Adicionar Novo Membro"}
+                    </DialogTitle>
+                    <DialogDescription className="text-white/80">
+                      {isEditMode ? "Atualize os dados do membro da igreja." : "Preencha os dados do novo membro da igreja em etapas."}
+                    </DialogDescription>
+                  </div>
+                </div>
+              </div>
               <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
                 <ScrollArea className="flex-1 px-6 py-4">
                   <Tabs defaultValue="pessoais" className="w-full">
