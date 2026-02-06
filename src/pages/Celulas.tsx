@@ -414,6 +414,9 @@ export default function Celulas() {
               </div>
               <div>
                 <DialogTitle className="text-xl font-black text-foreground leading-tight">{selectedCell?.name}</DialogTitle>
+                <DialogDescription className="sr-only">
+                  Detalhes informativos sobre a célula e seus membros.
+                </DialogDescription>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge className="bg-primary text-white hover:bg-primary text-[10px] h-5 px-2">
                     {selectedCell?.meeting_day || "Não definido"}
