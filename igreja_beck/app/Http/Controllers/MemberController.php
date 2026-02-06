@@ -99,4 +99,23 @@ class MemberController extends Controller
         $member->delete();
         return response()->json(null, 204);
     }
+
+    public function findByRole(Request $request)
+    {
+        $role = $request->query('role');
+        if (!$role) {
+            return response()->json(['message' => 'O cargo é obrigatório'], 400);
+        }
+
+        // Search for members whose role field contains the specified role
+        $member = Member::where('role', 'LIKE', '%' . $role . '%')
+            ->whereNotNull('cpf')
+            ->first();
+
+        if (!$member) {
+            return response()->json(['message' => 'Nenhum membro encontrado com este cargo ou cargo sem CPF cadastrado'], 404);
+        }
+
+        return response()->json($member);
+    }
 }

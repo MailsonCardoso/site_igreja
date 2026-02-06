@@ -39,6 +39,17 @@ interface SidebarContentProps {
 
 function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarContentProps) {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userRole = user.role || "Administrador";
+
+  const filteredNavigation = navigationItems.filter(item => {
+    if (userRole === "Secretário") {
+      // Secretário só vê Dashboard, Membros, Celulas e Agenda
+      return ["Dashboard", "Membros", "Células", "Agenda"].includes(item.name);
+    }
+    return true; // Administrador/Pastor vê tudo
+  });
+
   return (
     <div className="flex h-full flex-col bg-sidebar">
       {/* Logo */}
@@ -71,7 +82,7 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {navigationItems.map((item) => {
+        {filteredNavigation.map((item) => {
           const isActive = currentPath === item.href;
           return (
             <Link
@@ -106,8 +117,8 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
           </Avatar>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <p className="truncate text-sm font-medium text-sidebar-foreground">Pastor Carlos</p>
-              <p className="truncate text-xs text-sidebar-muted">Administrador</p>
+              <p className="truncate text-sm font-medium text-sidebar-foreground">{user.name || "Usuário"}</p>
+              <p className="truncate text-xs text-sidebar-muted">{user.role || "Papel"}</p>
             </div>
           )}
           <Button

@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
     Route::post('upload', [UploadController::class, 'upload']);
 
+    Route::get('members/find-by-role', [MemberController::class, 'findByRole']);
     Route::apiResource('members', MemberController::class);
     Route::get('transactions/report', [TransactionController::class, 'report']);
     Route::apiResource('transactions', TransactionController::class);

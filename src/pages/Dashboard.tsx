@@ -16,6 +16,9 @@ function formatCurrency(value: number): string {
 }
 
 export default function Dashboard() {
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userRole = user.role || "Administrador";
+
   const { data: dashboardData, isLoading } = useQuery({
     queryKey: ["dashboard"],
     queryFn: () => api.get("/dashboard"),
@@ -51,13 +54,15 @@ export default function Dashboard() {
           trend={{ value: 0, isPositive: true }}
           delay={0}
         />
-        <StatsCard
-          title="Entradas do Mês"
-          value={formatCurrency(stats.income || 0)}
-          icon={<DollarSign className="h-6 w-6" />}
-          trend={{ value: 0, isPositive: true }}
-          delay={0.05}
-        />
+        {userRole !== "Secretário" && (
+          <StatsCard
+            title="Entradas do Mês"
+            value={formatCurrency(stats.income || 0)}
+            icon={<DollarSign className="h-6 w-6" />}
+            trend={{ value: 0, isPositive: true }}
+            delay={0.05}
+          />
+        )}
         <StatsCard
           title="Novos Visitantes"
           value={stats.visitors_count || 0}

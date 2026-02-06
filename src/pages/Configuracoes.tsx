@@ -442,6 +442,64 @@ export default function Configuracoes() {
 
           <form onSubmit={onUserSubmit} className="p-8 space-y-6 bg-card">
             <div className="space-y-4">
+              {/* PAPEL PRIMEIRO */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Papel / Função</Label>
+                  <Select
+                    onValueChange={async (v) => {
+                      setUserFormData({ ...userFormData, role: v });
+                      // Regra de negócio: Se selecionar um papel, tenta carregar dados do membro
+                      try {
+                        const member = await api.get(`/members/find-by-role?role=${v}`);
+                        if (member) {
+                          setUserFormData(prev => ({
+                            ...prev,
+                            role: v,
+                            name: member.name,
+                            email: member.email || "",
+                            password: member.cpf ? member.cpf.replace(/\D/g, '') : "" // CPF como senha provisória (apenas números)
+                          }));
+                          toast({
+                            title: "Membro Localizado",
+                            description: `Dados de ${member.name} carregados automaticamente.`,
+                          });
+                        }
+                      } catch (error) {
+                        // Se não achar, apenas mantém o papel selecionado
+                        console.log("Membro não localizado para este papel");
+                      }
+                    }}
+                    value={userFormData.role}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Administrador" className="font-bold">Administrador</SelectItem>
+                      <SelectItem value="Pastor" className="font-bold">Pastor</SelectItem>
+                      <SelectItem value="Tesoureiro" className="font-bold">Tesoureiro</SelectItem>
+                      <SelectItem value="Secretário" className="font-bold">Secretário</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Status</Label>
+                  <Select
+                    onValueChange={(v) => setUserFormData({ ...userFormData, status: v })}
+                    value={userFormData.status}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="Ativo" className="font-bold text-success">Ativo</SelectItem>
+                      <SelectItem value="Inativo" className="font-bold text-destructive">Inativo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Nome Completo</Label>
                 <div className="relative">
@@ -472,49 +530,17 @@ export default function Configuracoes() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Senha Provisória</Label>
-                <Input
-                  type="password"
-                  value={userFormData.password}
-                  onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
-                  placeholder="Mínimo 8 caracteres"
-                  className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Papel</Label>
-                  <Select
-                    onValueChange={(v) => setUserFormData({ ...userFormData, role: v })}
-                    value={userFormData.role}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="Administrador" className="font-bold">Administrador</SelectItem>
-                      <SelectItem value="Pastor" className="font-bold">Pastor</SelectItem>
-                      <SelectItem value="Tesoureiro" className="font-bold">Tesoureiro</SelectItem>
-                      <SelectItem value="Secretário" className="font-bold">Secretário</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Status</Label>
-                  <Select
-                    onValueChange={(v) => setUserFormData({ ...userFormData, status: v })}
-                    value={userFormData.status}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="Ativo" className="font-bold text-success">Ativo</SelectItem>
-                      <SelectItem value="Inativo" className="font-bold text-destructive">Inativo</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Senha Provisória (CPF)</Label>
+                <div className="relative">
+                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    value={userFormData.password}
+                    onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
+                    placeholder="Senha ou CPF sem pontos"
+                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30"
+                    required
+                  />
                 </div>
               </div>
             </div>
