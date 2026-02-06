@@ -128,6 +128,7 @@ export default function Secretaria() {
       father_id: "",
       mother_id: "",
       spouse_id: "",
+      cell_id: "",
     },
   });
 
@@ -137,10 +138,18 @@ export default function Secretaria() {
   const cepValue = watch("cep");
 
   // Fetch Members
-  const { data: members = [], isLoading, error } = useQuery({
+  const { data: membersResponse, isLoading, error } = useQuery({
     queryKey: ["members"],
     queryFn: () => api.get("/members"),
   });
+  const members = membersResponse?.data || [];
+
+  // Fetch Cells
+  const { data: cellsResponse } = useQuery({
+    queryKey: ["cells"],
+    queryFn: () => api.get("/cells"),
+  });
+  const cells = cellsResponse?.data || [];
 
   // Watch for CEP changes to auto-fill address
   useEffect(() => {
@@ -224,6 +233,7 @@ export default function Secretaria() {
       ...data,
       category: data.status === "membro" ? "membro" : "visitante",
       baptism_date: data.status === "membro" ? data.baptism_date : null,
+      cell_id: data.cell_id === "none" || !data.cell_id ? null : data.cell_id,
     };
 
     if (isEditMode && selectedMember) {
@@ -258,6 +268,7 @@ export default function Secretaria() {
       father_id: member.father_id?.toString() || "",
       mother_id: member.mother_id?.toString() || "",
       spouse_id: member.spouse_id?.toString() || "",
+      cell_id: member.cell_id?.toString() || "",
     });
     setIsDialogOpen(true);
   };
@@ -480,12 +491,19 @@ export default function Secretaria() {
                             </SelectContent>
                           </Select>
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="origin_church">Igreja de Origem</Label>
-                          <div className="relative">
-                            <Church className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input id="origin_church" {...form.register("origin_church")} className="pl-10" />
-                          </div>
+                        <div className="space-y-2 p-0.5">
+                          <Label htmlFor="cell_id">Célula / Pequeno Grupo</Label>
+                          <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione uma célula" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="none">Nenhuma</SelectItem>
+                              {cells.map((cell: any) => (
+                                <SelectItem key={cell.id} value={cell.id.toString()}>{cell.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
                     </TabsContent>

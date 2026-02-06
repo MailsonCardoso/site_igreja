@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MinistryController;
+use App\Http\Controllers\CellController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -27,5 +28,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Ministries & Rosters
     Route::apiResource('ministries', MinistryController::class);
+    Route::apiResource('cells', CellController::class);
     Route::post('ministries/{ministry}/generate-rosters', [MinistryController::class, 'generateRosters']);
 });

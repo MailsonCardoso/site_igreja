@@ -33,13 +33,19 @@ class Member extends Model
         'mother_name',
         'father_id',
         'mother_id',
-        'spouse_id'
+        'spouse_id',
+        'cell_id'
     ];
 
     protected $casts = [
         'birth_date' => 'date',
         'baptism_date' => 'date',
     ];
+
+    public function cell()
+    {
+        return $this->belongsTo(Cell::class);
+    }
 
     public function father()
     {

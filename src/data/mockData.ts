@@ -33,16 +33,7 @@ export const faixaEtaria = [
   { faixa: "60+", quantidade: 80, fill: "hsl(0, 84%, 60%)" },
 ];
 
-export const membros = [
-  { id: 1, nome: "Maria Silva Santos", categoria: "Membro", telefone: "(11) 99999-1234", status: "Ativo", avatar: "MS" },
-  { id: 2, nome: "João Pedro Oliveira", categoria: "Membro", telefone: "(11) 99888-5678", status: "Ativo", avatar: "JP" },
-  { id: 3, nome: "Ana Carolina Ferreira", categoria: "Visitante", telefone: "(11) 99777-9012", status: "Ativo", avatar: "AC" },
-  { id: 4, nome: "Pedro Henrique Costa", categoria: "Membro", telefone: "(11) 99666-3456", status: "Inativo", avatar: "PH" },
-  { id: 5, nome: "Carla Beatriz Souza", categoria: "Membro", telefone: "(11) 99555-7890", status: "Ativo", avatar: "CB" },
-  { id: 6, nome: "Lucas Gabriel Lima", categoria: "Visitante", telefone: "(11) 99444-2345", status: "Ativo", avatar: "LG" },
-  { id: 7, nome: "Fernanda Alves Rocha", categoria: "Membro", telefone: "(11) 99333-6789", status: "Disciplina", avatar: "FA" },
-  { id: 8, nome: "Rafael Martins Gomes", categoria: "Membro", telefone: "(11) 99222-0123", status: "Ativo", avatar: "RM" },
-];
+export const membros = [];
 
 export const transacoes = [
   { id: 1, tipo: "entrada", categoria: "Dízimo", descricao: "Dízimos do mês", valor: 28500, data: "2024-02-01" },
@@ -55,14 +46,7 @@ export const transacoes = [
   { id: 8, tipo: "saida", categoria: "Eventos", descricao: "Decoração conferência", valor: 2300, data: "2024-02-18" },
 ];
 
-export const celulas = [
-  { id: 1, nome: "Célula Betel", lider: "Maria Silva", horario: "Terça 19:30", bairro: "Centro", capacidade: 80, membros: 12 },
-  { id: 2, nome: "Célula Ágape", lider: "João Santos", horario: "Quarta 20:00", bairro: "Jardins", capacidade: 100, membros: 15 },
-  { id: 3, nome: "Célula Shalom", lider: "Ana Oliveira", horario: "Quinta 19:00", bairro: "Vila Nova", capacidade: 75, membros: 10 },
-  { id: 4, nome: "Célula Maranata", lider: "Pedro Costa", horario: "Sexta 20:00", bairro: "Alphaville", capacidade: 90, membros: 8 },
-  { id: 5, nome: "Célula Eben-Ezer", lider: "Carla Souza", horario: "Terça 20:00", bairro: "Mooca", capacidade: 100, membros: 18 },
-  { id: 6, nome: "Célula Getsêmani", lider: "Lucas Ferreira", horario: "Quarta 19:30", bairro: "Tatuapé", capacidade: 85, membros: 14 },
-];
+export const celulas = [];
 
 export const eventos = [
   { id: 1, titulo: "Culto de Celebração", data: "2024-02-04", horario: "19:00", local: "Templo Principal" },

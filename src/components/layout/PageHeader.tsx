@@ -10,14 +10,15 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Fragment } from "react";
+import { Fragment, ReactNode } from "react";
 
 interface PageHeaderProps {
   title: string;
   breadcrumbs?: { label: string; href?: string }[];
+  actions?: ReactNode;
 }
 
-export function PageHeader({ title, breadcrumbs }: PageHeaderProps) {
+export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-card/80 backdrop-blur-sm px-4 lg:px-8">
       <div className="flex flex-col gap-0.5 pl-12 lg:pl-0">
@@ -54,6 +55,8 @@ export function PageHeader({ title, breadcrumbs }: PageHeaderProps) {
       </div>
 
       <div className="flex items-center gap-3">
+        {actions && <div className="mr-2">{actions}</div>}
+
         <div className="relative hidden md:block">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -62,7 +65,7 @@ export function PageHeader({ title, breadcrumbs }: PageHeaderProps) {
             className="w-64 pl-9 bg-secondary/50 border-border focus:bg-card"
           />
         </div>
-        
+
         <Button
           variant="ghost"
           size="icon"
