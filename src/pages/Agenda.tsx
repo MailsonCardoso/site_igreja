@@ -134,6 +134,11 @@ export default function Agenda() {
     .filter((e: any) => new Date(e.start_date) >= new Date())
     .sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
+  // Past events (history)
+  const pastEvents = eventos
+    .filter((e: any) => new Date(e.start_date) < new Date())
+    .sort((a: any, b: any) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+
   return (
     <MainLayout title="Agenda" breadcrumbs={[{ label: "Eventos" }]}>
       <div className="flex justify-between items-center mb-8">
@@ -281,8 +286,8 @@ export default function Agenda() {
               ) : upcomingEvents.length === 0 ? (
                 <p className="text-center text-sidebar-foreground/60 italic text-sm">Sem eventos futuros.</p>
               ) : (
-                upcomingEvents.slice(0, 4).map((evento: any) => (
-                  <div key={evento.id} className="bg-background/40 backdrop-blur-sm p-5 rounded-3xl border border-white/10 hover:border-primary/20 transition-all cursor-pointer group" onClick={() => setDate(new Date(evento.start_date))}>
+                upcomingEvents.slice(0, 3).map((evento: any) => (
+                  <div key={evento.id} className="bg-background/40 backdrop-blur-sm p-5 rounded-3xl border border-white/10 hover:border-primary/20 transition-all cursor-pointer group" onClick={() => handleView(evento)}>
                     <div className="flex items-center justify-between mb-3">
                       <Badge className="bg-primary/20 text-primary border-none text-[9px] font-black uppercase tracking-widest">{format(new Date(evento.start_date), "EEEE", { locale: ptBR })}</Badge>
                       <span className="text-[10px] font-bold text-sidebar-foreground/50">{format(new Date(evento.start_date), "dd 'de' MMM", { locale: ptBR })}</span>
@@ -293,6 +298,38 @@ export default function Agenda() {
                 ))
               )}
             </div>
+
+            {/* Eventos Realizados */}
+            {pastEvents.length > 0 && (
+              <div className="mt-12">
+                <h2 className="text-[10px] font-black text-sidebar-foreground/30 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                  <Clock className="h-3 w-3" /> Eventos Realizados
+                </h2>
+                <div className="space-y-3">
+                  {pastEvents.slice(0, 3).map((evento: any) => (
+                    <div
+                      key={evento.id}
+                      className="flex items-center gap-3 p-3 rounded-2xl hover:bg-white/5 transition-all cursor-pointer group"
+                      onClick={() => handleView(evento)}
+                    >
+                      <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/20 transition-all">
+                        <span className="text-[10px] font-black text-sidebar-foreground/40 group-hover:text-primary transition-all">
+                          {format(new Date(evento.start_date), "dd")}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs font-bold text-sidebar-foreground/60 truncate group-hover:text-sidebar-foreground transition-all">
+                          {evento.title}
+                        </h4>
+                        <p className="text-[10px] text-sidebar-foreground/30 font-medium">
+                          {format(new Date(evento.start_date), "MMM yyyy", { locale: ptBR })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="mt-10 p-6 rounded-3xl bg-primary/5 border border-primary/10">
               <p className="text-xs font-medium text-sidebar-foreground/80 leading-relaxed">
@@ -417,71 +454,81 @@ export default function Agenda() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
       {/* Modal de Visualização de Evento */}
       <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
         <DialogContent className="sm:max-w-[600px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="p-0 relative">
-            {/* Header com a cor do evento */}
-            <div className="h-32 w-full relative" style={{ backgroundColor: selectedEvent?.color || '#ecb318' }}>
-              <div className="absolute inset-0 bg-black/10" />
-              <button
-                onClick={() => setIsViewOpen(false)}
-                className="absolute top-6 right-6 h-10 w-10 rounded-xl bg-black/20 hover:bg-black/30 text-white flex items-center justify-center backdrop-blur-md transition-all border border-white/10"
-              >
-                <X className="h-5 w-5" />
-              </button>
+          <div className="bg-primary/5 p-6 border-b relative">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <CalendarIcon className="h-7 w-7 text-primary" />
+              </div>
+              <div>
+                <DialogTitle className="text-xl font-black text-foreground">
+                  Detalhes do Evento
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground font-medium text-xs">
+                  Confira as informações da atividade agendada.
+                </DialogDescription>
+              </div>
             </div>
+            <button
+              onClick={() => setIsViewOpen(false)}
+              className="absolute top-6 right-6 h-10 w-10 rounded-xl hover:bg-secondary/20 text-muted-foreground flex items-center justify-center transition-all"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
 
-            <div className="px-8 pb-8 -mt-10 relative">
-              <div className="h-20 w-20 rounded-3xl bg-card shadow-2xl border border-border flex items-center justify-center mb-6">
-                <CalendarIcon className="h-10 w-10" style={{ color: selectedEvent?.color || '#ecb318' }} />
+          <div className="p-8 space-y-6 bg-card">
+            <div className="space-y-6">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="h-3 w-3 rounded-full shadow-sm" style={{ backgroundColor: selectedEvent?.color || '#ecb318' }} />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nome do Evento</span>
+                </div>
+                <h2 className="text-3xl font-black text-foreground leading-tight">{selectedEvent?.title}</h2>
+                <div className="flex flex-wrap items-center gap-4 mt-4">
+                  <Badge variant="outline" className="rounded-lg border-primary/20 text-primary font-bold py-1 px-3">
+                    {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "dd 'de' MMMM, yyyy", { locale: ptBR })}
+                  </Badge>
+                  <span className="flex items-center gap-1.5 text-muted-foreground font-bold text-sm">
+                    <Clock className="h-4 w-4 text-primary" /> {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "HH:mm")}h
+                  </span>
+                  {selectedEvent?.location && (
+                    <span className="flex items-center gap-1.5 text-muted-foreground font-bold text-sm">
+                      <MapPin className="h-4 w-4 text-primary" /> {selectedEvent.location}
+                    </span>
+                  )}
+                </div>
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-3xl font-black text-foreground leading-tight">{selectedEvent?.title}</h2>
-                  <div className="flex flex-wrap items-center gap-4 mt-3">
-                    <Badge variant="outline" className="rounded-lg border-primary/20 text-primary font-bold py-1 px-3">
-                      {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "dd 'de' MMMM", { locale: ptBR })}
-                    </Badge>
-                    <span className="flex items-center gap-1.5 text-muted-foreground font-bold text-sm">
-                      <Clock className="h-4 w-4 text-primary" /> {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "HH:mm")}h
-                    </span>
-                    {selectedEvent?.location && (
-                      <span className="flex items-center gap-1.5 text-muted-foreground font-bold text-sm">
-                        <MapPin className="h-4 w-4 text-primary" /> {selectedEvent.location}
-                      </span>
-                    )}
-                  </div>
+              {selectedEvent?.description && (
+                <div className="bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-3">Sobre o Evento</span>
+                  <p className="text-foreground font-medium leading-relaxed whitespace-pre-wrap">
+                    {selectedEvent.description}
+                  </p>
                 </div>
+              )}
 
-                {selectedEvent?.description && (
-                  <div className="bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-3">Sobre o Evento</span>
-                    <p className="text-foreground font-medium leading-relaxed whitespace-pre-wrap">
-                      {selectedEvent.description}
-                    </p>
-                  </div>
-                )}
-
-                <div className="flex gap-4 pt-4">
-                  <Button
-                    onClick={() => {
-                      setIsViewOpen(false);
-                      handleEdit(selectedEvent);
-                    }}
-                    className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground border-none"
-                  >
-                    <Pencil className="h-5 w-5 mr-2" /> Editar Evento
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setIsViewOpen(false)}
-                    className="flex-1 h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5"
-                  >
-                    Fechar
-                  </Button>
-                </div>
+              <div className="flex gap-4 pt-4">
+                <Button
+                  onClick={() => {
+                    setIsViewOpen(false);
+                    handleEdit(selectedEvent);
+                  }}
+                  className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground border-none"
+                >
+                  <Pencil className="h-5 w-5 mr-2" /> Editar Evento
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setIsViewOpen(false)}
+                  className="flex-1 h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5"
+                >
+                  Fechar
+                </Button>
               </div>
             </div>
           </div>
