@@ -458,7 +458,7 @@ export default function Agenda() {
       {/* Modal de Visualização de Evento */}
       <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
         <DialogContent className="sm:max-w-[600px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="bg-primary/5 p-6 border-b relative">
+          <div className="bg-primary/5 p-6 border-b">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <CalendarIcon className="h-7 w-7 text-primary" />
@@ -472,12 +472,6 @@ export default function Agenda() {
                 </DialogDescription>
               </div>
             </div>
-            <button
-              onClick={() => setIsViewOpen(false)}
-              className="absolute top-6 right-6 h-10 w-10 rounded-xl hover:bg-secondary/20 text-muted-foreground flex items-center justify-center transition-all"
-            >
-              <X className="h-5 w-5" />
-            </button>
           </div>
 
           <div className="p-8 space-y-6 bg-card">
