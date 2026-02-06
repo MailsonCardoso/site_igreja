@@ -39,6 +39,13 @@ class MemberController extends Controller
             'mother_id' => 'nullable|exists:members,id',
             'spouse_id' => 'nullable|exists:members,id',
             'cell_id' => 'nullable|exists:cells,id',
+        ], [
+            'name.required' => 'O nome é obrigatório.',
+            'cpf.unique' => 'Este CPF já está cadastrado em nosso sistema.',
+            'email.unique' => 'Este e-mail já está sendo utilizado.',
+            'email.email' => 'Informe um e-mail válido.',
+            'category.required' => 'A categoria é obrigatória.',
+            'status.required' => 'A situação é obrigatória.',
         ]);
 
         $member = Member::create($validated);
@@ -77,6 +84,10 @@ class MemberController extends Controller
             'mother_id' => 'nullable|exists:members,id',
             'spouse_id' => 'nullable|exists:members,id',
             'cell_id' => 'nullable|exists:cells,id',
+        ], [
+            'cpf.unique' => 'Este CPF já está cadastrado em outro membro.',
+            'email.unique' => 'Este e-mail já está sendo utilizado.',
+            'email.email' => 'Informe um e-mail válido.',
         ]);
 
         $member->update($validated);
