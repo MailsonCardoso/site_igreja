@@ -22,7 +22,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigationItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Secretaria", href: "/secretaria", icon: Users },
+  { name: "Membros", href: "/secretaria", icon: Users },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
   { name: "Células", href: "/celulas", icon: CircleDot },
   { name: "Agenda", href: "/agenda", icon: Calendar },

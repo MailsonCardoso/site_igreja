@@ -30,24 +30,16 @@ export default function Celulas() {
   const queryClient = useQueryClient();
 
   // Fetch Cells
-  const { data: celulasResponse, isLoading } = useQuery({
+  const { data: celulas = [], isLoading } = useQuery({
     queryKey: ["cells"],
-    queryFn: async () => {
-      const response = await api.get("/cells");
-      return response.data;
-    },
+    queryFn: () => api.get("/cells"),
   });
-  const celulas = Array.isArray(celulasResponse) ? celulasResponse : [];
 
   // Fetch Members (for Leader selection)
-  const { data: membersResponse } = useQuery({
+  const { data: members = [] } = useQuery({
     queryKey: ["members"],
-    queryFn: async () => {
-      const response = await api.get("/members");
-      return response.data;
-    },
+    queryFn: () => api.get("/members"),
   });
-  const members = Array.isArray(membersResponse) ? membersResponse : [];
 
   const form = useForm({
     defaultValues: {

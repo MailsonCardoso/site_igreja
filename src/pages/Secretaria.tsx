@@ -138,18 +138,16 @@ export default function Secretaria() {
   const cepValue = watch("cep");
 
   // Fetch Members
-  const { data: membersResponse, isLoading, error } = useQuery({
+  const { data: members = [], isLoading, error } = useQuery({
     queryKey: ["members"],
     queryFn: () => api.get("/members"),
   });
-  const members = membersResponse?.data || [];
 
   // Fetch Cells
-  const { data: cellsResponse } = useQuery({
+  const { data: cells = [] } = useQuery({
     queryKey: ["cells"],
     queryFn: () => api.get("/cells"),
   });
-  const cells = cellsResponse?.data || [];
 
   // Watch for CEP changes to auto-fill address
   useEffect(() => {
@@ -303,7 +301,7 @@ export default function Secretaria() {
   });
 
   return (
-    <MainLayout title="Secretaria" breadcrumbs={[{ label: "Membros" }]}>
+    <MainLayout title="Membros" breadcrumbs={[{ label: "Membros" }]}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
