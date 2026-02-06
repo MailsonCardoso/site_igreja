@@ -9,7 +9,7 @@ class MemberController extends Controller
 {
     public function index()
     {
-        return response()->json(Member::all());
+        return response()->json(Member::with(['father', 'mother', 'spouse'])->get());
     }
 
     public function store(Request $request)

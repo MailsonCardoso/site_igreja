@@ -706,120 +706,146 @@ export default function Secretaria() {
 
       {/* View Modal */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-6 pb-0">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-12 w-12">
-                <AvatarFallback className="bg-primary/10 text-primary text-lg font-bold">
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-8 pb-0 bg-primary/5">
+            <div className="flex items-center gap-6">
+              <Avatar className="h-16 w-16 border-4 border-background shadow-sm">
+                <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
                   {(selectedMember?.name || "?").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <DialogTitle className="text-xl">{selectedMember?.name}</DialogTitle>
-                <DialogDescription className="flex items-center gap-2">
-                  <Badge variant="outline" className={statusStyles[selectedMember?.status]}>
-                    {selectedMember?.status}
+                <DialogTitle className="text-2xl font-bold">{selectedMember?.name}</DialogTitle>
+                <DialogDescription className="flex items-center gap-3 mt-1">
+                  <Badge className={statusStyles[selectedMember?.status] || "bg-muted text-muted-foreground"}>
+                    {selectedMember?.status || "visitante"}
                   </Badge>
-                  <span>•</span>
-                  <span>{selectedMember?.role || "Membro"}</span>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="font-medium text-foreground">{selectedMember?.role || "Membro"}</span>
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
-          <ScrollArea className="flex-1 px-6 py-6">
-            <div className="grid gap-8">
+          <ScrollArea className="flex-1">
+            <div className="p-8 space-y-8">
               {/* Personal Data */}
               <section>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-                  <User className="h-4 w-4" /> Dados Pessoais
-                </h4>
-                <div className="grid grid-cols-2 gap-4 bg-secondary/20 p-4 rounded-xl">
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase">CPF</p>
-                    <p className="font-medium">{selectedMember?.cpf || "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase">Nascimento</p>
-                    <p className="font-medium">{selectedMember?.birth_date ? new Date(selectedMember.birth_date).toLocaleDateString('pt-BR') : "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase">Sexo</p>
-                    <p className="font-medium capitalize">{selectedMember?.sex || "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase">Estado Civil</p>
-                    <p className="font-medium capitalize">{selectedMember?.marital_status || "-"}</p>
-                  </div>
+                <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                  <User className="h-5 w-5 text-primary" />
+                  <h4 className="font-semibold text-foreground">Informações Pessoais</h4>
                 </div>
-              </section>
-
-              {/* Contact Data */}
-              <section>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-                  <Phone className="h-4 w-4" /> Contato e Endereço
-                </h4>
-                <div className="grid grid-cols-2 gap-4 bg-secondary/20 p-4 rounded-xl">
-                  <div className="col-span-1">
-                    <p className="text-xs text-muted-foreground uppercase">WhatsApp</p>
-                    <p className="font-medium">{selectedMember?.phone || "-"}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 bg-secondary/10 p-5 rounded-2xl">
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">CPF</p>
+                    <p className="text-sm font-medium">{selectedMember?.cpf || "Não informado"}</p>
                   </div>
-                  <div className="col-span-1">
-                    <p className="text-xs text-muted-foreground uppercase">E-mail</p>
-                    <p className="font-medium">{selectedMember?.email || "-"}</p>
-                  </div>
-                  <div className="col-span-2 border-t border-secondary pt-2">
-                    <p className="text-xs text-muted-foreground uppercase">Endereço</p>
-                    <p className="font-medium">
-                      {selectedMember?.logradouro}, {selectedMember?.bairro}<br />
-                      {selectedMember?.cidade} - {selectedMember?.uf} | {selectedMember?.cep}
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Data de Nascimento</p>
+                    <p className="text-sm font-medium">
+                      {selectedMember?.birth_date ? new Date(selectedMember.birth_date).toLocaleDateString('pt-BR') : "Não informada"}
                     </p>
                   </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Gênero</p>
+                    <p className="text-sm font-medium capitalize">{selectedMember?.sex || "Não informado"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Estado Civil</p>
+                    <p className="text-sm font-medium capitalize">{selectedMember?.marital_status || "Não informado"}</p>
+                  </div>
                 </div>
               </section>
 
-              {/* Ecclesiastical Data */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Contact Data */}
+                <section>
+                  <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                    <Phone className="h-5 w-5 text-primary" />
+                    <h4 className="font-semibold text-foreground">Contato</h4>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 bg-secondary/10 p-5 rounded-2xl h-full">
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">WhatsApp</p>
+                      <p className="text-sm font-medium">{selectedMember?.phone || "Não informado"}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">E-mail</p>
+                      <p className="text-sm font-medium truncate" title={selectedMember?.email}>{selectedMember?.email || "Não informado"}</p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Ecclesiastical Data */}
+                <section>
+                  <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                    <Church className="h-5 w-5 text-primary" />
+                    <h4 className="font-semibold text-foreground">Dados Eclesiásticos</h4>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 bg-secondary/10 p-5 rounded-2xl h-full">
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Membro desde</p>
+                      <p className="text-sm font-medium">
+                        {selectedMember?.baptism_date ? new Date(selectedMember.baptism_date).toLocaleDateString('pt-BR') : "Não batizado"}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Igreja de Origem</p>
+                      <p className="text-sm font-medium">{selectedMember?.origin_church || "Esta Igreja"}</p>
+                    </div>
+                  </div>
+                </section>
+              </div>
+
+              {/* Address Data */}
               <section>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-                  <Church className="h-4 w-4" /> Igreja
-                </h4>
-                <div className="grid grid-cols-2 gap-4 bg-secondary/20 p-4 rounded-xl">
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase">Data de Batismo</p>
-                    <p className="font-medium">{selectedMember?.baptism_date ? new Date(selectedMember.baptism_date).toLocaleDateString('pt-BR') : "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground uppercase">Igreja de Origem</p>
-                    <p className="font-medium">{selectedMember?.origin_church || "-"}</p>
-                  </div>
+                <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                  <MapPin className="h-5 w-5 text-primary" />
+                  <h4 className="font-semibold text-foreground">Endereço Residencial</h4>
+                </div>
+                <div className="bg-secondary/10 p-5 rounded-2xl">
+                  <p className="font-medium text-sm leading-relaxed">
+                    {selectedMember?.logradouro ? (
+                      <>
+                        {selectedMember?.logradouro}<br />
+                        {selectedMember?.bairro} • {selectedMember?.cidade} - {selectedMember?.uf}<br />
+                        <span className="text-muted-foreground text-xs">CEP: {selectedMember?.cep}</span>
+                      </>
+                    ) : "Endereço não cadastrado"}
+                  </p>
                 </div>
               </section>
 
               {/* Family Data */}
               <section>
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3 flex items-center gap-2">
-                  <Users className="h-4 w-4" /> Família
-                </h4>
-                <div className="grid grid-cols-1 gap-3 bg-secondary/20 p-4 rounded-xl">
-                  <div className="flex justify-between items-center">
-                    <p className="text-xs text-muted-foreground uppercase">Pai</p>
-                    <p className="font-medium">{selectedMember?.father_name || selectedMember?.father?.name || "-"}</p>
+                <div className="flex items-center gap-2 mb-4 border-b pb-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  <h4 className="font-semibold text-foreground">Família e Vínculos</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-secondary/10 p-5 rounded-2xl">
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Pai</p>
+                    <p className="text-sm font-medium">{selectedMember?.father?.name || selectedMember?.father_name || "Não informado"}</p>
                   </div>
-                  <div className="flex justify-between items-center border-t border-secondary pt-2">
-                    <p className="text-xs text-muted-foreground uppercase">Mãe</p>
-                    <p className="font-medium">{selectedMember?.mother_name || selectedMember?.mother?.name || "-"}</p>
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Mãe</p>
+                    <p className="text-sm font-medium">{selectedMember?.mother?.name || selectedMember?.mother_name || "Não informada"}</p>
                   </div>
-                  {selectedMember?.marital_status === 'casado' && (
-                    <div className="flex justify-between items-center border-t border-secondary pt-2">
-                      <p className="text-xs text-muted-foreground uppercase">Cônjuge</p>
-                      <p className="font-medium">{selectedMember?.spouse?.name || "-"}</p>
-                    </div>
-                  )}
+                  <div>
+                    <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Cônjuge</p>
+                    <p className="text-sm font-medium">{selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Não vinculado" : "N/A")}</p>
+                  </div>
                 </div>
               </section>
             </div>
           </ScrollArea>
-          <div className="p-6 border-t bg-secondary/10 flex justify-end">
+          <div className="p-6 border-t bg-primary/5 flex justify-end gap-3">
             <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>Fechar</Button>
+            <Button className="bg-primary text-primary-foreground" onClick={() => {
+              setIsViewDialogOpen(false);
+              handleEdit(selectedMember);
+            }}>
+              <Pencil className="mr-2 h-4 w-4" /> Editar Membro
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
