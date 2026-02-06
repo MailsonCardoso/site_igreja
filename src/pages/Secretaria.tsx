@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Search, Plus, MoreHorizontal, Eye, Pencil, Loader2, User, Phone, MapPin, Church, Users } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Eye, Pencil, Loader2, User, Phone, MapPin, Church, Users, Trash2, UserMinus, UserCheck } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +28,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -38,6 +39,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -57,6 +68,7 @@ const statusStyles: Record<string, string> = {
 
 // Helper mask functions
 const maskCPF = (value: string) => {
+  if (!value) return "";
   return value
     .replace(/\D/g, "")
     .replace(/(\d{3})(\d)/, "$1.$2")
@@ -66,6 +78,7 @@ const maskCPF = (value: string) => {
 };
 
 const maskPhone = (value: string) => {
+  if (!value) return "";
   return value
     .replace(/\D/g, "")
     .replace(/(\d{2})(\d)/, "($1) $2")
@@ -74,6 +87,7 @@ const maskPhone = (value: string) => {
 };
 
 const maskCEP = (value: string) => {
+  if (!value) return "";
   return value
     .replace(/\D/g, "")
     .replace(/(\d{5})(\d)/, "$1-$2")
@@ -84,6 +98,10 @@ export default function Secretaria() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
   const queryClient = useQueryClient();
 
   const form = useForm({
@@ -112,7 +130,7 @@ export default function Secretaria() {
     },
   });
 
-  const { watch, setValue } = form;
+  const { watch, setValue, reset } = form;
   const statusValue = watch("status");
   const maritalStatusValue = watch("marital_status");
   const cepValue = watch("cep");
@@ -152,21 +170,111 @@ export default function Secretaria() {
       queryClient.invalidateQueries({ queryKey: ["members"] });
       toast.success("Membro cadastrado com sucesso!");
       setIsDialogOpen(false);
-      form.reset();
+      reset();
     },
     onError: (error: any) => {
       toast.error(error.message || "Erro ao cadastrar membro");
     },
   });
 
+  // Update Member Mutation
+  const updateMemberMutation = useMutation({
+    mutationFn: (data: any) => api.put(`/members/${data.id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["members"] });
+      toast.success("Membro atualizado com sucesso!");
+      setIsDialogOpen(false);
+      reset();
+      setSelectedMember(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao atualizar membro");
+    },
+  });
+
+  // Delete Member Mutation
+  const deleteMemberMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/members/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["members"] });
+      toast.success("Membro excluído com sucesso!");
+      setIsDeleteDialogOpen(false);
+      setSelectedMember(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao excluir membro");
+    },
+  });
+
+  // Toggle Status Mutation
+  const toggleStatusMutation = useMutation({
+    mutationFn: (data: { id: number; status: string }) => api.put(`/members/${data.id}`, { status: data.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["members"] });
+      toast.success("Status atualizado!");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao atualizar status");
+    },
+  });
+
   const onSubmit = (data: any) => {
-    // Process data to match backend expectations (enums, numbers, etc.)
     const processedData = {
       ...data,
-      category: data.status === "membro" ? "membro" : "visitante", // Logic for existing category field
+      category: data.status === "membro" ? "membro" : "visitante",
       baptism_date: data.status === "membro" ? data.baptism_date : null,
     };
-    createMemberMutation.mutate(processedData);
+
+    if (isEditMode && selectedMember) {
+      updateMemberMutation.mutate({ ...processedData, id: selectedMember.id });
+    } else {
+      createMemberMutation.mutate(processedData);
+    }
+  };
+
+  const handleEdit = (member: any) => {
+    setSelectedMember(member);
+    setIsEditMode(true);
+    reset({
+      name: member.name || "",
+      birth_date: member.birth_date ? member.birth_date.split('T')[0] : "",
+      sex: member.sex || "",
+      marital_status: member.marital_status || "",
+      cpf: member.cpf || "",
+      phone: member.phone || "",
+      email: member.email || "",
+      cep: member.cep || "",
+      logradouro: member.logradouro || "",
+      bairro: member.bairro || "",
+      cidade: member.cidade || "",
+      uf: member.uf || "",
+      status: member.status || "visitante",
+      baptism_date: member.baptism_date ? member.baptism_date.split('T')[0] : "",
+      role: member.role || "Membro",
+      origin_church: member.origin_church || "",
+      father_name: member.father_name || "",
+      mother_name: member.mother_name || "",
+      father_id: member.father_id?.toString() || "",
+      mother_id: member.mother_id?.toString() || "",
+      spouse_id: member.spouse_id?.toString() || "",
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleToggleStatus = (member: any) => {
+    const newStatus = member.status === "afastado" ? "membro" : "afastado";
+    toggleStatusMutation.mutate({ id: member.id, status: newStatus });
+  };
+
+  const handleDeleteClick = (member: any) => {
+    setSelectedMember(member);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (selectedMember) {
+      deleteMemberMutation.mutate(selectedMember.id);
+    }
   };
 
   const filteredMembros = members.filter((membro: any) => {
@@ -192,18 +300,28 @@ export default function Secretaria() {
             <p className="text-sm text-muted-foreground">{filteredMembros.length} pessoas encontradas</p>
           </div>
 
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) {
+              setIsEditMode(false);
+              setSelectedMember(null);
+              reset();
+            }
+          }}>
             <DialogTrigger asChild>
-              <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
+              <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => {
+                setIsEditMode(false);
+                reset();
+              }}>
                 <Plus className="h-4 w-4" />
                 Novo Membro
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0">
               <DialogHeader className="p-6 pb-0">
-                <DialogTitle>Adicionar Novo Membro</DialogTitle>
+                <DialogTitle>{isEditMode ? "Editar Membro" : "Adicionar Novo Membro"}</DialogTitle>
                 <DialogDescription>
-                  Preencha os dados do novo membro da igreja em etapas.
+                  {isEditMode ? "Atualize os dados do membro da igreja." : "Preencha os dados do novo membro da igreja em etapas."}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
@@ -231,7 +349,7 @@ export default function Secretaria() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="sex">Sexo</Label>
-                          <Select onValueChange={(val) => setValue("sex", val)} defaultValue="">
+                          <Select onValueChange={(val) => setValue("sex", val)} value={watch("sex")}>
                             <SelectTrigger>
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
@@ -243,7 +361,7 @@ export default function Secretaria() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="marital_status">Estado Civil</Label>
-                          <Select onValueChange={(val) => setValue("marital_status", val)} defaultValue="">
+                          <Select onValueChange={(val) => setValue("marital_status", val)} value={watch("marital_status")}>
                             <SelectTrigger>
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
@@ -325,7 +443,7 @@ export default function Secretaria() {
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
                           <Label htmlFor="status">Situação / Status</Label>
-                          <Select onValueChange={(val) => setValue("status", val)} defaultValue="visitante">
+                          <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
                             <SelectTrigger>
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
@@ -350,7 +468,7 @@ export default function Secretaria() {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="role">Função / Cargo</Label>
-                          <Select onValueChange={(val) => setValue("role", val)} defaultValue="Membro">
+                          <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
                             <SelectTrigger>
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
@@ -384,12 +502,12 @@ export default function Secretaria() {
                         <div className="grid gap-4 sm:grid-cols-2">
                           <div className="space-y-2">
                             <Label htmlFor="father_id">Pai (Membro)</Label>
-                            <Select onValueChange={(val) => setValue("father_id", val)}>
+                            <Select onValueChange={(val) => setValue("father_id", val)} value={watch("father_id")}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione um membro" />
                               </SelectTrigger>
                               <SelectContent>
-                                {members.map((m: any) => (
+                                {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
                                   <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
                                 ))}
                               </SelectContent>
@@ -402,12 +520,12 @@ export default function Secretaria() {
 
                           <div className="space-y-2">
                             <Label htmlFor="mother_id">Mãe (Membro)</Label>
-                            <Select onValueChange={(val) => setValue("mother_id", val)}>
+                            <Select onValueChange={(val) => setValue("mother_id", val)} value={watch("mother_id")}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione um membro" />
                               </SelectTrigger>
                               <SelectContent>
-                                {members.map((m: any) => (
+                                {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
                                   <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
                                 ))}
                               </SelectContent>
@@ -423,12 +541,12 @@ export default function Secretaria() {
                               <Label htmlFor="spouse_id" className="flex items-center gap-2">
                                 <Users className="h-4 w-4" /> Cônjuge (Membro)
                               </Label>
-                              <Select onValueChange={(val) => setValue("spouse_id", val)}>
+                              <Select onValueChange={(val) => setValue("spouse_id", val)} value={watch("spouse_id")}>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Selecione o cônjuge" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {members.map((m: any) => (
+                                  {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
                                     <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
                                   ))}
                                 </SelectContent>
@@ -442,8 +560,8 @@ export default function Secretaria() {
                 </ScrollArea>
                 <div className="flex justify-end gap-3 p-6 border-t mt-auto">
                   <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
-                  <Button type="submit" className="bg-primary text-primary-foreground min-w-[100px]" disabled={createMemberMutation.isPending}>
-                    {createMemberMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Salvar"}
+                  <Button type="submit" className="bg-primary text-primary-foreground min-w-[100px]" disabled={createMemberMutation.isPending || updateMemberMutation.isPending}>
+                    {createMemberMutation.isPending || updateMemberMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Salvar"}
                   </Button>
                 </div>
               </form>
@@ -548,13 +666,21 @@ export default function Secretaria() {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-card">
-                            <DropdownMenuItem className="cursor-pointer">
-                              <Eye className="mr-2 h-4 w-4" />
-                              Ver Perfil
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleEdit(membro)}>
                               <Pencil className="mr-2 h-4 w-4" />
                               Editar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleToggleStatus(membro)}>
+                              {membro.status === "afastado" ? (
+                                <><UserCheck className="mr-2 h-4 w-4 text-success" /> Reativar</>
+                              ) : (
+                                <><UserMinus className="mr-2 h-4 w-4 text-amber-500" /> Desabilitar</>
+                              )}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive" onClick={() => handleDeleteClick(membro)}>
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Excluir
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -567,7 +693,24 @@ export default function Secretaria() {
           </div>
         )}
       </motion.div>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Membro</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir <strong>{selectedMember?.name}</strong>? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setSelectedMember(null)}>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              {deleteMemberMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Excluir"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MainLayout>
   );
 }
-
