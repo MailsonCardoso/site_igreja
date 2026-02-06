@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, Users, Plus, Loader2, Save, Eye, Pencil, Trash2, ClipboardCheck, GraduationCap, Calendar } from "lucide-react";
+import { BookOpen, Users, Plus, Loader2, Save, Eye, Pencil, Trash2, ClipboardCheck, GraduationCap, Calendar, UserPlus, X, Check } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -12,7 +12,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
@@ -29,20 +28,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Ensino() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
+  const [isManageOpen, setIsManageOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
+  const [selectedLesson, setSelectedLesson] = useState<any>(null);
 
   const queryClient = useQueryClient();
   const form = useForm({
@@ -58,6 +55,15 @@ export default function Ensino() {
     }
   });
 
+  const lessonForm = useForm({
+    defaultValues: {
+      lesson_number: 1,
+      title: "",
+      date: "",
+      topic: "",
+    }
+  });
+
   const { reset, setValue, watch } = form;
 
   // Fetch Courses
@@ -66,10 +72,17 @@ export default function Ensino() {
     queryFn: () => api.get("/courses"),
   });
 
-  // Fetch Members (for teacher selection)
+  // Fetch Members
   const { data: members = [] } = useQuery({
     queryKey: ["members"],
     queryFn: () => api.get("/members"),
+  });
+
+  // Fetch Lessons for selected course
+  const { data: lessons = [] } = useQuery({
+    queryKey: ["lessons", selectedCourse?.id],
+    queryFn: () => api.get(`/courses/${selectedCourse?.id}/lessons`),
+    enabled: !!selectedCourse?.id && isManageOpen,
   });
 
   // Create/Update Course Mutation
@@ -104,6 +117,58 @@ export default function Ensino() {
     },
   });
 
+  // Create Lesson Mutation
+  const createLessonMutation = useMutation({
+    mutationFn: (data: any) => api.post(`/courses/${selectedCourse.id}/lessons`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lessons", selectedCourse?.id] });
+      toast.success("Aula criada!");
+      lessonForm.reset();
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao criar aula");
+    },
+  });
+
+  // Enroll Student Mutation
+  const enrollStudentMutation = useMutation({
+    mutationFn: (memberId: number) => api.post(`/courses/${selectedCourse.id}/students`, {
+      member_id: memberId,
+      enrolled_at: new Date().toISOString().split('T')[0],
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      toast.success("Aluno matriculado!");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao matricular aluno");
+    },
+  });
+
+  // Remove Student Mutation
+  const removeStudentMutation = useMutation({
+    mutationFn: (memberId: number) => api.delete(`/courses/${selectedCourse.id}/students/${memberId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      toast.success("Aluno removido!");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao remover aluno");
+    },
+  });
+
+  // Toggle Lesson Completion
+  const toggleLessonMutation = useMutation({
+    mutationFn: (lesson: any) => api.put(`/courses/${selectedCourse.id}/lessons/${lesson.id}`, {
+      is_completed: !lesson.is_completed,
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lessons", selectedCourse?.id] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      toast.success("Status da aula atualizado!");
+    },
+  });
+
   const onSubmit = (data: any) => {
     saveCourseMutation.mutate(data);
   };
@@ -134,11 +199,23 @@ export default function Ensino() {
     setIsDeleteOpen(true);
   };
 
+  const handleManage = (course: any) => {
+    setSelectedCourse(course);
+    setIsManageOpen(true);
+  };
+
+  const handleCreateLesson = (data: any) => {
+    createLessonMutation.mutate(data);
+  };
+
   const calculateProgress = (course: any) => {
     if (!course.total_classes || course.total_classes === 0) return 0;
     const completed = course.completed_classes || 0;
     return (completed / course.total_classes) * 100;
   };
+
+  const enrolledStudentIds = selectedCourse?.students?.map((s: any) => s.id) || [];
+  const availableMembers = members.filter((m: any) => !enrolledStudentIds.includes(m.id));
 
   return (
     <MainLayout title="Ensino" breadcrumbs={[{ label: "EBD / Cursos" }]}>
@@ -279,15 +356,12 @@ export default function Ensino() {
                         <Trash2 className="h-4 w-4" />
                       </Button>
                       <Button
-                        variant={isCompleted ? "outline" : "default"}
+                        onClick={() => handleManage(course)}
                         size="sm"
-                        className={`flex-1 gap-2 rounded-xl font-bold transition-all ${isCompleted
-                            ? "border-primary/20 text-primary hover:bg-primary/10"
-                            : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
-                          }`}
+                        className="flex-1 gap-2 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
                       >
                         <ClipboardCheck className="h-4 w-4" />
-                        {isCompleted ? "Ver Relatório" : "Gerenciar"}
+                        Gerenciar
                       </Button>
                     </div>
                   </div>
@@ -514,6 +588,245 @@ export default function Ensino() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Gerenciamento */}
+      <Dialog open={isManageOpen} onOpenChange={setIsManageOpen}>
+        <DialogContent className="sm:max-w-[900px] max-h-[85vh] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+          <div className="bg-primary/5 p-6 border-b">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <ClipboardCheck className="h-7 w-7 text-primary" />
+              </div>
+              <div className="flex-1">
+                <DialogTitle className="text-xl font-black text-foreground">
+                  Gerenciar: {selectedCourse?.name}
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground font-medium text-xs">
+                  Gerencie aulas, alunos e frequência do curso.
+                </DialogDescription>
+              </div>
+            </div>
+          </div>
+
+          <Tabs defaultValue="aulas" className="flex-1">
+            <div className="px-6 pt-4">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="aulas">📖 Aulas</TabsTrigger>
+                <TabsTrigger value="alunos">👥 Alunos</TabsTrigger>
+                <TabsTrigger value="relatorios">📊 Relatórios</TabsTrigger>
+              </TabsList>
+            </div>
+
+            <ScrollArea className="h-[500px]">
+              {/* Aba Aulas */}
+              <TabsContent value="aulas" className="p-6 space-y-6">
+                <div className="bg-secondary/5 p-5 rounded-2xl border border-secondary/10">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground mb-4">Nova Aula</h3>
+                  <form onSubmit={lessonForm.handleSubmit(handleCreateLesson)} className="space-y-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Número</Label>
+                        <Input
+                          type="number"
+                          {...lessonForm.register("lesson_number")}
+                          placeholder="1"
+                          className="h-10 rounded-xl border-secondary/30 bg-background font-bold"
+                        />
+                      </div>
+                      <div className="space-y-2 col-span-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Título</Label>
+                        <Input
+                          {...lessonForm.register("title")}
+                          placeholder="Ex: Introdução ao Batismo"
+                          className="h-10 rounded-xl border-secondary/30 bg-background font-bold"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Data</Label>
+                        <Input
+                          type="date"
+                          {...lessonForm.register("date")}
+                          className="h-10 rounded-xl border-secondary/30 bg-background font-bold"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tópico</Label>
+                        <Input
+                          {...lessonForm.register("topic")}
+                          placeholder="Assunto da aula"
+                          className="h-10 rounded-xl border-secondary/30 bg-background font-bold"
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={createLessonMutation.isPending}
+                      className="w-full h-10 rounded-xl font-bold bg-primary hover:bg-primary/90"
+                    >
+                      {createLessonMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4 mr-2" /> Adicionar Aula</>}
+                    </Button>
+                  </form>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground">Aulas Cadastradas</h3>
+                  {lessons.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                      <p className="font-medium">Nenhuma aula cadastrada ainda</p>
+                    </div>
+                  ) : (
+                    lessons.map((lesson: any) => (
+                      <div
+                        key={lesson.id}
+                        className="flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-all bg-card"
+                      >
+                        <div className="flex items-center gap-4 flex-1">
+                          <Checkbox
+                            checked={lesson.is_completed}
+                            onCheckedChange={() => toggleLessonMutation.mutate(lesson)}
+                            className="h-5 w-5"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs font-black text-primary">Aula {lesson.lesson_number}</span>
+                              {lesson.is_completed && (
+                                <Badge className="bg-success/10 text-success border-success/20 text-[10px] h-5">
+                                  <Check className="h-3 w-3 mr-1" /> Concluída
+                                </Badge>
+                              )}
+                            </div>
+                            <h4 className="font-bold text-foreground">{lesson.title || `Aula ${lesson.lesson_number}`}</h4>
+                            {lesson.topic && (
+                              <p className="text-xs text-muted-foreground mt-1">{lesson.topic}</p>
+                            )}
+                          </div>
+                          {lesson.date && (
+                            <div className="text-right">
+                              <p className="text-xs text-muted-foreground">Data</p>
+                              <p className="text-sm font-bold text-foreground">
+                                {new Date(lesson.date).toLocaleDateString('pt-BR')}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </TabsContent>
+
+              {/* Aba Alunos */}
+              <TabsContent value="alunos" className="p-6 space-y-6">
+                <div className="bg-secondary/5 p-5 rounded-2xl border border-secondary/10">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground mb-4">Matricular Aluno</h3>
+                  {availableMembers.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      Todos os membros já estão matriculados neste curso
+                    </p>
+                  ) : (
+                    <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                      {availableMembers.map((member: any) => (
+                        <div
+                          key={member.id}
+                          className="flex items-center justify-between p-3 rounded-xl border border-border/30 hover:border-primary/30 transition-all"
+                        >
+                          <span className="font-bold text-foreground">{member.name}</span>
+                          <Button
+                            size="sm"
+                            onClick={() => enrollStudentMutation.mutate(member.id)}
+                            disabled={enrollStudentMutation.isPending}
+                            className="h-8 rounded-lg font-bold"
+                          >
+                            <UserPlus className="h-4 w-4 mr-1" /> Matricular
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
+                    Alunos Matriculados ({selectedCourse?.students?.length || 0})
+                  </h3>
+                  {!selectedCourse?.students || selectedCourse.students.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <Users className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                      <p className="font-medium">Nenhum aluno matriculado</p>
+                    </div>
+                  ) : (
+                    selectedCourse.students.map((student: any) => (
+                      <div
+                        key={student.id}
+                        className="flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-all bg-card"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-sm font-black text-primary">
+                              {student.name?.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-foreground">{student.name}</h4>
+                            <p className="text-xs text-muted-foreground">
+                              Matriculado em {student.pivot?.enrolled_at ? new Date(student.pivot.enrolled_at).toLocaleDateString('pt-BR') : 'N/A'}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeStudentMutation.mutate(student.id)}
+                          disabled={removeStudentMutation.isPending}
+                          className="h-9 w-9 rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </TabsContent>
+
+              {/* Aba Relatórios */}
+              <TabsContent value="relatorios" className="p-6 space-y-6">
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-primary/5 p-5 rounded-2xl border border-primary/10">
+                    <p className="text-xs font-black uppercase tracking-wider text-muted-foreground mb-2">Total de Aulas</p>
+                    <p className="text-3xl font-black text-foreground">{selectedCourse?.total_classes || 0}</p>
+                  </div>
+                  <div className="bg-success/5 p-5 rounded-2xl border border-success/10">
+                    <p className="text-xs font-black uppercase tracking-wider text-muted-foreground mb-2">Concluídas</p>
+                    <p className="text-3xl font-black text-success">{selectedCourse?.completed_classes || 0}</p>
+                  </div>
+                  <div className="bg-blue-500/5 p-5 rounded-2xl border border-blue-500/10">
+                    <p className="text-xs font-black uppercase tracking-wider text-muted-foreground mb-2">Alunos</p>
+                    <p className="text-3xl font-black text-blue-600">{selectedCourse?.students?.length || 0}</p>
+                  </div>
+                </div>
+
+                <div className="bg-secondary/5 p-6 rounded-2xl border border-secondary/10">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground mb-4">Progresso do Curso</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-muted-foreground">Percentual Concluído</span>
+                      <span className="text-lg font-black text-primary">{Math.round(calculateProgress(selectedCourse))}%</span>
+                    </div>
+                    <Progress value={calculateProgress(selectedCourse)} className="h-3" />
+                  </div>
+                </div>
+
+                <div className="text-center py-8 text-muted-foreground">
+                  <p className="font-medium">Relatórios detalhados de frequência em breve!</p>
+                </div>
+              </TabsContent>
+            </ScrollArea>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </MainLayout>
