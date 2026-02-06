@@ -10,6 +10,8 @@ use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\CellController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -28,6 +30,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('transactions/report', [TransactionController::class, 'report']);
     Route::apiResource('transactions', TransactionController::class);
     Route::apiResource('events', EventController::class);
+    Route::apiResource('users', UserController::class);
+    Route::get('settings', [SettingController::class, 'index']);
+    Route::post('settings', [SettingController::class, 'store']);
 
     // Ministries & Rosters
     Route::apiResource('ministries', MinistryController::class);
