@@ -790,23 +790,31 @@ export default function Secretaria() {
                 </div>
                 <div className="bg-secondary/10 p-5 rounded-2xl">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Logradouro / Rua</p>
-                      <p className="text-sm font-medium">{selectedMember?.logradouro || selectedMember?.address || "Não informado"}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Bairro</p>
-                      <p className="text-sm font-medium">{selectedMember?.bairro || "Não informado"}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Cidade / UF</p>
-                      <p className="text-sm font-medium">
-                        {selectedMember?.cidade ? `${selectedMember.cidade}${selectedMember?.uf ? ` - ${selectedMember.uf}` : ''}` : "Não informada"}
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Logradouro / Rua</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {selectedMember?.logradouro?.trim() || selectedMember?.address?.trim() || "Não informado"}
                       </p>
                     </div>
-                    <div>
-                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">CEP</p>
-                      <p className="text-sm font-medium">{selectedMember?.cep || "Não informado"}</p>
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Bairro</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {selectedMember?.bairro?.trim() || "Não informado"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Cidade / UF</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {selectedMember?.cidade?.trim() ?
+                          `${selectedMember.cidade.trim()}${selectedMember?.uf?.trim() ? ` - ${selectedMember.uf.trim().toUpperCase()}` : ''}`
+                          : "Não informada"}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">CEP</p>
+                      <p className="text-sm font-semibold text-foreground">
+                        {selectedMember?.cep?.trim() || "Não informado"}
+                      </p>
                     </div>
                   </div>
                 </div>
