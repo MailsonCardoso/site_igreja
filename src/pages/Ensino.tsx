@@ -815,9 +815,9 @@ export default function Ensino() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-bold text-muted-foreground">Percentual Concluído</span>
-                      <span className="text-lg font-black text-primary">{Math.round(calculateProgress(selectedCourse))}%</span>
+                      <span className="text-lg font-black text-primary">{selectedCourse ? Math.round(calculateProgress(selectedCourse)) : 0}%</span>
                     </div>
-                    <Progress value={calculateProgress(selectedCourse)} className="h-3" />
+                    <Progress value={selectedCourse ? calculateProgress(selectedCourse) : 0} className="h-3" />
                   </div>
                 </div>
 
