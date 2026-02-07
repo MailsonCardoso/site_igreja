@@ -246,99 +246,100 @@ export default function SeriesPage() {
 
                 {/* Modal Editor */}
                 <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[600px] rounded-2xl">
-                        <DialogHeader>
-                            <DialogTitle>{currentSerie ? "Editar Série" : "Nova Série"}</DialogTitle>
-                            <DialogDescription>
-                                Organize suas mensagens em séries temáticas.
+                    <DialogContent className="sm:max-w-[600px] rounded-2xl border border-border/50 bg-background shadow-2xl p-0 overflow-hidden">
+                        <DialogHeader className="p-8 pb-6 border-b bg-muted/10">
+                            <DialogTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
+                                {currentSerie ? "Editar Série" : "Nova Série"}
+                            </DialogTitle>
+                            <DialogDescription className="font-medium text-muted-foreground pt-1">
+                                Organize suas mensagens em jornadas temáticas consistentes.
                             </DialogDescription>
                         </DialogHeader>
 
-                        <div className="grid gap-4 py-4">
-                            <div className="space-y-2">
-                                <Label>Título da Série *</Label>
+                        <div className="p-8 space-y-6">
+                            <div className="space-y-2.5">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Título da Série *</Label>
                                 <Input
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     placeholder="Ex: Estudos em Romanos"
-                                    className="font-bold"
+                                    className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-bold text-lg px-4"
                                 />
                             </div>
 
-                            <div className="space-y-2">
-                                <Label>Descrição</Label>
+                            <div className="space-y-2.5">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Descrição Breve</Label>
                                 <Textarea
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    placeholder="Breve descrição da série..."
-                                    className="min-h-[80px]"
+                                    placeholder="Qual o objetivo central desta série?"
+                                    className="min-h-[100px] rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all p-4 leading-relaxed"
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label>Total de Mensagens Planejadas</Label>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2.5">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Total Planejado</Label>
                                     <Input
                                         type="number"
                                         min="1"
                                         value={formData.total}
                                         onChange={(e) => setFormData({ ...formData, total: parseInt(e.target.value) || 1 })}
+                                        className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-bold px-4"
                                     />
                                 </div>
-                                <div className="space-y-2 flex flex-col justify-center">
-                                    <Label className="opacity-50">Concluídas (Automático)</Label>
-                                    <div className="text-xl font-bold pt-2">
-                                        {currentSerie ? getSeriesSermons(currentSerie.title).filter(s => s.status === "Pregado").length : 0}
-                                    </div>
+                                <div className="space-y-2.5">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Data de Início</Label>
+                                    <Input
+                                        type="date"
+                                        value={formData.startDate}
+                                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                        className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-medium px-4"
+                                    />
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
-                                <Label>Data de Início</Label>
-                                <Input
-                                    type="date"
-                                    value={formData.startDate}
-                                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label>Cor da Série</Label>
-                                <div className="grid grid-cols-6 gap-2">
+                            <div className="space-y-3 pt-2">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Identidade Visual (Cor)</Label>
+                                <div className="grid grid-cols-6 gap-3">
                                     {colorOptions.map((color) => (
                                         <button
                                             key={color.value}
                                             type="button"
                                             onClick={() => setFormData({ ...formData, color: color.value, coverColor: color.gradient })}
-                                            className={`h-10 rounded-lg ${color.value} transition-all ${formData.color === color.value ? 'ring-2 ring-offset-2 ring-primary scale-110' : 'hover:scale-105'}`}
+                                            className={`h-10 rounded-xl ${color.value} transition-all relative ${formData.color === color.value ? 'ring-2 ring-offset-2 ring-primary scale-110' : 'hover:scale-105 opacity-70 hover:opacity-100'}`}
                                             title={color.label}
-                                        />
+                                        >
+                                            {formData.color === color.value && <div className="absolute inset-0 flex items-center justify-center"><Save className="h-4 w-4 text-white p-0.5" /></div>}
+                                        </button>
                                     ))}
                                 </div>
                             </div>
                         </div>
 
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsEditorOpen(false)}>Cancelar</Button>
-                            <Button onClick={handleSave} className="gap-2">
-                                <Save className="h-4 w-4" /> Salvar
+                        <DialogFooter className="p-6 bg-muted/10 border-t flex flex-col sm:flex-row gap-3">
+                            <Button variant="ghost" onClick={() => setIsEditorOpen(false)} className="rounded-xl font-bold h-11 px-6">
+                                Cancelar
+                            </Button>
+                            <Button onClick={handleSave} className="rounded-xl font-bold h-11 px-10 gap-2 shadow-lg shadow-primary/20">
+                                <Save className="h-4 w-4" /> Salvar Série
                             </Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
 
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-                    <AlertDialogContent className="rounded-2xl">
+                    <AlertDialogContent className="rounded-2xl border border-border/50 shadow-2xl p-8 max-w-[450px]">
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                Esta ação não pode ser desfeita. A série "{currentSerie?.title}" será excluída permanentemente.
+                            <AlertDialogTitle className="text-2xl font-black text-foreground">Excluir Série?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-base font-medium text-muted-foreground pt-2">
+                                Esta ação removerá permanentemente a série <span className="text-foreground font-bold italic">"{currentSerie?.title}"</span>. Os sermões vinculados não serão excluídos, mas perderão a referência à série.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
-                            <AlertDialogAction className="rounded-xl bg-destructive hover:bg-destructive/90" onClick={confirmDelete}>
-                                Excluir
+                        <AlertDialogFooter className="mt-8 gap-3 sm:flex-row">
+                            <AlertDialogCancel className="rounded-xl font-bold border-none bg-muted hover:bg-muted/80 h-11 px-6">Voltar</AlertDialogCancel>
+                            <AlertDialogAction className="rounded-xl font-bold bg-destructive hover:bg-destructive/90 text-destructive-foreground h-11 px-6" onClick={confirmDelete}>
+                                Confirmar Exclusão
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

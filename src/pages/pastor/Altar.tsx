@@ -309,147 +309,154 @@ export default function Altar() {
 
                 {/* Editor Modal */}
                 <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto rounded-3xl p-0 overflow-hidden border-none shadow-2xl">
-                        <DialogHeader className="p-8 pb-4 bg-primary/5">
-                            <DialogTitle className="text-2xl font-bold font-display">
+                    <DialogContent className="sm:max-w-[750px] max-h-[90vh] overflow-y-auto rounded-2xl border border-border/50 bg-background shadow-2xl p-0 overflow-hidden">
+                        <DialogHeader className="p-8 pb-6 border-b bg-muted/10">
+                            <DialogTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
                                 {currentSermon ? 'Editar Mensagem' : 'Nova Mensagem'}
                             </DialogTitle>
-                            <DialogDescription className="font-medium">
-                                Estruture sua pregação para o próximo culto.
+                            <DialogDescription className="font-medium text-muted-foreground pt-1">
+                                Estruture sua pregação com clareza e organização.
                             </DialogDescription>
                         </DialogHeader>
 
                         <div className="p-8 space-y-8">
-                            {/* Campos Básicos */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Título da Mensagem</Label>
+                            {/* Campos Básicos - Layout Lateral Ajustado */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                <div className="space-y-2.5">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Título da Mensagem</Label>
                                     <Input
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                         placeholder="Ex: O Poder da Ressurreição"
-                                        className="h-11 rounded-xl bg-muted/20 border-none font-bold text-lg"
+                                        className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-bold text-lg px-4"
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Série de Mensagens</Label>
+                                <div className="space-y-2.5">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Série de Mensagens</Label>
                                     <Select
                                         value={formData.series}
                                         onValueChange={(val) => setFormData({ ...formData, series: val })}
                                     >
-                                        <SelectTrigger className="h-11 rounded-xl bg-muted/20 border-none font-medium">
+                                        <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-medium px-4">
                                             <SelectValue placeholder="Selecione uma série" />
                                         </SelectTrigger>
-                                        <SelectContent className="rounded-xl">
-                                            <SelectItem value="Avulso">Nenhuma (Mensagem Avulsa)</SelectItem>
+                                        <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                                            <SelectItem value="Avulso" className="py-2.5">Nenhuma (Mensagem Avulsa)</SelectItem>
                                             {seriesList.map(s => (
-                                                <SelectItem key={s.id} value={s.title}>{s.title}</SelectItem>
+                                                <SelectItem key={s.id} value={s.title} className="py-2.5">{s.title}</SelectItem>
                                             ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
-                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Data</Label>
-                                    <Input
-                                        type="date"
-                                        value={formData.date}
-                                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                        className="h-11 rounded-xl bg-muted/20 border-none font-medium"
-                                    />
+                                <div className="space-y-2.5">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Data da Pregação</Label>
+                                    <div className="relative">
+                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
+                                        <Input
+                                            type="date"
+                                            value={formData.date}
+                                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                            className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-medium pl-11"
+                                        />
+                                    </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Status</Label>
+
+                                <div className="space-y-2.5">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Estado / Status</Label>
                                     <Select
                                         value={formData.status}
                                         onValueChange={(val: any) => setFormData({ ...formData, status: val })}
                                     >
-                                        <SelectTrigger className="h-11 rounded-xl bg-muted/20 border-none font-medium">
+                                        <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-medium px-4">
                                             <SelectValue />
                                         </SelectTrigger>
-                                        <SelectContent className="rounded-xl">
-                                            <SelectItem value="Planejado">Planejado</SelectItem>
-                                            <SelectItem value="Pregado">Pregado</SelectItem>
-                                            <SelectItem value="Rascunho">Rascunho</SelectItem>
+                                        <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                                            <SelectItem value="Planejado" className="py-2.5">📋 Planejado</SelectItem>
+                                            <SelectItem value="Pregado" className="py-2.5">🎙️ Pregado</SelectItem>
+                                            <SelectItem value="Rascunho" className="py-2.5">✍️ Rascunho</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Versículo Base</Label>
-                                    <Input
-                                        value={formData.verse}
-                                        onChange={(e) => setFormData({ ...formData, verse: e.target.value })}
-                                        placeholder="Ex: João 3:16"
-                                        className="h-11 rounded-xl bg-muted/20 border-none font-serif italic"
-                                    />
-                                </div>
                             </div>
 
-                            {/* Conteúdo */}
-                            <div className="space-y-6 pt-4 border-t">
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Introdução / Gancho</Label>
+                            <div className="space-y-2.5">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Versículo Base (Texto Chave)</Label>
+                                <Input
+                                    value={formData.verse}
+                                    onChange={(e) => setFormData({ ...formData, verse: e.target.value })}
+                                    placeholder="Ex: João 3:16"
+                                    className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-serif italic text-lg px-4"
+                                />
+                            </div>
+
+                            {/* Conteúdo - Dividido Lateralmente */}
+                            <div className="space-y-8 pt-6 border-t border-border/40">
+                                <div className="space-y-2.5">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Introdução / Gancho Inicial</Label>
                                     <Textarea
                                         value={formData.content.intro}
                                         onChange={(e) => setFormData({ ...formData, content: { ...formData.content, intro: e.target.value } })}
-                                        placeholder="Como você vai começar a mensagem?"
-                                        className="min-h-[100px] rounded-2xl bg-muted/20 border-none p-4"
+                                        placeholder="Como você pretende capturar a atenção da igreja?"
+                                        className="min-h-[120px] rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all p-4 leading-relaxed"
                                     />
                                 </div>
 
                                 <div className="space-y-4">
-                                    <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Tópicos Principais</Label>
-                                    {formData.content.topics.map((topic, index) => (
-                                        <div key={index} className="flex gap-3">
-                                            <div className="flex items-center justify-center w-8 h-10 rounded-lg bg-primary/10 text-primary font-black text-xs">
-                                                {index + 1}
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Desenvolvimento (Tópicos Principais)</Label>
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {formData.content.topics.map((topic, index) => (
+                                            <div key={index} className="flex gap-4 group">
+                                                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 border border-primary/20 text-primary font-black text-xs shrink-0 transition-colors group-focus-within:bg-primary group-focus-within:text-white">
+                                                    {index + 1}
+                                                </div>
+                                                <Input
+                                                    value={topic}
+                                                    onChange={(e) => handleTopicChange(index, e.target.value)}
+                                                    placeholder={`Digite o ponto central do tópico ${index + 1}`}
+                                                    className="h-10 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-bold px-4"
+                                                />
                                             </div>
-                                            <Input
-                                                value={topic}
-                                                onChange={(e) => handleTopicChange(index, e.target.value)}
-                                                placeholder={`Tópico ${index + 1}`}
-                                                className="flex-1 h-10 rounded-xl bg-muted/20 border-none font-bold"
-                                            />
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-bold uppercase tracking-wider opacity-60">Conclusão / Apelo</Label>
+                                <div className="space-y-2.5">
+                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Conclusão / Desafio Prático</Label>
                                     <Textarea
                                         value={formData.content.conclusion}
                                         onChange={(e) => setFormData({ ...formData, content: { ...formData.content, conclusion: e.target.value } })}
-                                        placeholder="Qual é o desafio final para a igreja?"
-                                        className="min-h-[80px] rounded-2xl bg-muted/20 border-none p-4 font-medium italic"
+                                        placeholder="Qual é a aplicação prática para a vida do ouvinte?"
+                                        className="min-h-[100px] rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all p-4 font-medium italic leading-relaxed"
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        <DialogFooter className="p-8 bg-muted/30 gap-3">
-                            <Button variant="ghost" onClick={() => setIsEditorOpen(false)} className="rounded-xl font-bold">Cancelar</Button>
-                            <Button onClick={handleSave} className="rounded-xl font-bold px-8 gap-2 shadow-lg shadow-primary/20">
+                        <DialogFooter className="p-6 bg-muted/10 border-t flex flex-col sm:flex-row gap-3">
+                            <Button variant="ghost" onClick={() => setIsEditorOpen(false)} className="rounded-xl font-bold h-11 px-6">
+                                Cancelar
+                            </Button>
+                            <Button onClick={handleSave} className="rounded-xl font-bold h-11 px-10 gap-2 shadow-lg shadow-primary/20">
                                 <Save className="h-4 w-4" /> Salvar Mensagem
                             </Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
 
-                {/* AlertDialog de Exclusão */}
+                {/* AlertDialog de Exclusão - Estilo Corrigido */}
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-                    <AlertDialogContent className="rounded-3xl border-none p-8">
+                    <AlertDialogContent className="rounded-2xl border border-border/50 shadow-2xl p-8 max-w-[450px]">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="text-2xl font-black">Excluir Mensagem?</AlertDialogTitle>
-                            <AlertDialogDescription className="text-base font-medium">
-                                Esta ação removerá permanentemente o sermão "{currentSermon?.title}". Você não poderá desfazer isso.
+                            <AlertDialogTitle className="text-2xl font-black text-foreground">Excluir Mensagem?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-base font-medium text-muted-foreground pt-2">
+                                Esta ação removerá permanentemente o sermão <span className="text-foreground font-bold italic">"{currentSermon?.title}"</span>. Esta operação não pode ser desfeita.
                             </AlertDialogDescription>
                         </AlertDialogHeader>
-                        <AlertDialogFooter className="mt-8 gap-3">
-                            <AlertDialogCancel className="rounded-xl font-bold border-none bg-muted hover:bg-muted/80">Cancelar</AlertDialogCancel>
-                            <AlertDialogAction className="rounded-xl font-bold bg-destructive hover:bg-destructive/90 text-destructive-foreground" onClick={confirmDelete}>
-                                Sim, excluir
+                        <AlertDialogFooter className="mt-8 gap-3 sm:flex-row">
+                            <AlertDialogCancel className="rounded-xl font-bold border-none bg-muted hover:bg-muted/80 h-11 px-6">Voltar</AlertDialogCancel>
+                            <AlertDialogAction className="rounded-xl font-bold bg-destructive hover:bg-destructive/90 text-destructive-foreground h-11 px-6" onClick={confirmDelete}>
+                                Confirmar Exclusão
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
