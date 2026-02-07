@@ -392,83 +392,78 @@ export default function Ensino() {
           </div>
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-5 bg-card overflow-y-auto">
-            <div className="space-y-4">
-              <div className="space-y-2">
+            <div className="grid grid-cols-4 gap-4">
+              <div className="col-span-2 space-y-2">
                 <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Nome do Curso</Label>
                 <Input
                   {...form.register("name", { required: true })}
                   placeholder="Ex: Curso de Batismo"
-                  className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold transition-all focus:border-primary/50"
+                  className="h-10 rounded-xl border-input bg-background font-semibold transition-all focus:border-primary/50"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Descrição</Label>
-                  <Textarea
-                    {...form.register("description")}
-                    placeholder="Breve descrição sobre o curso..."
-                    className="rounded-xl border-secondary/30 bg-secondary/5 h-[120px] font-medium text-sm resize-none"
-                  />
-                </div>
-
-                <div className="space-y-3">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Nome do Professor</Label>
-                    <Input
-                      {...form.register("teacher")}
-                      placeholder="Nome do professor responsável"
-                      className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold transition-all focus:border-primary/50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Total de Aulas</Label>
-                    <Input
-                      type="number"
-                      {...form.register("total_classes")}
-                      placeholder="12"
-                      className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
-                    />
-                  </div>
-                </div>
+              <div className="col-span-2 space-y-2">
+                <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Nome do Professor</Label>
+                <Input
+                  {...form.register("teacher")}
+                  placeholder="Nome do professor responsável"
+                  className="h-10 rounded-xl border-input bg-background font-semibold transition-all focus:border-primary/50"
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Data de Início</Label>
-                  <Input
-                    type="date"
-                    {...form.register("start_date")}
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Data de Término</Label>
-                  <Input
-                    type="date"
-                    {...form.register("end_date")}
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
-                  />
-                </div>
+              <div className="col-span-4 space-y-2">
+                <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Descrição</Label>
+                <Textarea
+                  {...form.register("description")}
+                  placeholder="Breve descrição sobre o curso..."
+                  className="rounded-xl border-input bg-background h-[70px] font-medium text-sm resize-none focus:border-primary/50"
+                />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Horário</Label>
-                  <Input
-                    {...form.register("schedule")}
-                    placeholder="Ex: Domingos 9h"
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Local</Label>
-                  <Input
-                    {...form.register("location")}
-                    placeholder="Ex: Sala 1"
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
-                  />
-                </div>
+              <div className="col-span-1 space-y-2">
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Total Aulas</Label>
+                <Input
+                  type="number"
+                  {...form.register("total_classes")}
+                  placeholder="12"
+                  className="h-10 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
+                />
+              </div>
+
+              <div className="col-span-1 space-y-2">
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Início</Label>
+                <Input
+                  type="date"
+                  {...form.register("start_date")}
+                  className="h-10 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
+                />
+              </div>
+
+              <div className="col-span-1 space-y-2">
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Término</Label>
+                <Input
+                  type="date"
+                  {...form.register("end_date")}
+                  className="h-10 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
+                />
+              </div>
+
+              <div className="col-span-1 space-y-2">
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Horário</Label>
+                <Input
+                  {...form.register("schedule")}
+                  placeholder="Ex: Dom 9h"
+                  className="h-10 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
+                />
+              </div>
+
+              <div className="col-span-4 space-y-2">
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Local</Label>
+                <Input
+                  {...form.register("location")}
+                  placeholder="Ex: Sala 1"
+                  className="h-10 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
+                />
               </div>
             </div>
 
