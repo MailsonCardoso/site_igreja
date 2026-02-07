@@ -246,7 +246,7 @@ export default function SeriesPage() {
 
                 {/* Modal Editor */}
                 <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[700px] rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                    <DialogContent className="sm:max-w-[550px] rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
                         <div className="bg-primary/5 p-8 border-b relative">
                             <div className="flex items-center gap-4">
                                 <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
@@ -265,17 +265,17 @@ export default function SeriesPage() {
 
                         <div className="p-8 space-y-6 bg-card">
                             <div className="space-y-2.5">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Título da Série *</Label>
+                                <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Título da Série *</Label>
                                 <Input
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     placeholder="Ex: Estudos em Romanos"
-                                    className="h-12 rounded-xl border-input bg-background focus:bg-background font-bold text-lg px-4 transition-all focus:border-primary/50"
+                                    className="h-12 rounded-xl border-input bg-background focus:bg-background font-semibold text-lg px-4 transition-all focus:border-primary/50"
                                 />
                             </div>
 
                             <div className="space-y-2.5">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Descrição Breve</Label>
+                                <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Descrição Breve</Label>
                                 <Textarea
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -286,7 +286,7 @@ export default function SeriesPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Total Planejado</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Total Planejado</Label>
                                     <Input
                                         type="number"
                                         min="1"
@@ -296,7 +296,7 @@ export default function SeriesPage() {
                                     />
                                 </div>
                                 <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Data de Início</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Data de Início</Label>
                                     <Input
                                         type="date"
                                         value={formData.startDate}
@@ -307,7 +307,7 @@ export default function SeriesPage() {
                             </div>
 
                             <div className="space-y-3 pt-2">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Identidade Visual (Cor)</Label>
+                                <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Identidade Visual (Cor)</Label>
                                 <div className="grid grid-cols-6 gap-3">
                                     {colorOptions.map((color) => (
                                         <button
@@ -346,7 +346,7 @@ export default function SeriesPage() {
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                     <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8 max-w-[450px]">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="text-2xl font-black text-foreground">Excluir Série?</AlertDialogTitle>
+                            <AlertDialogTitle className="text-2xl font-bold text-foreground">Excluir Série?</AlertDialogTitle>
                             <AlertDialogDescription className="text-base font-medium text-muted-foreground pt-2">
                                 Esta ação removerá permanentemente a série <span className="text-foreground font-bold italic">"{currentSerie?.title}"</span>. Os sermões vinculados não serão excluídos, mas perderão a referência à série.
                             </AlertDialogDescription>

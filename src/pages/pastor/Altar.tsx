@@ -330,16 +330,16 @@ export default function Altar() {
                             {/* Campos Básicos - Layout Lateral Ajustado */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Título da Mensagem</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Título da Mensagem</Label>
                                     <Input
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                         placeholder="Ex: O Poder da Ressurreição"
-                                        className="h-12 rounded-xl border-input bg-background focus:bg-background font-bold text-lg px-4 transition-all focus:border-primary/50"
+                                        className="h-12 rounded-xl border-input bg-background focus:bg-background font-semibold text-lg px-4 transition-all focus:border-primary/50"
                                     />
                                 </div>
                                 <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Série de Mensagens</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Série de Mensagens</Label>
                                     <Select
                                         value={formData.series}
                                         onValueChange={(val) => setFormData({ ...formData, series: val })}
@@ -357,7 +357,7 @@ export default function Altar() {
                                 </div>
 
                                 <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Data da Pregação</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Data da Pregação</Label>
                                     <div className="relative">
                                         <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 pointer-events-none" />
                                         <Input
@@ -370,7 +370,7 @@ export default function Altar() {
                                 </div>
 
                                 <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Estado / Status</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Estado / Status</Label>
                                     <Select
                                         value={formData.status}
                                         onValueChange={(val: any) => setFormData({ ...formData, status: val })}
@@ -388,7 +388,7 @@ export default function Altar() {
                             </div>
 
                             <div className="space-y-2.5">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Versículo Base (Texto Chave)</Label>
+                                <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Versículo Base (Texto Chave)</Label>
                                 <Input
                                     value={formData.verse}
                                     onChange={(e) => setFormData({ ...formData, verse: e.target.value })}
@@ -400,7 +400,7 @@ export default function Altar() {
                             {/* Conteúdo - Dividido Lateralmente */}
                             <div className="space-y-8 pt-6 border-t border-border/40">
                                 <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Introdução / Gancho Inicial</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Introdução / Gancho Inicial</Label>
                                     <Textarea
                                         value={formData.content.intro}
                                         onChange={(e) => setFormData({ ...formData, content: { ...formData.content, intro: e.target.value } })}
@@ -410,18 +410,18 @@ export default function Altar() {
                                 </div>
 
                                 <div className="space-y-4">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Desenvolvimento (Tópicos Principais)</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Desenvolvimento (Tópicos Principais)</Label>
                                     <div className="grid grid-cols-1 gap-4">
                                         {formData.content.topics.map((topic, index) => (
                                             <div key={index} className="flex gap-4 group">
-                                                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 border border-primary/20 text-primary font-black text-xs shrink-0 transition-colors group-focus-within:bg-primary group-focus-within:text-white">
+                                                <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/5 border border-primary/20 text-primary font-bold text-xs shrink-0 transition-colors group-focus-within:bg-primary group-focus-within:text-white">
                                                     {index + 1}
                                                 </div>
                                                 <Input
                                                     value={topic}
                                                     onChange={(e) => handleTopicChange(index, e.target.value)}
                                                     placeholder={`Digite o ponto central do tópico ${index + 1}`}
-                                                    className="w-full h-10 rounded-xl border-input bg-background font-bold px-4 focus:border-primary/50"
+                                                    className="w-full h-10 rounded-xl border-input bg-background font-semibold px-4 focus:border-primary/50"
                                                 />
                                             </div>
                                         ))}
@@ -429,7 +429,7 @@ export default function Altar() {
                                 </div>
 
                                 <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Conclusão / Desafio Prático</Label>
+                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Conclusão / Desafio Prático</Label>
                                     <Textarea
                                         value={formData.content.conclusion}
                                         onChange={(e) => setFormData({ ...formData, content: { ...formData.content, conclusion: e.target.value } })}
@@ -463,7 +463,7 @@ export default function Altar() {
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                     <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8 max-w-[450px]">
                         <AlertDialogHeader>
-                            <AlertDialogTitle className="text-2xl font-black text-foreground">Excluir Mensagem?</AlertDialogTitle>
+                            <AlertDialogTitle className="text-2xl font-bold text-foreground">Excluir Mensagem?</AlertDialogTitle>
                             <AlertDialogDescription className="text-base font-medium text-muted-foreground pt-2">
                                 Esta ação removerá permanentemente o sermão <span className="text-foreground font-bold italic">"{currentSermon?.title}"</span>. Esta operação não pode ser desfeita.
                             </AlertDialogDescription>
