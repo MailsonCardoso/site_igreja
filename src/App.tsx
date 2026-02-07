@@ -13,6 +13,7 @@ import Agenda from "./pages/Agenda";
 import Ministerios from "./pages/Ministerios";
 import Ensino from "./pages/Ensino";
 import Configuracoes from "./pages/Configuracoes";
+import Altar from "./pages/pastor/Altar";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -82,6 +83,12 @@ const App = () => (
           <Route path="/" element={
             <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
               <Dashboard />
+            </RoleRoute>
+          } />
+
+          <Route path="/pastor" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+              <Altar />
             </RoleRoute>
           } />
 

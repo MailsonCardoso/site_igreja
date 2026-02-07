@@ -14,6 +14,7 @@ import {
   Menu,
   LogOut,
   ChevronLeft,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -22,6 +23,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigationItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Pastoral", href: "/pastor", icon: BookOpen },
   { name: "Membros", href: "/secretaria", icon: Users },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
   { name: "Células", href: "/celulas", icon: CircleDot },
