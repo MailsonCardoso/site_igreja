@@ -15,6 +15,8 @@ import Ensino from "./pages/Ensino";
 import Configuracoes from "./pages/Configuracoes";
 import Altar from "./pages/pastor/Altar";
 import Pulpito from "./pages/pastor/Pulpito";
+import Series from "./pages/pastor/Series";
+import Insights from "./pages/pastor/Insights";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -87,6 +89,7 @@ const App = () => (
             </RoleRoute>
           } />
 
+          {/* Módulo Pastoral */}
           <Route path="/pastor" element={
             <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
               <Altar />
@@ -96,6 +99,18 @@ const App = () => (
           <Route path="/pastor/pulpito/:id" element={
             <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
               <Pulpito />
+            </RoleRoute>
+          } />
+
+          <Route path="/pastor/series" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+              <Series />
+            </RoleRoute>
+          } />
+
+          <Route path="/pastor/insights" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+              <Insights />
             </RoleRoute>
           } />
 

@@ -15,6 +15,8 @@ import {
   LogOut,
   ChevronLeft,
   BookOpen,
+  Library,
+  Lightbulb,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -24,6 +26,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 const navigationItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Pastoral", href: "/pastor", icon: BookOpen },
+  { name: "Séries", href: "/pastor/series", icon: Library },
+  { name: "Insights", href: "/pastor/insights", icon: Lightbulb },
   { name: "Membros", href: "/secretaria", icon: Users },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
   { name: "Células", href: "/celulas", icon: CircleDot },
