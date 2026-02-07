@@ -278,7 +278,7 @@ export default function Financeiro() {
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner">
-                  <span className="text-xl font-black">R$</span>
+                  <span className="text-xl font-semibold">R$</span>
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Saldo do Período</p>
@@ -573,7 +573,7 @@ export default function Financeiro() {
           <form onSubmit={handleSubmit} className="p-8 space-y-6 bg-card">
             <div className="grid gap-6">
               <div className="space-y-2">
-                <Label htmlFor="description" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Descrição</Label>
+                <Label htmlFor="description" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Descrição</Label>
                 <div className="relative">
                   <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -590,9 +590,9 @@ export default function Financeiro() {
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Valor (R$)</Label>
+                  <Label htmlFor="amount" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Valor (R$)</Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-muted-foreground">R$</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-muted-foreground">R$</span>
                     <Input
                       id="amount"
                       name="amount"
@@ -600,13 +600,13 @@ export default function Financeiro() {
                       placeholder="0,00"
                       value={formData.amount}
                       onChange={handleInputChange}
-                      className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold text-lg text-foreground pl-10"
+                      className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold text-lg text-foreground pl-10"
                       required
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="date" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Data da Operação</Label>
+                  <Label htmlFor="date" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Data da Operação</Label>
                   <Input
                     id="date"
                     name="date"
@@ -620,7 +620,7 @@ export default function Financeiro() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="category" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Categoria Financeira</Label>
+                <Label htmlFor="category" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Categoria Financeira</Label>
                 <Select
                   onValueChange={(v) => setFormData({ ...formData, category_name: v })}
                   value={formData.category_name}
@@ -632,20 +632,20 @@ export default function Financeiro() {
                   <SelectContent className="rounded-xl">
                     {transactionType === "entrada" ? (
                       <>
-                        <SelectItem value="Dízimo" className="font-bold text-success">Dízimo</SelectItem>
-                        <SelectItem value="Oferta" className="font-bold">Oferta</SelectItem>
-                        <SelectItem value="Doação" className="font-bold">Doação</SelectItem>
-                        <SelectItem value="Evento" className="font-bold">Evento</SelectItem>
-                        <SelectItem value="Outros" className="font-bold">Outros</SelectItem>
+                        <SelectItem value="Dízimo" className="font-semibold text-success">Dízimo</SelectItem>
+                        <SelectItem value="Oferta" className="font-semibold">Oferta</SelectItem>
+                        <SelectItem value="Doação" className="font-semibold">Doação</SelectItem>
+                        <SelectItem value="Evento" className="font-semibold">Evento</SelectItem>
+                        <SelectItem value="Outros" className="font-semibold">Outros</SelectItem>
                       </>
                     ) : (
                       <>
-                        <SelectItem value="Aluguel" className="font-bold text-destructive">Aluguel</SelectItem>
-                        <SelectItem value="Luz/Água" className="font-bold">Luz/Água</SelectItem>
-                        <SelectItem value="Manutenção" className="font-bold">Manutenção</SelectItem>
-                        <SelectItem value="Missões" className="font-bold">Missões</SelectItem>
-                        <SelectItem value="Salários" className="font-bold">Salários</SelectItem>
-                        <SelectItem value="Outros" className="font-bold">Outros</SelectItem>
+                        <SelectItem value="Aluguel" className="font-semibold text-destructive">Aluguel</SelectItem>
+                        <SelectItem value="Luz/Água" className="font-semibold">Luz/Água</SelectItem>
+                        <SelectItem value="Manutenção" className="font-semibold">Manutenção</SelectItem>
+                        <SelectItem value="Missões" className="font-semibold">Missões</SelectItem>
+                        <SelectItem value="Salários" className="font-semibold">Salários</SelectItem>
+                        <SelectItem value="Outros" className="font-semibold">Outros</SelectItem>
                       </>
                     )}
                   </SelectContent>

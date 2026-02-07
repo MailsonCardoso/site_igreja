@@ -304,7 +304,7 @@ export default function Configuracoes() {
 
               <form onSubmit={onSaveSettings} className="grid gap-8 sm:grid-cols-2">
                 <div className="space-y-3">
-                  <Label htmlFor="nome" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">Nome da Igreja</Label>
+                  <Label htmlFor="nome" className="text-[10px] uppercase font-semibold tracking-wider text-primary ml-1">Nome da Igreja</Label>
                   <Input
                     id="nome"
                     value={settingsForm.nome}
@@ -315,7 +315,7 @@ export default function Configuracoes() {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="cnpj" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">CNPJ</Label>
+                  <Label htmlFor="cnpj" className="text-[10px] uppercase font-semibold tracking-wider text-primary ml-1">CNPJ</Label>
                   <Input
                     id="cnpj"
                     value={settingsForm.cnpj}
@@ -326,7 +326,7 @@ export default function Configuracoes() {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="endereco" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">Endereço</Label>
+                  <Label htmlFor="endereco" className="text-[10px] uppercase font-semibold tracking-wider text-primary ml-1">Endereço</Label>
                   <Input
                     id="endereco"
                     value={settingsForm.endereco}
@@ -337,7 +337,7 @@ export default function Configuracoes() {
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="cidade" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">Cidade / Estado</Label>
+                  <Label htmlFor="cidade" className="text-[10px] uppercase font-semibold tracking-wider text-primary ml-1">Cidade / Estado</Label>
                   <Input
                     id="cidade"
                     value={settingsForm.cidade}
@@ -566,7 +566,7 @@ export default function Configuracoes() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Papel / Função</Label>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Papel / Função</Label>
                   <Select
                     onValueChange={(v) => {
                       setUserFormData({ ...userFormData, role: v, memberId: "", name: "", email: "", password: "" });
@@ -587,7 +587,7 @@ export default function Configuracoes() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Status</Label>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Status</Label>
                   <Select
                     onValueChange={(v) => setUserFormData({ ...userFormData, status: v })}
                     value={userFormData.status}
@@ -609,7 +609,7 @@ export default function Configuracoes() {
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-2"
                 >
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-primary ml-1">Selecionar Membro ({userFormData.role})</Label>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-primary ml-1">Selecionar Membro ({userFormData.role})</Label>
                   <Select
                     onValueChange={handleMemberSelect}
                     value={userFormData.memberId}
@@ -630,7 +630,7 @@ export default function Configuracoes() {
               )}
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">
+                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
                   Nome Completo
                   {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-primary/10 text-primary border-none">VINCULADO</Badge>}
                 </Label>
@@ -648,9 +648,9 @@ export default function Configuracoes() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">
+                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
                   E-mail de Login
-                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-bold">AUTOMÁTICO</Badge>}
+                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-semibold">AUTOMÁTICO</Badge>}
                 </Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -667,9 +667,9 @@ export default function Configuracoes() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">
+                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
                   Senha Provisória (CPF)
-                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-bold">GERADA PELO CPF</Badge>}
+                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-semibold">GERADA PELO CPF</Badge>}
                 </Label>
                 <div className="relative">
                   <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -692,7 +692,7 @@ export default function Configuracoes() {
               </Button>
               <Button
                 type="submit"
-                className="flex-1 font-black h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20 transition-all active:scale-95"
+                className="flex-1 font-semibold h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20 transition-all active:scale-95"
                 disabled={createUserMutation.isPending}
               >
                 {createUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "CONCEDER ACESSO"}
@@ -720,7 +720,7 @@ export default function Configuracoes() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Papel / Função</Label>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Papel / Função</Label>
                   <Select
                     onValueChange={(v) => setEditFormData({ ...editFormData, role: v })}
                     value={editFormData.role}
@@ -738,7 +738,7 @@ export default function Configuracoes() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Status</Label>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Status</Label>
                   <Select
                     onValueChange={(v) => setEditFormData({ ...editFormData, status: v })}
                     value={editFormData.status}
@@ -755,7 +755,7 @@ export default function Configuracoes() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">Nome Completo</Label>
+                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Nome Completo</Label>
                 <div className="relative">
                   <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -768,7 +768,7 @@ export default function Configuracoes() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-black tracking-widest text-muted-foreground ml-1">E-mail de Login</Label>
+                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">E-mail de Login</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -790,7 +790,7 @@ export default function Configuracoes() {
               </Button>
               <Button
                 type="submit"
-                className="flex-1 font-black h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20"
+                className="flex-1 font-semibold h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20"
                 disabled={updateUserMutation.isPending}
               >
                 {updateUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "SALVAR ALTERAÇÕES"}
@@ -808,8 +808,8 @@ export default function Configuracoes() {
               <Trash2 className="h-10 w-10" />
             </div>
             <div>
-              <DialogTitle className="text-2xl font-black text-foreground">Remover Acesso?</DialogTitle>
-              <DialogDescription className="font-bold text-destructive mt-1">
+              <DialogTitle className="text-2xl font-bold text-foreground">Remover Acesso?</DialogTitle>
+              <DialogDescription className="font-semibold text-destructive mt-1">
                 Esta ação é irreversível e o usuário perderá acesso imediato ao sistema.
               </DialogDescription>
             </div>
@@ -817,16 +817,16 @@ export default function Configuracoes() {
 
           <div className="p-8 space-y-6 bg-card text-center">
             <p className="text-foreground font-medium">
-              Tem certeza que deseja excluir o acesso de <span className="font-black text-primary">{userToDelete?.name}</span>?
+              Tem certeza que deseja excluir o acesso de <span className="font-semibold text-primary">{userToDelete?.name}</span>?
             </p>
 
             <DialogFooter className="flex-col sm:flex-row gap-3 pt-2">
-              <Button type="button" variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="w-full font-bold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
+              <Button type="button" variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="w-full font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
                 MANTER ACESSO
               </Button>
               <Button
                 type="button"
-                className="w-full font-black h-12 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xl shadow-destructive/20"
+                className="w-full font-semibold h-12 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xl shadow-destructive/20"
                 onClick={() => deleteUserMutation.mutate(userToDelete?.id)}
                 disabled={deleteUserMutation.isPending}
               >

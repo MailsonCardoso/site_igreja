@@ -342,10 +342,10 @@ export default function Secretaria() {
                     <User className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <DialogTitle className="text-xl font-black text-foreground">
+                    <DialogTitle className="text-xl font-semibold text-foreground">
                       {isEditMode ? "Editar Membro" : "Adicionar Novo Membro"}
                     </DialogTitle>
-                    <DialogDescription className="text-muted-foreground">
+                    <DialogDescription className="text-muted-foreground text-sm">
                       {isEditMode ? "Atualize os dados do membro da igreja." : "Preencha os dados do novo membro da igreja em etapas."}
                     </DialogDescription>
                   </div>
@@ -635,10 +635,10 @@ export default function Secretaria() {
             <Table>
               <TableHeader>
                 <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                  <TableHead className="font-semibold">Nome</TableHead>
-                  <TableHead className="font-semibold">Cargo/Função</TableHead>
-                  <TableHead className="font-semibold hidden md:table-cell">WhatsApp</TableHead>
-                  <TableHead className="font-semibold">Situação</TableHead>
+                  <TableHead className="font-semibold uppercase text-[10px] tracking-wider">Nome</TableHead>
+                  <TableHead className="font-semibold uppercase text-[10px] tracking-wider">Cargo/Função</TableHead>
+                  <TableHead className="font-semibold uppercase text-[10px] tracking-wider hidden md:table-cell">WhatsApp</TableHead>
+                  <TableHead className="font-semibold uppercase text-[10px] tracking-wider">Situação</TableHead>
                   <TableHead className="font-semibold w-12"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -730,18 +730,18 @@ export default function Secretaria() {
           <DialogHeader className="p-8 pb-0 bg-primary/5">
             <div className="flex items-center gap-6">
               <Avatar className="h-16 w-16 border-4 border-background shadow-sm">
-                <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold">
+                <AvatarFallback className="bg-primary/10 text-primary text-2xl font-semibold">
                   {(selectedMember?.name || "?").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <DialogTitle className="text-2xl font-bold">{selectedMember?.name}</DialogTitle>
+                <DialogTitle className="text-2xl font-bold text-foreground">{selectedMember?.name}</DialogTitle>
                 <DialogDescription className="flex items-center gap-3 mt-1">
-                  <Badge className={statusStyles[selectedMember?.status] || "bg-muted text-muted-foreground"}>
+                  <Badge className={`${statusStyles[selectedMember?.status] || "bg-muted text-muted-foreground"} font-semibold`}>
                     {selectedMember?.status || "visitante"}
                   </Badge>
                   <span className="text-muted-foreground">•</span>
-                  <span className="font-medium text-foreground">{selectedMember?.role || "Membro"}</span>
+                  <span className="font-semibold text-foreground/70">{selectedMember?.role || "Membro"}</span>
                 </DialogDescription>
               </div>
             </div>
@@ -752,26 +752,26 @@ export default function Secretaria() {
               <section>
                 <div className="flex items-center gap-2 mb-6 border-b pb-2">
                   <User className="h-5 w-5 text-primary" />
-                  <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Informações Pessoais</h4>
+                  <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Informações Pessoais</h4>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 bg-secondary/5 p-6 rounded-2xl border border-secondary/20">
                   <div className="space-y-1">
-                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">CPF</p>
-                    <p className="text-base font-bold text-foreground">{selectedMember?.cpf || "Não informado"}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">CPF</p>
+                    <p className="text-base font-semibold text-foreground">{selectedMember?.cpf || "Não informado"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Nascimento</p>
-                    <p className="text-base font-bold text-foreground">
+                    <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Nascimento</p>
+                    <p className="text-base font-semibold text-foreground">
                       {selectedMember?.birth_date ? new Date(selectedMember.birth_date).toLocaleDateString('pt-BR') : "Não informada"}
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Gênero</p>
-                    <p className="text-base font-bold text-foreground capitalize">{selectedMember?.sex || "Não informado"}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Gênero</p>
+                    <p className="text-base font-semibold text-foreground capitalize">{selectedMember?.sex || "Não informado"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Estado Civil</p>
-                    <p className="text-base font-bold text-foreground capitalize">{selectedMember?.marital_status || "Não informado"}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Estado Civil</p>
+                    <p className="text-base font-semibold text-foreground capitalize">{selectedMember?.marital_status || "Não informado"}</p>
                   </div>
                 </div>
               </section>
@@ -781,16 +781,16 @@ export default function Secretaria() {
                 <section>
                   <div className="flex items-center gap-2 mb-6 border-b pb-2">
                     <Phone className="h-5 w-5 text-primary" />
-                    <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Contato</h4>
+                    <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Contato</h4>
                   </div>
                   <div className="grid grid-cols-1 gap-6 bg-secondary/5 p-6 rounded-2xl border border-secondary/20 min-h-[140px]">
                     <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">WhatsApp / Telefone</p>
-                      <p className="text-base font-bold text-foreground">{selectedMember?.phone || "Não informado"}</p>
+                      <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">WhatsApp / Telefone</p>
+                      <p className="text-base font-semibold text-foreground">{selectedMember?.phone || "Não informado"}</p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">E-mail</p>
-                      <p className="text-base font-bold text-foreground truncate" title={selectedMember?.email}>{selectedMember?.email || "Não informado"}</p>
+                      <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">E-mail</p>
+                      <p className="text-base font-semibold text-foreground truncate" title={selectedMember?.email}>{selectedMember?.email || "Não informado"}</p>
                     </div>
                   </div>
                 </section>
@@ -799,16 +799,16 @@ export default function Secretaria() {
                 <section>
                   <div className="flex items-center gap-2 mb-6 border-b pb-2">
                     <Church className="h-5 w-5 text-primary" />
-                    <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Dados Eclesiásticos</h4>
+                    <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Dados Eclesiásticos</h4>
                   </div>
                   <div className="grid grid-cols-1 gap-6 bg-secondary/5 p-6 rounded-2xl border border-secondary/20 min-h-[140px]">
                     <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Cargo / Função</p>
-                      <p className="text-base font-bold text-foreground">{selectedMember?.role || "Membro"}</p>
+                      <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Cargo / Função</p>
+                      <p className="text-base font-semibold text-foreground">{selectedMember?.role || "Membro"}</p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">Igreja de Origem</p>
-                      <p className="text-base font-bold text-foreground">{selectedMember?.origin_church || "Esta Igreja"}</p>
+                      <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Igreja de Origem</p>
+                      <p className="text-base font-semibold text-foreground">{selectedMember?.origin_church || "Esta Igreja"}</p>
                     </div>
                   </div>
                 </section>
@@ -818,52 +818,52 @@ export default function Secretaria() {
               <section className="pb-8">
                 <div className="flex items-center gap-2 mb-6 border-b pb-2">
                   <Users className="h-5 w-5 text-primary" />
-                  <h4 className="font-bold text-foreground uppercase text-xs tracking-widest">Família e Filiação</h4>
+                  <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Família e Filiação</h4>
                 </div>
 
                 <div className="space-y-6">
                   {/* Parents and Spouse */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-primary/5 p-6 rounded-2xl border border-primary/10">
                     <div className="space-y-2">
-                      <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Pai</p>
-                      <p className="text-base font-bold text-foreground leading-tight">
+                      <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">Pai</p>
+                      <p className="text-base font-semibold text-foreground leading-tight">
                         {selectedMember?.father?.name || selectedMember?.father_name || "Não informado"}
                       </p>
-                      {selectedMember?.father?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10">Membro</Badge>}
+                      {selectedMember?.father?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
                     </div>
                     <div className="space-y-2">
-                      <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Mãe</p>
-                      <p className="text-base font-bold text-foreground leading-tight">
+                      <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">Mãe</p>
+                      <p className="text-base font-semibold text-foreground leading-tight">
                         {selectedMember?.mother?.name || selectedMember?.mother_name || "Não informada"}
                       </p>
-                      {selectedMember?.mother?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10">Membro</Badge>}
+                      {selectedMember?.mother?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
                     </div>
                     <div className="space-y-2">
-                      <p className="text-[10px] text-primary uppercase font-black tracking-tighter">Cônjuge</p>
-                      <p className="text-base font-bold text-foreground leading-tight">
+                      <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">Cônjuge</p>
+                      <p className="text-base font-semibold text-foreground leading-tight">
                         {selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Nome não vinculado" : "N/A")}
                       </p>
-                      {selectedMember?.spouse?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10">Membro</Badge>}
+                      {selectedMember?.spouse?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
                     </div>
                   </div>
 
                   {/* Children (Dynamic Discovery) */}
                   {members.filter((m: any) => m.father_id === selectedMember?.id || m.mother_id === selectedMember?.id).length > 0 && (
                     <div className="bg-success/5 p-6 rounded-2xl border border-success/20">
-                      <p className="text-[10px] text-success uppercase font-black tracking-tighter mb-4">Filhos (Membros Cadastrados)</p>
+                      <p className="text-[9px] text-success uppercase font-semibold tracking-wider mb-4">Filhos (Membros Cadastrados)</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {members
                           .filter((m: any) => m.father_id === selectedMember?.id || m.mother_id === selectedMember?.id)
                           .map((filho: any) => (
                             <div key={filho.id} className="flex items-center gap-3 p-2 rounded-lg bg-background border border-border/50">
                               <Avatar className="h-8 w-8">
-                                <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-bold">
+                                <AvatarFallback className="text-[10px] bg-secondary text-secondary-foreground font-semibold">
                                   {(filho.name || "?").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
                               <div className="flex flex-col">
-                                <span className="text-sm font-bold text-foreground">{filho.name}</span>
-                                <span className="text-[10px] text-muted-foreground uppercase">{filho.role || "Membro"}</span>
+                                <span className="text-sm font-semibold text-foreground">{filho.name}</span>
+                                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">{filho.role || "Membro"}</span>
                               </div>
                             </div>
                           ))}

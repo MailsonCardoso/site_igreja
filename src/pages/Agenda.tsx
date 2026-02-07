@@ -373,7 +373,7 @@ export default function Agenda() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Data</Label>
+                    <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Data</Label>
                     <Input
                       type="date"
                       {...form.register("start_date", { required: true })}
@@ -381,7 +381,7 @@ export default function Agenda() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Horário</Label>
+                    <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Horário</Label>
                     <Input
                       type="time"
                       {...form.register("horario")}
@@ -391,7 +391,7 @@ export default function Agenda() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Local</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Local</Label>
                   <Input
                     {...form.register("location")}
                     placeholder="Ex: Templo Principal"
@@ -411,7 +411,7 @@ export default function Agenda() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Cor de Identificação</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Cor de Identificação</Label>
                   <div className="flex gap-2.5">
                     {["#ecb318", "#ef4444", "#3b82f6", "#22c55e", "#a855f7"].map(c => (
                       <button
@@ -490,7 +490,7 @@ export default function Agenda() {
                     <Clock className="h-4 w-4 text-primary" /> {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "HH:mm")}h
                   </span>
                   {selectedEvent?.location && (
-                    <span className="flex items-center gap-1.5 text-muted-foreground font-bold text-sm">
+                    <span className="flex items-center gap-1.5 text-muted-foreground font-semibold text-sm">
                       <MapPin className="h-4 w-4 text-primary" /> {selectedEvent.location}
                     </span>
                   )}
@@ -499,7 +499,7 @@ export default function Agenda() {
 
               {selectedEvent?.description && (
                 <div className="bg-secondary/5 p-6 rounded-3xl border border-secondary/10">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-3">Sobre o Evento</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-3">Sobre o Evento</span>
                   <p className="text-foreground font-medium leading-relaxed whitespace-pre-wrap">
                     {selectedEvent.description}
                   </p>

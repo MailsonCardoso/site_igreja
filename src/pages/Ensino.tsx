@@ -403,7 +403,7 @@ export default function Ensino() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Descrição</Label>
+                <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Descrição</Label>
                 <Textarea
                   {...form.register("description")}
                   placeholder="Breve descrição sobre o curso..."
@@ -492,7 +492,7 @@ export default function Ensino() {
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent className="rounded-[2rem]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-black">Excluir Curso</AlertDialogTitle>
+            <AlertDialogTitle className="text-2xl font-bold">Excluir Curso</AlertDialogTitle>
             <AlertDialogDescription>
               Tem certeza que deseja excluir o curso <strong>{selectedCourse?.name}</strong>?
               Esta ação removerá todas as aulas e registros de frequência associados.
@@ -519,8 +519,8 @@ export default function Ensino() {
                 <BookOpen className="h-7 w-7 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-xl font-black text-foreground">
-                  Detalhes do Curso
+                <DialogTitle className="text-xl font-bold text-foreground">
+                  {selectedCourse?.name}
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground font-medium text-xs">
                   Visualize as informações completas do curso.
@@ -537,27 +537,27 @@ export default function Ensino() {
 
             {selectedCourse?.description && (
               <div className="bg-secondary/5 p-5 rounded-2xl border border-secondary/10">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-2">Descrição</span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-2">Descrição</span>
                 <p className="text-foreground font-medium leading-relaxed">{selectedCourse.description}</p>
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-secondary/5 p-4 rounded-xl border border-secondary/10">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Professor</span>
-                <p className="text-foreground font-bold">{selectedCourse?.teacher || "Não definido"}</p>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-1">Professor</span>
+                <p className="text-sm font-semibold text-foreground capitalize truncate">{selectedCourse?.teacher || "N/A"}</p>
               </div>
               <div className="bg-secondary/5 p-4 rounded-xl border border-secondary/10">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Total de Aulas</span>
-                <p className="text-foreground font-bold">{selectedCourse?.total_classes || 0} aulas</p>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-1">Total de Aulas</span>
+                <p className="text-sm font-semibold text-foreground">{selectedCourse?.total_classes || 0}</p>
               </div>
               <div className="bg-secondary/5 p-4 rounded-xl border border-secondary/10">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Horário</span>
-                <p className="text-foreground font-bold">{selectedCourse?.schedule || "Não definido"}</p>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-1">Horário</span>
+                <p className="text-sm font-semibold text-foreground">{selectedCourse?.schedule || "N/A"}</p>
               </div>
               <div className="bg-secondary/5 p-4 rounded-xl border border-secondary/10">
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-1">Local</span>
-                <p className="text-foreground font-bold">{selectedCourse?.location || "Não definido"}</p>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-1">Local</span>
+                <p className="text-sm font-semibold text-foreground truncate">{selectedCourse?.location || "N/A"}</p>
               </div>
             </div>
 
@@ -615,7 +615,7 @@ export default function Ensino() {
               {/* Aba Aulas */}
               <TabsContent value="aulas" className="p-6 space-y-6">
                 <div className="bg-secondary/5 p-5 rounded-2xl border border-secondary/10">
-                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground mb-4">Nova Aula</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Nova Aula</h3>
                   <form onSubmit={lessonForm.handleSubmit(handleCreateLesson)} className="space-y-4">
                     <div className="grid grid-cols-3 gap-4">
                       <div className="space-y-2">
@@ -665,7 +665,7 @@ export default function Ensino() {
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground">Aulas Cadastradas</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">Aulas Cadastradas</h3>
                   {lessons.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                       <BookOpen className="h-12 w-12 mx-auto mb-3 opacity-20" />
@@ -715,7 +715,7 @@ export default function Ensino() {
               {/* Aba Alunos */}
               <TabsContent value="alunos" className="p-6 space-y-6">
                 <div className="bg-secondary/5 p-5 rounded-2xl border border-secondary/10">
-                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground mb-4">Matricular Aluno</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Matricular Aluno</h3>
                   {availableMembers.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-4">
                       Todos os membros já estão matriculados neste curso
@@ -743,7 +743,7 @@ export default function Ensino() {
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
                     Alunos Matriculados ({selectedCourse?.students?.length || 0})
                   </h3>
                   {!selectedCourse?.students || selectedCourse.students.length === 0 ? (
@@ -759,7 +759,7 @@ export default function Ensino() {
                       >
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                            <span className="text-sm font-black text-primary">
+                            <span className="text-sm font-semibold text-primary">
                               {student.name?.charAt(0).toUpperCase()}
                             </span>
                           </div>
@@ -789,25 +789,25 @@ export default function Ensino() {
               <TabsContent value="relatorios" className="p-6 space-y-6">
                 <div className="grid grid-cols-3 gap-4">
                   <div className="bg-primary/5 p-5 rounded-2xl border border-primary/10">
-                    <p className="text-xs font-black uppercase tracking-wider text-muted-foreground mb-2">Total de Aulas</p>
-                    <p className="text-3xl font-black text-foreground">{selectedCourse?.total_classes || 0}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Total de Aulas</p>
+                    <p className="text-3xl font-bold text-foreground">{selectedCourse?.total_classes || 0}</p>
                   </div>
                   <div className="bg-success/5 p-5 rounded-2xl border border-success/10">
-                    <p className="text-xs font-black uppercase tracking-wider text-muted-foreground mb-2">Concluídas</p>
-                    <p className="text-3xl font-black text-success">{selectedCourse?.completed_classes || 0}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Concluídas</p>
+                    <p className="text-3xl font-bold text-success">{selectedCourse?.completed_classes || 0}</p>
                   </div>
                   <div className="bg-blue-500/5 p-5 rounded-2xl border border-blue-500/10">
-                    <p className="text-xs font-black uppercase tracking-wider text-muted-foreground mb-2">Alunos</p>
-                    <p className="text-3xl font-black text-blue-600">{selectedCourse?.students?.length || 0}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Alunos</p>
+                    <p className="text-3xl font-bold text-blue-600">{selectedCourse?.students?.length || 0}</p>
                   </div>
                 </div>
 
                 <div className="bg-secondary/5 p-6 rounded-2xl border border-secondary/10">
-                  <h3 className="text-sm font-black uppercase tracking-wider text-foreground mb-4">Progresso do Curso</h3>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Progresso do Curso</h3>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-bold text-muted-foreground">Percentual Concluído</span>
-                      <span className="text-lg font-black text-primary">{selectedCourse ? Math.round(calculateProgress(selectedCourse)) : 0}%</span>
+                      <span className="text-lg font-bold text-primary">{selectedCourse ? Math.round(calculateProgress(selectedCourse)) : 0}%</span>
                     </div>
                     <Progress value={selectedCourse ? calculateProgress(selectedCourse) : 0} className="h-3" />
                   </div>
