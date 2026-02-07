@@ -246,7 +246,7 @@ export default function SeriesPage() {
 
                 {/* Modal Editor */}
                 <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[550px] rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                    <DialogContent className="sm:max-w-[850px] rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
                         <div className="bg-primary/5 p-8 border-b relative">
                             <div className="flex items-center gap-4">
                                 <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
