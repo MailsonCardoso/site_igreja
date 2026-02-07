@@ -309,7 +309,7 @@ export default function Altar() {
 
                 {/* Editor Modal */}
                 <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[750px] max-h-[90vh] overflow-y-auto rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                    <DialogContent className="sm:max-w-[750px] max-h-[90vh] overflow-y-auto rounded-[2rem] border-none bg-background shadow-2xl p-0">
                         <div className="bg-primary/5 p-8 border-b relative">
                             <div className="flex items-center gap-4">
                                 <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
@@ -405,7 +405,7 @@ export default function Altar() {
                                         value={formData.content.intro}
                                         onChange={(e) => setFormData({ ...formData, content: { ...formData.content, intro: e.target.value } })}
                                         placeholder="Como você pretende capturar a atenção da igreja?"
-                                        className="min-h-[120px] rounded-xl border-input bg-background p-4 leading-relaxed focus:border-primary/50"
+                                        className="min-h-[120px] w-full rounded-xl border-input bg-background p-4 leading-relaxed focus:border-primary/50 resize-none"
                                     />
                                 </div>
 
@@ -421,7 +421,7 @@ export default function Altar() {
                                                     value={topic}
                                                     onChange={(e) => handleTopicChange(index, e.target.value)}
                                                     placeholder={`Digite o ponto central do tópico ${index + 1}`}
-                                                    className="h-10 rounded-xl border-input bg-background font-bold px-4 focus:border-primary/50"
+                                                    className="w-full h-10 rounded-xl border-input bg-background font-bold px-4 focus:border-primary/50"
                                                 />
                                             </div>
                                         ))}
@@ -434,7 +434,7 @@ export default function Altar() {
                                         value={formData.content.conclusion}
                                         onChange={(e) => setFormData({ ...formData, content: { ...formData.content, conclusion: e.target.value } })}
                                         placeholder="Qual é a aplicação prática para a vida do ouvinte?"
-                                        className="min-h-[100px] rounded-xl border-input bg-background p-4 font-medium italic leading-relaxed focus:border-primary/50"
+                                        className="min-h-[100px] w-full rounded-xl border-input bg-background p-4 font-medium italic leading-relaxed focus:border-primary/50 resize-none"
                                     />
                                 </div>
                             </div>
