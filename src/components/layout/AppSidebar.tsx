@@ -61,8 +61,13 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
   const filteredNavigation = navigationItems.filter(item => {
     const normalizedRole = userRole.toLowerCase();
 
-    if (normalizedRole === "administrador" || normalizedRole === "pastor") {
-      return true;
+    if (normalizedRole === "administrador") {
+      return true; // Admin vê tudo
+    }
+
+    if (normalizedRole === "pastor") {
+      // Pastor vê apenas: Dashboard, Agenda, Pastoral, Séries, Insights, Células, Ensino
+      return ["Dashboard", "Agenda", "Pastoral", "Séries", "Insights", "Células", "Ensino"].includes(item.name);
     }
 
     if (normalizedRole === "secretaria" || normalizedRole === "secretária" || normalizedRole === "secretário") {

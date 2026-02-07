@@ -45,6 +45,19 @@ export default function Celulas() {
   const [selectedCell, setSelectedCell] = useState<any>(null);
   const queryClient = useQueryClient();
 
+  // Verificar role do usuário
+  let userRole = "Administrador";
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      const user = JSON.parse(storedUser);
+      userRole = user?.role || "Administrador";
+    }
+  } catch (e) {
+    console.error("Error parsing user", e);
+  }
+  const isReadOnly = userRole.toLowerCase() === "pastor";
+
   // Fetch Cells
   const { data: celulas = [], isLoading } = useQuery({
     queryKey: ["cells"],
@@ -149,13 +162,15 @@ export default function Celulas() {
           <h2 className="text-xl font-semibold text-foreground">Gestão de Pequenos Grupos</h2>
           <p className="text-muted-foreground">Acompanhe a lotação e liderança de cada célula</p>
         </div>
-        <Button
-          onClick={() => setIsDialogOpen(true)}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 h-11 rounded-xl transition-all active:scale-95 flex items-center gap-2"
-        >
-          <Plus className="h-5 w-5" />
-          <span className="font-semibold">Nova Célula</span>
-        </Button>
+        {!isReadOnly && (
+          <Button
+            onClick={() => setIsDialogOpen(true)}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 h-11 rounded-xl transition-all active:scale-95 flex items-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            <span className="font-semibold">Nova Célula</span>
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
@@ -210,22 +225,26 @@ export default function Celulas() {
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(celula)}
-                      className="h-9 w-9 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(celula)}
-                      className="h-9 w-9 rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-200"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {!isReadOnly && (
+                      <>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(celula)}
+                          className="h-9 w-9 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(celula)}
+                          className="h-9 w-9 rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-200"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
 

@@ -40,6 +40,19 @@ export default function Agenda() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
+  // Verificar role do usuário
+  let userRole = "Administrador";
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      const user = JSON.parse(storedUser);
+      userRole = user?.role || "Administrador";
+    }
+  } catch (e) {
+    console.error("Error parsing user", e);
+  }
+  const isReadOnly = userRole.toLowerCase() === "pastor";
+
   const queryClient = useQueryClient();
   const form = useForm({
     defaultValues: {
@@ -146,24 +159,26 @@ export default function Agenda() {
           <h2 className="text-xl font-semibold text-foreground font-display">Agenda da Igreja</h2>
           <p className="text-muted-foreground">Gerencie cultos, reuniões e eventos especiais</p>
         </div>
-        <Button
-          onClick={() => {
-            setIsEditMode(false);
-            reset({
-              title: "",
-              description: "",
-              location: "",
-              start_date: date ? format(date, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
-              horario: "19:30",
-              color: "#ecb318"
-            });
-            setIsDialogOpen(true);
-          }}
-          className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 h-11 rounded-xl transition-all active:scale-95 flex items-center gap-2"
-        >
-          <Plus className="h-5 w-5" />
-          <span className="font-semibold">Novo Evento</span>
-        </Button>
+        {!isReadOnly && (
+          <Button
+            onClick={() => {
+              setIsEditMode(false);
+              reset({
+                title: "",
+                description: "",
+                location: "",
+                start_date: date ? format(date, "yyyy-MM-dd") : format(new Date(), "yyyy-MM-dd"),
+                horario: "19:30",
+                color: "#ecb318"
+              });
+              setIsDialogOpen(true);
+            }}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 h-11 rounded-xl transition-all active:scale-95 flex items-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            <span className="font-semibold">Novo Evento</span>
+          </Button>
+        )}
       </div>
 
       <div className="grid gap-8 lg:grid-cols-12">
@@ -256,12 +271,16 @@ export default function Agenda() {
                       <Button variant="ghost" size="icon" onClick={() => handleView(evento)} className="rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200">
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(evento)} className="rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200">
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleDelete(evento)} className="rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-200">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      {!isReadOnly && (
+                        <>
+                          <Button variant="ghost" size="icon" onClick={() => handleEdit(evento)} className="rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200">
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => handleDelete(evento)} className="rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-200">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 ))
