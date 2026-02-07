@@ -17,16 +17,16 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { mockSermons } from "./Altar"; // Importando dados mockados
+import { PastoralStore, Sermon } from "@/data/pastoral-store";
 
 export default function Pulpito() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [sermon, setSermon] = useState<any>(null);
+    const [sermon, setSermon] = useState<Sermon | null>(null);
 
     // Controles de Púlpito
     const [fontSize, setFontSize] = useState(24);
-    const [isDark, setIsDark] = useState(true); // Padrão escuro para púlpito (menos cansaço visual)
+    const [isDark, setIsDark] = useState(true);
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     // Cronômetro
@@ -34,8 +34,9 @@ export default function Pulpito() {
     const [isRunning, setIsRunning] = useState(false);
 
     useEffect(() => {
-        // Carregar sermão (simulado)
-        const foundSermon = mockSermons.find(s => s.id === Number(id));
+        // Carregar sermão do store real
+        const sermons = PastoralStore.getSermons();
+        const foundSermon = sermons.find(s => s.id === Number(id));
         if (foundSermon) {
             setSermon(foundSermon);
         }

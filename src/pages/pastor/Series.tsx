@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Folder, Plus, BookOpen, MoreVertical, Calendar, Trash2, Edit, Save } from "lucide-react";
+import { Folder, Plus, BookOpen, MoreVertical, Calendar, Trash2, Edit, Save, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -33,45 +33,15 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { PastoralStore, Series, Sermon } from "@/data/pastoral-store";
 
-const initialSeries = [
-    {
-        id: 1,
-        title: "Estudos em Romanos",
-        description: "Uma jornada expositiva pela epístola de Paulo.",
-        total: 12,
-        completed: 4,
-        color: "bg-blue-500",
-        coverColor: "from-blue-500/20 to-blue-500/5",
-        startDate: "2024-01-15"
-    },
-    {
-        id: 2,
-        title: "Salmos de Confiança",
-        description: "Encontrando paz em meio às tormentas da vida.",
-        total: 5,
-        completed: 5,
-        color: "bg-green-500",
-        coverColor: "from-green-500/20 to-green-500/5",
-        startDate: "2023-12-01"
-    },
-    {
-        id: 3,
-        title: "Família Cristã",
-        description: "Princípios bíblicos para o lar.",
-        total: 8,
-        completed: 0,
-        color: "bg-amber-500",
-        coverColor: "from-amber-500/20 to-amber-500/5",
-        startDate: "2024-03-10"
-    }
-];
+export default function SeriesPage() {
+    const [series, setSeries] = useState<Series[]>(PastoralStore.getSeries());
+    const [sermons] = useState<Sermon[]>(PastoralStore.getSermons());
 
-export default function Series() {
-    const [series, setSeries] = useState(initialSeries);
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const [currentSerie, setCurrentSerie] = useState<any>(null);
+    const [currentSerie, setCurrentSerie] = useState<Series | null>(null);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -83,7 +53,12 @@ export default function Series() {
         startDate: ""
     });
 
-    const handleOpenEditor = (serie: any = null) => {
+    // Sincronizar com LocalStorage
+    useEffect(() => {
+        PastoralStore.saveSeries(series);
+    }, [series]);
+
+    const handleOpenEditor = (serie: Series | null = null) => {
         if (serie) {
             setCurrentSerie(serie);
             setFormData({
@@ -117,7 +92,6 @@ export default function Series() {
         }
 
         if (currentSerie) {
-            // Atualizar
             setSeries(series.map(s =>
                 s.id === currentSerie.id
                     ? { ...currentSerie, ...formData }
@@ -125,8 +99,7 @@ export default function Series() {
             ));
             toast.success("Série atualizada com sucesso!");
         } else {
-            // Criar
-            const newSerie = {
+            const newSerie: Series = {
                 id: Math.max(...series.map(s => s.id), 0) + 1,
                 ...formData
             };
@@ -137,16 +110,22 @@ export default function Series() {
         setIsEditorOpen(false);
     };
 
-    const handleDelete = (serie: any) => {
+    const handleDelete = (serie: Series) => {
         setCurrentSerie(serie);
         setIsDeleteOpen(true);
     };
 
     const confirmDelete = () => {
-        setSeries(series.filter(s => s.id !== currentSerie.id));
-        toast.success("Série excluída com sucesso!");
-        setIsDeleteOpen(false);
-        setCurrentSerie(null);
+        if (currentSerie) {
+            setSeries(series.filter(s => s.id !== currentSerie.id));
+            toast.success("Série excluída com sucesso!");
+            setIsDeleteOpen(false);
+            setCurrentSerie(null);
+        }
+    };
+
+    const getSeriesSermons = (seriesTitle: string) => {
+        return sermons.filter(s => s.series === seriesTitle);
     };
 
     const colorOptions = [
@@ -173,14 +152,15 @@ export default function Series() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {series.map((serie) => {
-                        const progress = serie.total > 0 ? (serie.completed / serie.total) * 100 : 0;
+                        const linkedSermons = getSeriesSermons(serie.title);
+                        const completedFromSermons = linkedSermons.filter(s => s.status === "Pregado").length;
+                        const progress = serie.total > 0 ? (completedFromSermons / serie.total) * 100 : 0;
 
                         return (
                             <Card key={serie.id} className="group hover:shadow-xl transition-all duration-300 rounded-2xl border-border/50 overflow-hidden bg-card hover:-translate-y-1">
                                 <div className={`h-32 w-full bg-gradient-to-br ${serie.coverColor} flex items-center justify-center relative`}>
                                     <BookOpen className={`h-12 w-12 ${serie.color.replace('bg-', 'text-')}`} />
 
-                                    {/* Dropdown de Ações */}
                                     <div className="absolute top-3 right-3">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -206,19 +186,41 @@ export default function Series() {
                                             <CardTitle className="text-xl font-bold">{serie.title}</CardTitle>
                                             <CardDescription className="line-clamp-2 mt-1">{serie.description}</CardDescription>
                                         </div>
-                                        {progress === 100 && (
+                                        {progress >= 100 && serie.total > 0 && (
                                             <Badge className="bg-green-500 hover:bg-green-600 border-none ml-2">Concluída</Badge>
                                         )}
                                     </div>
                                 </CardHeader>
 
                                 <CardContent>
-                                    <div className="space-y-2">
-                                        <div className="flex justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                            <span>Progresso</span>
-                                            <span>{serie.completed} de {serie.total} Pregadas</span>
+                                    <div className="space-y-4">
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                <span>Progresso</span>
+                                                <span>{completedFromSermons} de {serie.total} Pregadas</span>
+                                            </div>
+                                            <Progress value={progress} className="h-2" />
                                         </div>
-                                        <Progress value={progress} className="h-2" />
+
+                                        {linkedSermons.length > 0 && (
+                                            <div className="pt-2">
+                                                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-2">
+                                                    <List className="h-3 w-3" /> Sermões Vinculados
+                                                </div>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {linkedSermons.slice(0, 3).map(s => (
+                                                        <Badge key={s.id} variant="secondary" className="text-[9px] px-1.5 py-0 h-5 max-w-[100px] truncate">
+                                                            {s.title}
+                                                        </Badge>
+                                                    ))}
+                                                    {linkedSermons.length > 3 && (
+                                                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-5">
+                                                            +{linkedSermons.length - 3}
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </CardContent>
 
@@ -234,7 +236,6 @@ export default function Series() {
                         );
                     })}
 
-                    {/* Card Nova Série Placeholder */}
                     <button onClick={() => handleOpenEditor()} className="flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-muted bg-muted/5 hover:bg-muted/10 transition-all min-h-[300px] text-muted-foreground hover:text-foreground group">
                         <div className="h-16 w-16 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                             <Plus className="h-8 w-8" />
@@ -276,7 +277,7 @@ export default function Series() {
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label>Total de Mensagens</Label>
+                                    <Label>Total de Mensagens Planejadas</Label>
                                     <Input
                                         type="number"
                                         min="1"
@@ -284,15 +285,11 @@ export default function Series() {
                                         onChange={(e) => setFormData({ ...formData, total: parseInt(e.target.value) || 1 })}
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>Já Pregadas</Label>
-                                    <Input
-                                        type="number"
-                                        min="0"
-                                        max={formData.total}
-                                        value={formData.completed}
-                                        onChange={(e) => setFormData({ ...formData, completed: Math.min(parseInt(e.target.value) || 0, formData.total) })}
-                                    />
+                                <div className="space-y-2 flex flex-col justify-center">
+                                    <Label className="opacity-50">Concluídas (Automático)</Label>
+                                    <div className="text-xl font-bold pt-2">
+                                        {currentSerie ? getSeriesSermons(currentSerie.title).filter(s => s.status === "Pregado").length : 0}
+                                    </div>
                                 </div>
                             </div>
 
@@ -330,7 +327,6 @@ export default function Series() {
                     </DialogContent>
                 </Dialog>
 
-                {/* AlertDialog de Exclusão */}
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                     <AlertDialogContent className="rounded-2xl">
                         <AlertDialogHeader>
