@@ -179,7 +179,7 @@ export default function Financeiro() {
             <Calendar className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h2 className="text-2xl font-black text-foreground">Gestão de Período</h2>
+            <h2 className="text-xl font-semibold text-foreground">Gestão de Período</h2>
             <p className="text-muted-foreground font-medium text-xs">Selecione o mês para visualizar o balanço</p>
           </div>
         </div>
@@ -197,7 +197,7 @@ export default function Financeiro() {
           </Select>
 
           <Select value={selectedYear} onValueChange={setSelectedYear}>
-            <SelectTrigger className="w-[110px] h-11 rounded-xl font-bold bg-card border-secondary/30">
+            <SelectTrigger className="w-[110px] h-11 rounded-xl font-semibold bg-card border-secondary/30">
               <SelectValue placeholder="Ano" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -210,7 +210,7 @@ export default function Financeiro() {
           <Button
             onClick={() => setIsReportOpen(true)}
             variant="outline"
-            className="h-11 rounded-xl border-primary text-primary hover:bg-primary/10 font-bold px-6 flex items-center gap-2"
+            className="h-11 rounded-xl border-primary text-primary hover:bg-primary/10 font-semibold px-6 flex items-center gap-2"
           >
             <FileText className="h-5 w-5" />
             Balancete
@@ -241,8 +241,8 @@ export default function Financeiro() {
                   <ArrowUpRight className="h-7 w-7" />
                 </div>
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">Total Entradas</p>
-                  <p className="text-3xl font-black text-success tabular-nums">{formatCurrency(totalEntradas)}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Total Entradas</p>
+                  <p className="text-2xl font-bold text-success tabular-nums">{formatCurrency(totalEntradas)}</p>
                 </div>
               </div>
             </motion.div>
@@ -261,8 +261,8 @@ export default function Financeiro() {
                   <ArrowDownRight className="h-7 w-7" />
                 </div>
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">Total Saídas</p>
-                  <p className="text-3xl font-black text-destructive tabular-nums">{formatCurrency(totalSaidas)}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Total Saídas</p>
+                  <p className="text-2xl font-bold text-destructive tabular-nums">{formatCurrency(totalSaidas)}</p>
                 </div>
               </div>
             </motion.div>
@@ -281,8 +281,8 @@ export default function Financeiro() {
                   <span className="text-xl font-black">R$</span>
                 </div>
                 <div>
-                  <p className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">Saldo do Período</p>
-                  <p className={`text-3xl font-black tabular-nums ${saldoMensal >= 0 ? 'text-foreground' : 'text-destructive'}`}>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Saldo do Período</p>
+                  <p className={`text-2xl font-bold tabular-nums ${saldoMensal >= 0 ? 'text-foreground' : 'text-destructive'}`}>
                     {formatCurrency(saldoMensal)}
                   </p>
                 </div>
@@ -299,7 +299,7 @@ export default function Financeiro() {
           >
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-8">
               <div>
-                <h2 className="text-2xl font-black text-foreground">Fluxo de Caixa</h2>
+                <h2 className="text-xl font-semibold text-foreground">Fluxo de Caixa</h2>
                 <p className="text-sm text-muted-foreground font-medium">Listagem detalhada das movimentações de {meses.find(m => m.value === selectedMonth)?.label}/{selectedYear}</p>
               </div>
 
@@ -327,11 +327,11 @@ export default function Financeiro() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-secondary/20 hover:bg-secondary/20 border-b-2">
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground text-center w-20">Tipo</TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground">Descrição</TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground">Categoria</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-wider text-muted-foreground text-center w-20">Tipo</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-wider text-muted-foreground">Descrição</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-wider text-muted-foreground">Categoria</TableHead>
                     <TableHead
-                      className="font-black uppercase text-[10px] tracking-widest text-muted-foreground cursor-pointer group w-40"
+                      className="font-semibold uppercase text-[10px] tracking-wider text-muted-foreground cursor-pointer group w-40"
                       onClick={() => toggleSort('date')}
                     >
                       <div className="flex items-center gap-2 group-hover:text-primary transition-colors">
@@ -339,7 +339,7 @@ export default function Financeiro() {
                       </div>
                     </TableHead>
                     <TableHead
-                      className="font-black uppercase text-[10px] tracking-widest text-muted-foreground text-right cursor-pointer group w-44"
+                      className="font-semibold uppercase text-[10px] tracking-wider text-muted-foreground text-right cursor-pointer group w-44"
                       onClick={() => toggleSort('amount')}
                     >
                       <div className="flex items-center justify-end gap-2 group-hover:text-primary transition-colors">
@@ -383,18 +383,18 @@ export default function Financeiro() {
                               </div>
                             )}
                           </TableCell>
-                          <TableCell className="font-bold text-foreground">
+                          <TableCell className="font-medium text-foreground">
                             {transacao.description || transacao.descricao}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="font-bold uppercase text-[9px] tracking-widest bg-card border-secondary/50">
+                            <Badge variant="outline" className="font-semibold uppercase text-[9px] tracking-wider bg-card border-secondary/50">
                               {transacao.category_name || transacao.categoria}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-muted-foreground font-bold text-sm">
                             {format(new Date(dataStr), "dd/MM/yyyy", { locale: ptBR })}
                           </TableCell>
-                          <TableCell className={`text-right font-black tabular-nums text-lg ${tipo === "entrada" ? "text-success" : "text-destructive"}`}>
+                          <TableCell className={`text-right font-semibold tabular-nums text-lg ${tipo === "entrada" ? "text-success" : "text-destructive"}`}>
                             <span className="text-[10px] opacity-50 mr-1">{tipo === "entrada" ? "+" : "-"}</span>
                             {formatCurrency(valor)}
                           </TableCell>
@@ -425,7 +425,7 @@ export default function Financeiro() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handlePrint} className="bg-primary hover:bg-primary/90 rounded-xl font-bold gap-2">
+              <Button onClick={handlePrint} className="bg-primary hover:bg-primary/90 rounded-xl font-semibold gap-2">
                 <Printer className="h-4 w-4" /> Imprimir / PDF
               </Button>
             </div>
@@ -441,9 +441,9 @@ export default function Financeiro() {
               <div id="printable-report" className="p-10 space-y-12 bg-white text-black min-h-full">
                 {/* Cabeçalho da Igreja no Report */}
                 <div className="text-center space-y-2 pb-8 border-b-4 border-primary">
-                  <h1 className="text-4xl font-black uppercase tracking-tighter">IGREJA COMUNIDADE CRISTÃ</h1>
-                  <p className="text-sm font-bold opacity-60">Relatório Consolidado de Transações Financeiras</p>
-                  <p className="text-lg font-black bg-primary/10 py-1 rounded-lg inline-block px-4">
+                  <h1 className="text-3xl font-bold uppercase tracking-tight">IGREJA COMUNIDADE CRISTÃ</h1>
+                  <p className="text-sm font-semibold opacity-60">Relatório Consolidado de Transações Financeiras</p>
+                  <p className="text-lg font-bold bg-primary/10 py-1 rounded-lg inline-block px-4">
                     FECHAMENTO: {meses.find(m => m.value === selectedMonth)?.label.toUpperCase()} / {selectedYear}
                   </p>
                 </div>
@@ -561,7 +561,7 @@ export default function Financeiro() {
               {transactionType === 'entrada' ? <ArrowUpRight className="h-8 w-8" /> : <ArrowDownRight className="h-8 w-8" />}
             </div>
             <div>
-              <DialogTitle className="text-2xl font-black text-foreground">
+              <DialogTitle className="text-xl font-semibold text-foreground">
                 {transactionType === "entrada" ? "Registrar Entrada" : "Registrar Saída"}
               </DialogTitle>
               <DialogDescription className="font-medium text-muted-foreground italic">
@@ -582,7 +582,7 @@ export default function Financeiro() {
                     placeholder="Ex: Oferta de Culto de Domingo"
                     value={formData.description}
                     onChange={handleInputChange}
-                    className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold transition-all focus:border-primary/50 pl-10"
+                    className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold transition-all focus:border-primary/50 pl-10"
                     required
                   />
                 </div>
@@ -600,7 +600,7 @@ export default function Financeiro() {
                       placeholder="0,00"
                       value={formData.amount}
                       onChange={handleInputChange}
-                      className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-black text-lg text-foreground pl-10"
+                      className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold text-lg text-foreground pl-10"
                       required
                     />
                   </div>
@@ -613,7 +613,7 @@ export default function Financeiro() {
                     type="date"
                     value={formData.date}
                     onChange={handleInputChange}
-                    className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
                     required
                   />
                 </div>
@@ -626,7 +626,7 @@ export default function Financeiro() {
                   value={formData.category_name}
                   required
                 >
-                  <SelectTrigger id="category" className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold">
+                  <SelectTrigger id="category" className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold">
                     <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
@@ -654,12 +654,12 @@ export default function Financeiro() {
             </div>
 
             <DialogFooter className="pt-6 border-t border-secondary/10 flex gap-4">
-              <Button type="button" variant="outline" className="flex-1 h-12 rounded-xl font-bold" onClick={() => setIsModalOpen(false)}>
+              <Button type="button" variant="outline" className="flex-1 h-12 rounded-xl font-semibold" onClick={() => setIsModalOpen(false)}>
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className={`flex-1 h-12 rounded-xl font-bold gap-2 shadow-xl ${transactionType === "entrada" ? "bg-success hover:bg-success/90 shadow-success/20" : "bg-destructive hover:bg-destructive/90 shadow-destructive/20"}`}
+                className={`flex-1 h-12 rounded-xl font-semibold gap-2 shadow-xl ${transactionType === "entrada" ? "bg-success hover:bg-success/90 shadow-success/20" : "bg-destructive hover:bg-destructive/90 shadow-destructive/20"}`}
                 disabled={createMutation.isPending}
               >
                 {createMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}

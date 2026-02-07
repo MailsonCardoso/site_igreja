@@ -143,7 +143,7 @@ export default function Agenda() {
     <MainLayout title="Agenda" breadcrumbs={[{ label: "Eventos" }]}>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-foreground font-display">Agenda da Igreja</h2>
+          <h2 className="text-xl font-semibold text-foreground font-display">Agenda da Igreja</h2>
           <p className="text-muted-foreground">Gerencie cultos, reuniões e eventos especiais</p>
         </div>
         <Button
@@ -162,7 +162,7 @@ export default function Agenda() {
           className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 h-11 rounded-xl transition-all active:scale-95 flex items-center gap-2"
         >
           <Plus className="h-5 w-5" />
-          <span className="font-bold">Novo Evento</span>
+          <span className="font-semibold">Novo Evento</span>
         </Button>
       </div>
 
@@ -179,7 +179,7 @@ export default function Agenda() {
               <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
                 <CalendarIcon className="h-5 w-5 text-primary" />
               </div>
-              <h2 className="text-xl font-black text-foreground uppercase tracking-tight">Calendário de Atividades</h2>
+              <h2 className="text-lg font-semibold text-foreground uppercase tracking-tight">Calendário de Atividades</h2>
             </div>
 
             <div className="flex justify-center bg-secondary/5 rounded-3xl p-6 border border-secondary/10">
@@ -222,11 +222,11 @@ export default function Agenda() {
                 <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
                   <Clock className="h-5 w-5 text-orange-600" />
                 </div>
-                <h3 className="text-xl font-black text-foreground uppercase tracking-tight">
+                <h3 className="text-lg font-semibold text-foreground uppercase tracking-tight">
                   {date ? format(date, "dd 'de' MMMM", { locale: ptBR }) : "Eventos do Dia"}
                 </h3>
               </div>
-              <Badge variant="outline" className="rounded-lg border-primary/20 text-primary font-bold">
+              <Badge variant="outline" className="rounded-lg border-primary/20 text-primary font-semibold">
                 {dayEvents.length} {dayEvents.length === 1 ? 'Evento' : 'Eventos'}
               </Badge>
             </div>
@@ -241,11 +241,11 @@ export default function Agenda() {
                   <div key={evento.id} className="group relative flex items-center justify-between p-5 rounded-3xl bg-card border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
                     <div className="flex items-center gap-5">
                       <div className="h-14 w-14 rounded-2xl flex flex-col items-center justify-center text-white shadow-lg shadow-primary/10" style={{ backgroundColor: evento.color || '#ecb318' }}>
-                        <span className="text-xs font-black uppercase opacity-80">{format(new Date(evento.start_date), "MMM", { locale: ptBR })}</span>
-                        <span className="text-lg font-black leading-none">{format(new Date(evento.start_date), "dd")}</span>
+                        <span className="text-[10px] font-bold uppercase opacity-80">{format(new Date(evento.start_date), "MMM", { locale: ptBR })}</span>
+                        <span className="text-lg font-bold leading-none">{format(new Date(evento.start_date), "dd")}</span>
                       </div>
                       <div>
-                        <h4 className="text-lg font-black text-foreground leading-tight mb-1">{evento.title}</h4>
+                        <h4 className="text-lg font-semibold text-foreground leading-tight mb-1">{evento.title}</h4>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
                           <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(evento.start_date), "HH:mm")}h</span>
                           {evento.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {evento.location}</span>}
@@ -278,7 +278,7 @@ export default function Agenda() {
           className="lg:col-span-4"
         >
           <div className="rounded-[2rem] bg-sidebar p-8 shadow-xl border border-primary/5 h-full">
-            <h2 className="text-xl font-black text-sidebar-foreground uppercase tracking-tight mb-8">Destaques</h2>
+            <h2 className="text-lg font-semibold text-sidebar-foreground uppercase tracking-tight mb-8">Destaques</h2>
 
             <div className="space-y-6">
               {isLoading ? (
@@ -289,8 +289,8 @@ export default function Agenda() {
                 upcomingEvents.slice(0, 3).map((evento: any) => (
                   <div key={evento.id} className="bg-background/40 backdrop-blur-sm p-5 rounded-3xl border border-white/10 hover:border-primary/20 transition-all cursor-pointer group" onClick={() => handleView(evento)}>
                     <div className="flex items-center justify-between mb-3">
-                      <Badge className="bg-primary/20 text-primary border-none text-[9px] font-black uppercase tracking-widest">{format(new Date(evento.start_date), "EEEE", { locale: ptBR })}</Badge>
-                      <span className="text-[10px] font-bold text-sidebar-foreground/50">{format(new Date(evento.start_date), "dd 'de' MMM", { locale: ptBR })}</span>
+                      <Badge className="bg-primary/20 text-primary border-none text-[9px] font-bold uppercase tracking-widest">{format(new Date(evento.start_date), "EEEE", { locale: ptBR })}</Badge>
+                      <span className="text-[10px] font-semibold text-sidebar-foreground/50">{format(new Date(evento.start_date), "dd 'de' MMM", { locale: ptBR })}</span>
                     </div>
                     <h4 className="font-bold text-sidebar-foreground group-hover:text-primary transition-colors">{evento.title}</h4>
                     <p className="text-xs text-sidebar-foreground/60 mt-1 line-clamp-1">{evento.location || "Local não informado"}</p>
@@ -302,7 +302,7 @@ export default function Agenda() {
             {/* Eventos Realizados */}
             {pastEvents.length > 0 && (
               <div className="mt-12">
-                <h2 className="text-[10px] font-black text-sidebar-foreground/30 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                <h2 className="text-[10px] font-semibold text-sidebar-foreground/30 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
                   <Clock className="h-3 w-3" /> Eventos Realizados
                 </h2>
                 <div className="space-y-3">
@@ -313,7 +313,7 @@ export default function Agenda() {
                       onClick={() => handleView(evento)}
                     >
                       <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/20 transition-all">
-                        <span className="text-[10px] font-black text-sidebar-foreground/40 group-hover:text-primary transition-all">
+                        <span className="text-[10px] font-bold text-sidebar-foreground/40 group-hover:text-primary transition-all">
                           {format(new Date(evento.start_date), "dd")}
                         </span>
                       </div>
@@ -349,7 +349,7 @@ export default function Agenda() {
                 {isEditMode ? <Pencil className="h-7 w-7 text-primary" /> : <CalendarIcon className="h-7 w-7 text-primary" />}
               </div>
               <div>
-                <DialogTitle className="text-xl font-black text-foreground">
+                <DialogTitle className="text-xl font-semibold text-foreground">
                   {isEditMode ? "Editar Evento" : "Novo Evento"}
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground font-medium text-xs">
@@ -363,7 +363,7 @@ export default function Agenda() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Título do Evento</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Título do Evento</Label>
                   <Input
                     {...form.register("title", { required: true })}
                     placeholder="Ex: Culto de Celebração"
@@ -402,7 +402,7 @@ export default function Agenda() {
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Descrição (Opcional)</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Descrição (Opcional)</Label>
                   <Textarea
                     {...form.register("description")}
                     placeholder="Detalhes sobre o evento..."
@@ -428,8 +428,8 @@ export default function Agenda() {
             </div>
 
             <div className="flex gap-4 pt-4 border-t border-border/50">
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1 h-11 rounded-xl font-bold">Cancelar</Button>
-              <Button type="submit" disabled={saveEventMutation.isPending} className="flex-1 h-11 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20">
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1 h-11 rounded-xl font-semibold">Cancelar</Button>
+              <Button type="submit" disabled={saveEventMutation.isPending} className="flex-1 h-11 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20">
                 {saveEventMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-5 w-5 mr-2" /> {isEditMode ? "Atualizar" : "Agendar"}</>}
               </Button>
             </div>
@@ -441,14 +441,14 @@ export default function Agenda() {
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent className="rounded-[2rem]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-black">Remover Eventos</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-semibold">Remover Eventos</AlertDialogTitle>
             <AlertDialogDescription>
               Deseja realmente excluir o evento <strong>{selectedEvent?.title}</strong>? Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 pt-4">
-            <AlertDialogCancel className="rounded-xl font-bold">Manter Evento</AlertDialogCancel>
-            <AlertDialogAction onClick={() => selectedEvent && deleteEventMutation.mutate(selectedEvent.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-bold">
+            <AlertDialogCancel className="rounded-xl font-semibold">Manter Evento</AlertDialogCancel>
+            <AlertDialogAction onClick={() => selectedEvent && deleteEventMutation.mutate(selectedEvent.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-semibold">
               Confirmar Exclusão
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -464,7 +464,7 @@ export default function Agenda() {
                 <CalendarIcon className="h-7 w-7 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-xl font-black text-foreground">
+                <DialogTitle className="text-xl font-semibold text-foreground">
                   Detalhes do Evento
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground font-medium text-xs">
@@ -479,14 +479,14 @@ export default function Agenda() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-3 w-3 rounded-full shadow-sm" style={{ backgroundColor: selectedEvent?.color || '#ecb318' }} />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nome do Evento</span>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Nome do Evento</span>
                 </div>
-                <h2 className="text-3xl font-black text-foreground leading-tight">{selectedEvent?.title}</h2>
+                <h2 className="text-2xl font-bold text-foreground leading-tight">{selectedEvent?.title}</h2>
                 <div className="flex flex-wrap items-center gap-4 mt-4">
-                  <Badge variant="outline" className="rounded-lg border-primary/20 text-primary font-bold py-1 px-3">
+                  <Badge variant="outline" className="rounded-lg border-primary/20 text-primary font-semibold py-1 px-3">
                     {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "dd 'de' MMMM, yyyy", { locale: ptBR })}
                   </Badge>
-                  <span className="flex items-center gap-1.5 text-muted-foreground font-bold text-sm">
+                  <span className="flex items-center gap-1.5 text-muted-foreground font-semibold text-sm">
                     <Clock className="h-4 w-4 text-primary" /> {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "HH:mm")}h
                   </span>
                   {selectedEvent?.location && (
@@ -512,14 +512,14 @@ export default function Agenda() {
                     setIsViewOpen(false);
                     handleEdit(selectedEvent);
                   }}
-                  className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground border-none"
+                  className="flex-1 h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground border-none"
                 >
                   <Pencil className="h-5 w-5 mr-2" /> Editar Evento
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setIsViewOpen(false)}
-                  className="flex-1 h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5"
+                  className="flex-1 h-12 rounded-xl font-semibold border-secondary/50 text-muted-foreground hover:bg-secondary/5"
                 >
                   Fechar
                 </Button>
