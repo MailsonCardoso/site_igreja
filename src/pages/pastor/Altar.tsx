@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import {
     BookOpen,
@@ -69,6 +70,7 @@ export const mockSermons = [
 ];
 
 export default function Altar() {
+    const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
 
     const filteredSermons = mockSermons.filter(sermon =>
@@ -115,7 +117,7 @@ export default function Altar() {
                             <p className="text-muted-foreground font-medium">"Justificados pela Fé"</p>
                         </CardContent>
                         <CardFooter>
-                            <Button size="sm" className="w-full rounded-lg gap-2 font-semibold bg-background/50 hover:bg-background text-foreground border border-black/5 dark:border-white/10 shadow-sm">
+                            <Button size="sm" className="w-full rounded-lg gap-2 font-semibold bg-background/50 hover:bg-background text-foreground border border-black/5 dark:border-white/10 shadow-sm" onClick={() => navigate('/pastor/pulpito/1')}>
                                 <Play className="h-3 w-3" /> Preparar Púlpito
                             </Button>
                         </CardFooter>
@@ -198,7 +200,7 @@ export default function Altar() {
                                     </div>
                                 </CardContent>
                                 <CardFooter className="pt-2 pb-5 px-5">
-                                    <Button className="w-full rounded-xl gap-2 font-semibold bg-secondary/80 text-secondary-foreground hover:bg-secondary border border-transparent hover:border-border/50 shadow-sm transition-all h-10">
+                                    <Button className="w-full rounded-xl gap-2 font-semibold bg-secondary/80 text-secondary-foreground hover:bg-secondary border border-transparent hover:border-border/50 shadow-sm transition-all h-10" onClick={() => navigate(`/pastor/pulpito/${sermon.id}`)}>
                                         <Play className="h-3.5 w-3.5" /> Abrir no Púlpito
                                     </Button>
                                 </CardFooter>

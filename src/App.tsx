@@ -14,6 +14,7 @@ import Ministerios from "./pages/Ministerios";
 import Ensino from "./pages/Ensino";
 import Configuracoes from "./pages/Configuracoes";
 import Altar from "./pages/pastor/Altar";
+import Pulpito from "./pages/pastor/Pulpito";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -89,6 +90,12 @@ const App = () => (
           <Route path="/pastor" element={
             <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
               <Altar />
+            </RoleRoute>
+          } />
+
+          <Route path="/pastor/pulpito/:id" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+              <Pulpito />
             </RoleRoute>
           } />
 
