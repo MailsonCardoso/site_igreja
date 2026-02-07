@@ -11,9 +11,9 @@ import {
     MoreVertical,
     PenTool,
     Play,
-    X,
     Trash2,
-    Save
+    Save,
+    Copy
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,10 +35,20 @@ import {
     DialogDescription,
     DialogFooter
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
-// Mock Data
-export const mockSermons = [
+// Mock Data Inicial
+const initialSermons = [
     {
         id: 1,
         title: "Justificados pela Fé",
@@ -67,8 +77,8 @@ export const mockSermons = [
         color: "bg-green-500",
         content: {
             intro: "Neste salmo tão conhecido, Davi expressa...",
-            topics: [],
-            conclusion: ""
+            topics: ["A provisão do Pastor", "O cuidado constante"],
+            conclusion: "Bondade e misericórdia me seguirão todos os dias."
         }
     },
     {
@@ -79,24 +89,32 @@ export const mockSermons = [
         date: "2026-02-01",
         status: "Pregado",
         color: "bg-blue-500",
-        content: { intro: "", topics: [], conclusion: "" }
+        content: {
+            intro: "Paulo nos ensina sobre a paz que excede todo entendimento.",
+            topics: ["Oração como antídoto", "A paz de Deus"],
+            conclusion: "Não andeis ansiosos por coisa alguma."
+        }
     }
 ];
 
 export default function Altar() {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
+    const [sermons, setSermons] = useState(initialSermons);
 
     // Editor State
     const [isEditorOpen, setIsEditorOpen] = useState(false);
-    const [currentSermon, setCurrentSermon] = useState<any>(null); // Se null, é novo sermão
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [currentSermon, setCurrentSermon] = useState<any>(null);
 
-    // Formulário (simplificado com state local para este exemplo)
+    // Formulário
     const [formData, setFormData] = useState({
         title: "",
         series: "",
         verse: "",
+        date: "",
         status: "Planejado",
+        color: "bg-amber-400",
         content: {
             intro: "",
             topics: [""] as string[],
@@ -111,7 +129,9 @@ export default function Altar() {
                 title: sermon.title,
                 series: sermon.series,
                 verse: sermon.verse,
+                date: sermon.date,
                 status: sermon.status,
+                color: sermon.color || "bg-amber-400",
                 content: {
                     intro: sermon.content.intro,
                     topics: sermon.content.topics.length ? sermon.content.topics : [""],
@@ -124,7 +144,9 @@ export default function Altar() {
                 title: "",
                 series: "",
                 verse: "",
+                date: "",
                 status: "Planejado",
+                color: "bg-amber-400",
                 content: {
                     intro: "",
                     topics: [""],
@@ -133,6 +155,62 @@ export default function Altar() {
             });
         }
         setIsEditorOpen(true);
+    };
+
+    const handleSave = () => {
+        // Validação
+        if (!formData.title.trim()) {
+            toast.error("O título é obrigatório!");
+            return;
+        }
+        if (!formData.verse.trim()) {
+            toast.error("O versículo base é obrigatório!");
+            return;
+        }
+
+        if (currentSermon) {
+            // Atualizar existente
+            setSermons(sermons.map(s =>
+                s.id === currentSermon.id
+                    ? { ...currentSermon, ...formData }
+                    : s
+            ));
+            toast.success("Sermão atualizado com sucesso!");
+        } else {
+            // Criar novo
+            const newSermon = {
+                id: Math.max(...sermons.map(s => s.id), 0) + 1,
+                ...formData
+            };
+            setSermons([newSermon, ...sermons]);
+            toast.success("Sermão criado com sucesso!");
+        }
+
+        setIsEditorOpen(false);
+    };
+
+    const handleDelete = (sermon: any) => {
+        setCurrentSermon(sermon);
+        setIsDeleteOpen(true);
+    };
+
+    const confirmDelete = () => {
+        setSermons(sermons.filter(s => s.id !== currentSermon.id));
+        toast.success("Sermão excluído com sucesso!");
+        setIsDeleteOpen(false);
+        setCurrentSermon(null);
+    };
+
+    const handleDuplicate = (sermon: any) => {
+        const duplicate = {
+            ...sermon,
+            id: Math.max(...sermons.map(s => s.id), 0) + 1,
+            title: `${sermon.title} (Cópia)`,
+            status: "Planejado",
+            date: ""
+        };
+        setSermons([duplicate, ...sermons]);
+        toast.success("Sermão duplicado com sucesso!");
     };
 
     const handleTopicChange = (index: number, value: string) => {
@@ -150,7 +228,7 @@ export default function Altar() {
         setFormData({ ...formData, content: { ...formData.content, topics: newTopics } });
     };
 
-    const filteredSermons = mockSermons.filter(sermon =>
+    const filteredSermons = sermons.filter(sermon =>
         sermon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sermon.series.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -217,14 +295,14 @@ export default function Altar() {
 
                     <Card className="rounded-2xl border-none shadow-sm bg-card hover:shadow-md transition-all">
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Banco de Insights</CardTitle>
+                            <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Total de Sermões</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center gap-3">
                                 <PenTool className="h-8 w-8 text-amber-500 bg-amber-500/10 p-1.5 rounded-lg" />
                                 <div>
-                                    <h3 className="font-bold text-foreground">12 Notas Recentes</h3>
-                                    <p className="text-xs text-muted-foreground font-medium">3 novos versículos salvos</p>
+                                    <h3 className="font-bold text-foreground text-3xl">{sermons.length}</h3>
+                                    <p className="text-xs text-muted-foreground font-medium">Mensagens cadastradas</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -253,9 +331,15 @@ export default function Altar() {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="rounded-xl">
-                                                <DropdownMenuItem onClick={() => handleOpenEditor(sermon)}>Editar</DropdownMenuItem>
-                                                <DropdownMenuItem>Duplicar</DropdownMenuItem>
-                                                <DropdownMenuItem className="text-destructive">Excluir</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleOpenEditor(sermon)}>
+                                                    Editar
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleDuplicate(sermon)}>
+                                                    <Copy className="h-3 w-3 mr-2" /> Duplicar
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(sermon)}>
+                                                    <Trash2 className="h-3 w-3 mr-2" /> Excluir
+                                                </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </div>
@@ -268,7 +352,7 @@ export default function Altar() {
                                     <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground">
                                         <div className="flex items-center gap-1.5">
                                             <Calendar className="h-3.5 w-3.5" />
-                                            {new Date(sermon.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
+                                            {sermon.date ? new Date(sermon.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }) : 'Sem data'}
                                         </div>
                                         <div className="flex items-center gap-1.5">
                                             <Clock className="h-3.5 w-3.5" />
@@ -312,7 +396,7 @@ export default function Altar() {
                                 {/* Campos Principais */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label>Título da Mensagem</Label>
+                                        <Label>Título da Mensagem *</Label>
                                         <Input
                                             value={formData.title}
                                             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
@@ -332,7 +416,7 @@ export default function Altar() {
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <Label>Versículo Base</Label>
+                                        <Label>Versículo Base *</Label>
                                         <Input
                                             value={formData.verse}
                                             onChange={(e) => setFormData({ ...formData, verse: e.target.value })}
@@ -342,7 +426,11 @@ export default function Altar() {
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Data Planejada</Label>
-                                        <Input type="date" />
+                                        <Input
+                                            type="date"
+                                            value={formData.date}
+                                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                        />
                                     </div>
                                 </div>
 
@@ -374,7 +462,6 @@ export default function Altar() {
                                                         placeholder={`Tópico ${index + 1}`}
                                                         className="font-semibold"
                                                     />
-                                                    <Textarea placeholder="Desenvolvimento do ponto..." className="min-h-[80px]" />
                                                 </div>
                                                 <Button variant="ghost" size="icon" onClick={() => removeTopic(index)} disabled={formData.content.topics.length === 1} className="mt-2 text-muted-foreground hover:text-destructive">
                                                     <Trash2 className="h-4 w-4" />
@@ -401,12 +488,30 @@ export default function Altar() {
 
                         <DialogFooter className="p-6 pt-4 border-t bg-muted/20">
                             <Button variant="outline" onClick={() => setIsEditorOpen(false)}>Cancelar</Button>
-                            <Button className="gap-2 font-bold shadow-lg shadow-primary/20">
+                            <Button className="gap-2 font-bold shadow-lg shadow-primary/20" onClick={handleSave}>
                                 <Save className="h-4 w-4" /> Salvar Esboço
                             </Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
+
+                {/* AlertDialog de Exclusão */}
+                <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+                    <AlertDialogContent className="rounded-2xl">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Esta ação não pode ser desfeita. O sermão "{currentSermon?.title}" será excluído permanentemente.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+                            <AlertDialogAction className="rounded-xl bg-destructive hover:bg-destructive/90" onClick={confirmDelete}>
+                                Excluir
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </MainLayout>
     );
