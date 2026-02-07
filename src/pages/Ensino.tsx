@@ -585,8 +585,8 @@ export default function Ensino() {
 
       {/* Modal de Gerenciamento */}
       <Dialog open={isManageOpen} onOpenChange={setIsManageOpen}>
-        <DialogContent className="sm:max-w-[900px] max-h-[85vh] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="bg-primary/5 p-6 border-b">
+        <DialogContent className="sm:max-w-[95vw] w-[95vw] h-[95vh] rounded-2xl p-0 overflow-hidden border-none shadow-2xl flex flex-col">
+          <div className="bg-primary/5 p-6 border-b shrink-0">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <ClipboardCheck className="h-7 w-7 text-primary" />
@@ -602,8 +602,8 @@ export default function Ensino() {
             </div>
           </div>
 
-          <Tabs defaultValue="aulas" className="flex-1">
-            <div className="px-6 pt-4">
+          <Tabs defaultValue="aulas" className="flex-1 flex flex-col overflow-hidden">
+            <div className="px-6 pt-4 shrink-0">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="aulas">📖 Aulas</TabsTrigger>
                 <TabsTrigger value="alunos">👥 Alunos</TabsTrigger>
@@ -611,7 +611,7 @@ export default function Ensino() {
               </TabsList>
             </div>
 
-            <ScrollArea className="h-[500px]">
+            <ScrollArea className="flex-1 h-full">
               {/* Aba Aulas */}
               <TabsContent value="aulas" className="p-6 space-y-6">
                 <div className="bg-secondary/5 p-5 rounded-2xl border border-secondary/10">
