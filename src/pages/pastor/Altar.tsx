@@ -48,7 +48,7 @@ import {
 import { toast } from "sonner";
 
 // Mock Data Inicial
-const initialSermons = [
+export const mockSermons = [
     {
         id: 1,
         title: "Justificados pela Fé",
@@ -100,7 +100,7 @@ const initialSermons = [
 export default function Altar() {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
-    const [sermons, setSermons] = useState(initialSermons);
+    const [sermons, setSermons] = useState(mockSermons);
 
     // Editor State
     const [isEditorOpen, setIsEditorOpen] = useState(false);
