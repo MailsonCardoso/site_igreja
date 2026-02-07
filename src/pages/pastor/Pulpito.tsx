@@ -145,6 +145,10 @@ export default function Pulpito() {
                         {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
                     </Button>
 
+                    <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="hover:bg-zinc-500/20 rounded-full hidden sm:flex">
+                        {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+                    </Button>
+
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button variant="outline" size="sm" className={`gap-2 border-dashed rounded-full ${isDark ? 'border-zinc-700 hover:bg-zinc-800' : 'border-zinc-300'}`}>
