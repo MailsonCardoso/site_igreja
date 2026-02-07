@@ -418,8 +418,8 @@ export default function Financeiro() {
                 <FileText className="h-8 w-8 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-2xl font-black text-foreground">Balancete Mensal</DialogTitle>
-                <DialogDescription className="font-bold text-primary">
+                <DialogTitle className="text-xl font-semibold text-foreground">Balancete Mensal</DialogTitle>
+                <DialogDescription className="font-semibold text-primary">
                   {meses.find(m => m.value === selectedMonth)?.label} / {selectedYear}
                 </DialogDescription>
               </div>
@@ -435,7 +435,7 @@ export default function Financeiro() {
             {isLoadingReport ? (
               <div className="flex flex-col items-center justify-center py-20">
                 <Loader2 className="h-10 w-10 animate-spin text-primary mb-2" />
-                <p className="font-bold text-muted-foreground">Gerando relatório...</p>
+                <p className="font-semibold text-muted-foreground">Gerando relatório...</p>
               </div>
             ) : reportData ? (
               <div id="printable-report" className="p-10 space-y-12 bg-white text-black min-h-full">
@@ -452,29 +452,29 @@ export default function Financeiro() {
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <div className="flex justify-between items-center py-2 border-b-2 border-dashed">
-                      <span className="font-bold uppercase text-xs">Saldo Inicial (Anterior):</span>
-                      <span className="font-black tabular-nums">{formatCurrency(reportData.previous_balance)}</span>
+                      <span className="font-semibold uppercase text-xs">Saldo Inicial (Anterior):</span>
+                      <span className="font-semibold tabular-nums">{formatCurrency(reportData.previous_balance)}</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b-2 border-dashed text-success">
-                      <span className="font-bold uppercase text-xs">Total de Entradas:</span>
-                      <span className="font-black tabular-nums">+ {formatCurrency(reportData.total_income)}</span>
+                      <span className="font-semibold uppercase text-xs">Total de Entradas:</span>
+                      <span className="font-bold tabular-nums">+ {formatCurrency(reportData.total_income)}</span>
                     </div>
                     <div className="flex justify-between items-center py-2 border-b-2 border-dashed text-destructive">
-                      <span className="font-bold uppercase text-xs">Total de Saídas:</span>
-                      <span className="font-black tabular-nums">- {formatCurrency(reportData.total_expense)}</span>
+                      <span className="font-semibold uppercase text-xs">Total de Saídas:</span>
+                      <span className="font-bold tabular-nums">- {formatCurrency(reportData.total_expense)}</span>
                     </div>
                     <div className="flex justify-between items-center py-4 bg-primary/5 px-4 rounded-xl">
-                      <span className="font-black uppercase text-sm">Saldo Final do Mês:</span>
-                      <span className="text-2xl font-black tabular-nums">{formatCurrency(reportData.previous_balance + (reportData.total_income - reportData.total_expense))}</span>
+                      <span className="font-semibold uppercase text-sm">Saldo Final do Mês:</span>
+                      <span className="text-2xl font-bold tabular-nums">{formatCurrency(reportData.previous_balance + (reportData.total_income - reportData.total_expense))}</span>
                     </div>
                   </div>
 
                   <div className="bg-secondary/5 p-6 rounded-[2rem] border-2 border-secondary/20 flex flex-col justify-center items-center text-center">
-                    <p className="text-xs font-black uppercase tracking-widest opacity-40 mb-2">Desempenho no Mês</p>
-                    <div className={`text-4xl font-black tabular-nums ${reportData.current_balance >= 0 ? 'text-success' : 'text-destructive'}`}>
+                    <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-2">Desempenho no Mês</p>
+                    <div className={`text-3xl font-bold tabular-nums ${reportData.current_balance >= 0 ? 'text-success' : 'text-destructive'}`}>
                       {reportData.current_balance > 0 ? '+' : ''}{formatCurrency(reportData.current_balance)}
                     </div>
-                    <p className="text-[10px] font-bold mt-2 leading-tight">Este valor representa a diferença entre o que entrou e o que saiu exclusivamente neste mês.</p>
+                    <p className="text-[10px] font-medium mt-2 leading-tight">Este valor representa a diferença entre o que entrou e o que saiu exclusivamente neste mês.</p>
                   </div>
                 </div>
 
@@ -482,20 +482,20 @@ export default function Financeiro() {
                 <div className="grid grid-cols-2 gap-10 pt-4">
                   {/* Entradas Grouped */}
                   <div className="space-y-6">
-                    <h3 className="flex items-center gap-2 font-black uppercase tracking-widest text-success border-b-2 border-success pb-2 text-sm">
+                    <h3 className="flex items-center gap-2 font-semibold uppercase tracking-wider text-success border-b-2 border-success pb-2 text-sm">
                       <ArrowUpRight className="h-5 w-5" /> Entradas por Categoria
                     </h3>
                     <div className="space-y-3">
                       {reportData.grouped_data?.entrada ? Object.entries(reportData.grouped_data.entrada).map(([cat, data]: [string, any]) => (
                         <div key={cat} className="flex justify-between items-center bg-success/5 p-3 rounded-xl border border-success/10">
                           <div className="flex flex-col">
-                            <span className="font-bold text-sm">{cat}</span>
-                            <span className="text-[9px] font-black uppercase opacity-40">{data.count} Lançamento(s)</span>
+                            <span className="font-semibold text-sm">{cat}</span>
+                            <span className="text-[9px] font-semibold uppercase opacity-40">{data.count} Lançamento(s)</span>
                           </div>
-                          <span className="font-black tabular-nums text-success">{formatCurrency(data.total)}</span>
+                          <span className="font-semibold tabular-nums text-success">{formatCurrency(data.total)}</span>
                         </div>
                       )) : <p className="text-xs italic opacity-40">Sem registros de entrada.</p>}
-                      <div className="flex justify-between pt-2 border-t font-black">
+                      <div className="flex justify-between pt-2 border-t font-semibold">
                         <span>SUBTOTAL:</span>
                         <span>{formatCurrency(reportData.total_income)}</span>
                       </div>
@@ -504,20 +504,20 @@ export default function Financeiro() {
 
                   {/* Saidas Grouped */}
                   <div className="space-y-6">
-                    <h3 className="flex items-center gap-2 font-black uppercase tracking-widest text-destructive border-b-2 border-destructive pb-2 text-sm">
+                    <h3 className="flex items-center gap-2 font-semibold uppercase tracking-wider text-destructive border-b-2 border-destructive pb-2 text-sm">
                       <ArrowDownRight className="h-5 w-5" /> Saídas por Categoria
                     </h3>
                     <div className="space-y-3">
                       {reportData.grouped_data?.saida ? Object.entries(reportData.grouped_data.saida).map(([cat, data]: [string, any]) => (
                         <div key={cat} className="flex justify-between items-center bg-destructive/5 p-3 rounded-xl border border-destructive/10">
                           <div className="flex flex-col">
-                            <span className="font-bold text-sm">{cat}</span>
-                            <span className="text-[9px] font-black uppercase opacity-40">{data.count} Lançamento(s)</span>
+                            <span className="font-semibold text-sm">{cat}</span>
+                            <span className="text-[9px] font-semibold uppercase opacity-40">{data.count} Lançamento(s)</span>
                           </div>
-                          <span className="font-black tabular-nums text-destructive">{formatCurrency(data.total)}</span>
+                          <span className="font-semibold tabular-nums text-destructive">{formatCurrency(data.total)}</span>
                         </div>
                       )) : <p className="text-xs italic opacity-40">Sem registros de saída.</p>}
-                      <div className="flex justify-between pt-2 border-t font-black">
+                      <div className="flex justify-between pt-2 border-t font-semibold">
                         <span>SUBTOTAL:</span>
                         <span>{formatCurrency(reportData.total_expense)}</span>
                       </div>
@@ -529,11 +529,11 @@ export default function Financeiro() {
                 <div className="grid grid-cols-2 gap-20 pt-20 pb-10">
                   <div className="text-center space-y-2">
                     <div className="border-b-2 border-black w-full h-10"></div>
-                    <p className="text-[10px] font-black uppercase">Responsável Tesouraria</p>
+                    <p className="text-[10px] font-semibold uppercase">Responsável Tesouraria</p>
                   </div>
                   <div className="text-center space-y-2">
                     <div className="border-b-2 border-black w-full h-10"></div>
-                    <p className="text-[10px] font-black uppercase">Conselho Fiscal / Pastor</p>
+                    <p className="text-[10px] font-semibold uppercase">Conselho Fiscal / Pastor</p>
                   </div>
                 </div>
 
@@ -545,8 +545,8 @@ export default function Financeiro() {
           </ScrollArea>
 
           <DialogFooter className="p-6 border-t bg-card no-print">
-            <Button variant="outline" className="h-12 rounded-xl font-bold px-8" onClick={() => setIsReportOpen(false)}>Fechar Fechamento</Button>
-            <Button onClick={handlePrint} className="h-12 rounded-xl bg-primary hover:bg-primary/90 font-bold px-10 gap-2 shadow-xl shadow-primary/20">
+            <Button variant="outline" className="h-12 rounded-xl font-semibold px-8" onClick={() => setIsReportOpen(false)}>Fechar Fechamento</Button>
+            <Button onClick={handlePrint} className="h-12 rounded-xl bg-primary hover:bg-primary/90 font-semibold px-10 gap-2 shadow-xl shadow-primary/20">
               <Printer className="h-5 w-5" /> Imprimir Balancete
             </Button>
           </DialogFooter>
