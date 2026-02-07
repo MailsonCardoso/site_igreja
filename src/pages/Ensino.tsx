@@ -374,8 +374,8 @@ export default function Ensino() {
 
       {/* Modal de Cadastro/Edição */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[650px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="bg-primary/5 p-6 border-b">
+        <DialogContent className="sm:max-w-[800px] max-h-[90vh] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl flex flex-col">
+          <div className="bg-primary/5 p-6 border-b shrink-0">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 {isEditMode ? <Pencil className="h-7 w-7 text-primary" /> : <BookOpen className="h-7 w-7 text-primary" />}
@@ -391,7 +391,7 @@ export default function Ensino() {
             </div>
           </div>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-5 bg-card">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-5 bg-card overflow-y-auto">
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Nome do Curso</Label>
