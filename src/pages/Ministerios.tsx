@@ -45,7 +45,7 @@ function EscalaCard({ escala, index }: { escala: Roster; index: number }) {
     >
       <div className="flex items-center gap-4 mb-4">
         <div className="flex h-14 w-14 flex-col items-center justify-center rounded-xl bg-sidebar text-sidebar-foreground">
-          <span className="text-lg font-bold text-primary">{day}</span>
+          <span className="text-lg font-semibold text-primary">{day}</span>
           <span className="text-[10px] font-medium uppercase">{month}</span>
         </div>
         <div>
@@ -107,7 +107,7 @@ export default function Ministerios() {
 
   // Mutation for generating rosters
   const generateMutation = useMutation({
-    mutationFn: () => api.post(`/ministries/${selectedMinistryId}/generate-rosters`),
+    mutationFn: () => api.post(`/ministries/${selectedMinistryId}/generate-rosters`, {}),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rosters", selectedMinistryId] });
       toast({
@@ -160,7 +160,7 @@ export default function Ministerios() {
         ) : ministries.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-muted/30 rounded-xl border border-dashed border-border">
             <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-lg font-medium text-foreground">Nenhum ministério encontrado</p>
+            <p className="text-lg font-semibold text-foreground">Nenhum ministério encontrado</p>
             <p className="text-sm text-muted-foreground text-center max-w-xs">
               Cadastre ministérios no painel de configurações para começar a gerar escalas.
             </p>

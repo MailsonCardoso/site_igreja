@@ -146,7 +146,7 @@ export default function Celulas() {
       {/* Botão reposicionado para dentro do conteúdo principal para melhor visual e funcionamento */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Gestão de Pequenos Grupos</h2>
+          <h2 className="text-xl font-semibold text-foreground">Gestão de Pequenos Grupos</h2>
           <p className="text-muted-foreground">Acompanhe a lotação e liderança de cada célula</p>
         </div>
         <Button
@@ -154,7 +154,7 @@ export default function Celulas() {
           className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 h-11 rounded-xl transition-all active:scale-95 flex items-center gap-2"
         >
           <Plus className="h-5 w-5" />
-          <span className="font-bold">Nova Célula</span>
+          <span className="font-semibold">Nova Célula</span>
         </Button>
       </div>
 
@@ -167,14 +167,14 @@ export default function Celulas() {
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10">
             <User className="h-10 w-10 text-primary" />
           </div>
-          <h3 className="text-2xl font-black text-foreground">Nenhuma célula cadastrada</h3>
+          <h3 className="text-xl font-semibold text-foreground">Nenhuma célula cadastrada</h3>
           <p className="mt-2 max-w-sm text-muted-foreground text-lg leading-relaxed">
             Organize sua igreja criando pequenos grupos. Comece agora mesmo!
           </p>
           <Button
             onClick={() => setIsDialogOpen(true)}
             variant="outline"
-            className="mt-8 border-primary text-primary hover:bg-primary hover:text-white rounded-xl h-12 px-8 font-bold transition-all"
+            className="mt-8 border-primary text-primary hover:bg-primary hover:text-white rounded-xl h-12 px-8 font-semibold transition-all"
           >
             Cadastrar Primeira Célula
           </Button>
@@ -196,8 +196,8 @@ export default function Celulas() {
               >
                 <div className="flex items-start justify-between mb-8">
                   <div className="flex-1">
-                    <h3 className="text-2xl font-black text-foreground group-hover:text-primary transition-colors leading-none truncate pr-2">{celula.name}</h3>
-                    <Badge variant="outline" className="mt-2 border-primary/20 text-primary uppercase text-[8px] font-black tracking-widest px-2 py-0">
+                    <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors leading-none truncate pr-2">{celula.name}</h3>
+                    <Badge variant="outline" className="mt-2 border-primary/20 text-primary uppercase text-[8px] font-semibold tracking-widest px-2 py-0">
                       {celula.meeting_day || "Não definido"}
                     </Badge>
                   </div>
@@ -235,8 +235,8 @@ export default function Celulas() {
                       <User className="h-6 w-6 text-orange-600" />
                     </div>
                     <div>
-                      <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block">Líder do Grupo</span>
-                      <span className="text-md font-bold text-foreground block">{celula.leader?.name || "Não atribuído"}</span>
+                      <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-widest block">Líder do Grupo</span>
+                      <span className="text-md font-semibold text-foreground block">{celula.leader?.name || "Não atribuído"}</span>
                     </div>
                   </div>
 
@@ -245,16 +245,16 @@ export default function Celulas() {
                       <Clock className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block">Dia e Horário</span>
-                      <span className="text-md font-bold text-foreground block">{celula.meeting_day} às {celula.meeting_time || "19:30"}</span>
+                      <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-widest block">Dia e Horário</span>
+                      <span className="text-md font-semibold text-foreground block">{celula.meeting_day} às {celula.meeting_time || "19:30"}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="pt-6 border-t border-border/50">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-[11px] font-black text-muted-foreground uppercase tracking-wider">Ocupação Atual</span>
-                    <span className="text-sm font-black text-foreground">
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Ocupação Atual</span>
+                    <span className="text-sm font-semibold text-foreground">
                       {numMembros}/{capacidade} <span className="text-primary ml-1">({Math.round(ocupacao)}%)</span>
                     </span>
                   </div>
@@ -281,7 +281,7 @@ export default function Celulas() {
                 {isEditMode ? <Pencil className="h-8 w-8 text-primary" /> : <Users className="h-8 w-8 text-primary" />}
               </div>
               <div>
-                <DialogTitle className="text-2xl font-black text-foreground">
+                <DialogTitle className="text-xl font-semibold text-foreground">
                   {isEditMode ? "Editar Célula" : "Nova Célula"}
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground font-medium">
@@ -293,20 +293,20 @@ export default function Celulas() {
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-8 space-y-6 bg-card">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nome da Célula</Label>
+              <Label htmlFor="name" className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Nome da Célula</Label>
               <Input
                 id="name"
                 {...form.register("name", { required: true })}
                 placeholder="Ex: Célula Esperança"
-                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 focus:bg-background font-bold transition-all focus:border-primary/50"
+                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 focus:bg-background font-semibold transition-all focus:border-primary/50"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Dia da Semana</Label>
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Dia da Semana</Label>
                 <Select onValueChange={(val) => setValue("meeting_day", val)} value={watch("meeting_day")}>
-                  <SelectTrigger className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold focus:border-primary/50">
+                  <SelectTrigger className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold focus:border-primary/50">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-primary/10">
@@ -318,20 +318,20 @@ export default function Celulas() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="meeting_time" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Horário</Label>
+                <Label htmlFor="meeting_time" className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Horário</Label>
                 <Input
                   id="meeting_time"
                   type="time"
                   {...form.register("meeting_time")}
-                  className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold focus:border-primary/50"
+                  className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold focus:border-primary/50"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Líder da Célula</Label>
+              <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Líder da Célula</Label>
               <Select onValueChange={(val) => setValue("leader_id", val)} value={watch("leader_id")}>
-                <SelectTrigger className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold focus:border-primary/50">
+                <SelectTrigger className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold focus:border-primary/50">
                   <SelectValue placeholder="Selecione um líder" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-primary/10">
@@ -347,12 +347,12 @@ export default function Celulas() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="capacity" className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Capacidade Máxima</Label>
+              <Label htmlFor="capacity" className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Capacidade Máxima</Label>
               <Input
                 id="capacity"
                 type="number"
                 {...form.register("capacity")}
-                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-bold focus:border-primary/50"
+                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold focus:border-primary/50"
               />
             </div>
 
@@ -366,14 +366,14 @@ export default function Celulas() {
                   setSelectedCell(null);
                   reset();
                 }}
-                className="flex-1 h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
+                className="flex-1 h-12 rounded-xl font-semibold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={saveCellMutation.isPending}
-                className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
+                className="flex-1 h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
               >
                 {saveCellMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-5 w-5" /> {isEditMode ? "Atualizar" : "Salvar"} Célula</>}
               </Button>
@@ -386,17 +386,17 @@ export default function Celulas() {
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
         <AlertDialogContent className="rounded-[2rem]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-2xl font-black">Excluir Célula</AlertDialogTitle>
+            <AlertDialogTitle className="text-xl font-semibold">Excluir Célula</AlertDialogTitle>
             <AlertDialogDescription>
               Tem certeza que deseja excluir a célula <strong>{selectedCell?.name}</strong>?
               Esta ação removerá o vínculo de todos os membros deste grupo.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 pt-4">
-            <AlertDialogCancel className="rounded-xl font-bold">Cancelar</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl font-semibold">Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => selectedCell && deleteCellMutation.mutate(selectedCell.id)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-bold"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-semibold"
             >
               {deleteCellMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirmar Exclusão"}
             </AlertDialogAction>
@@ -413,7 +413,7 @@ export default function Celulas() {
                 <Users className="h-7 w-7 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-xl font-black text-foreground leading-tight">{selectedCell?.name}</DialogTitle>
+                <DialogTitle className="text-xl font-semibold text-foreground leading-tight">{selectedCell?.name}</DialogTitle>
                 <DialogDescription className="sr-only">
                   Detalhes informativos sobre a célula e seus membros.
                 </DialogDescription>
@@ -421,8 +421,8 @@ export default function Celulas() {
                   <Badge className="bg-primary text-white hover:bg-primary text-[10px] h-5 px-2">
                     {selectedCell?.meeting_day || "Não definido"}
                   </Badge>
-                  <span className="text-muted-foreground font-bold text-xs">•</span>
-                  <span className="text-muted-foreground font-bold text-xs">{selectedCell?.meeting_time || "19:30"}h</span>
+                  <span className="text-muted-foreground font-semibold text-xs">•</span>
+                  <span className="text-muted-foreground font-semibold text-xs">{selectedCell?.meeting_time || "19:30"}h</span>
                 </div>
               </div>
             </div>
@@ -433,19 +433,19 @@ export default function Celulas() {
               {/* Liderança e Capacidade */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-secondary/10 p-4 rounded-xl border border-secondary/20">
-                  <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block mb-0.5">Líder</span>
-                  <span className="text-md font-bold text-foreground block truncate">{selectedCell?.leader?.name || "Não atribuído"}</span>
+                  <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-widest block mb-0.5">Líder</span>
+                  <span className="text-md font-semibold text-foreground block truncate">{selectedCell?.leader?.name || "Não atribuído"}</span>
                 </div>
                 <div className="bg-secondary/10 p-4 rounded-xl border border-secondary/20">
-                  <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block mb-0.5">Capacidade</span>
-                  <span className="text-md font-bold text-foreground block">{selectedCell?.capacity || 15} pessoas</span>
+                  <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-widest block mb-0.5">Capacidade</span>
+                  <span className="text-md font-semibold text-foreground block">{selectedCell?.capacity || 15} pessoas</span>
                 </div>
               </div>
 
               {/* Lista de Membros */}
               <section>
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="text-[11px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                  <h4 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                     <User className="h-3.5 w-3.5" /> Membros ({selectedCell?.members?.length || 0})
                   </h4>
                 </div>
@@ -460,16 +460,16 @@ export default function Celulas() {
                       <div key={membro.id} className="flex items-center justify-between p-3 rounded-xl bg-card border border-border/50 hover:bg-secondary/5 transition-colors">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-9 w-9 border-2 border-background shadow-sm">
-                            <AvatarFallback className="bg-primary/10 text-primary font-bold text-[10px]">
+                            <AvatarFallback className="bg-primary/10 text-primary font-semibold text-[10px]">
                               {(membro.name || "?").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p className="font-bold text-sm text-foreground leading-none mb-1">{membro.name}</p>
-                            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-wider">{membro.role || "Membro"}</p>
+                            <p className="font-semibold text-sm text-foreground leading-none mb-1">{membro.name}</p>
+                            <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">{membro.role || "Membro"}</p>
                           </div>
                         </div>
-                        <Badge variant="ghost" className="text-[9px] text-muted-foreground border-secondary/20">
+                        <Badge variant="outline" className="text-[9px] text-muted-foreground border-secondary/20">
                           {membro.phone || "---"}
                         </Badge>
                       </div>
@@ -483,7 +483,7 @@ export default function Celulas() {
           <div className="p-4 border-t bg-background">
             <Button
               variant="outline"
-              className="w-full h-10 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all text-sm"
+              className="w-full h-10 rounded-xl font-semibold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all text-sm"
               onClick={() => setIsViewOpen(false)}
             >
               Fechar Detalhes

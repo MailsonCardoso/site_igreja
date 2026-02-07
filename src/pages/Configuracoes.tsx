@@ -269,13 +269,13 @@ export default function Configuracoes() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="bg-secondary/30 p-4 pb-0">
             <TabsList className="mb-0 bg-secondary/50 h-14 rounded-2xl p-1 gap-2 border-none">
-              <TabsTrigger value="geral" className="h-11 rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-bold transition-all">
+              <TabsTrigger value="geral" className="h-11 rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-semibold transition-all">
                 Geral
               </TabsTrigger>
-              <TabsTrigger value="usuarios" className="h-11 rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-bold transition-all">
+              <TabsTrigger value="usuarios" className="h-11 rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-semibold transition-all">
                 Usuários
               </TabsTrigger>
-              <TabsTrigger value="integracoes" className="h-11 rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-bold transition-all">
+              <TabsTrigger value="integracoes" className="h-11 rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-semibold transition-all">
                 Integrações
               </TabsTrigger>
             </TabsList>
@@ -286,7 +286,7 @@ export default function Configuracoes() {
               <div className="flex flex-col md:flex-row md:items-center gap-8 pb-8 border-b">
                 <div className="relative group">
                   <Avatar className="h-28 w-28 ring-4 ring-primary/20 shadow-2xl transition-transform group-hover:scale-105 duration-300">
-                    <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-black">
+                    <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-bold">
                       {settingsForm.nome ? settingsForm.nome.substring(0, 2).toUpperCase() : "IC"}
                     </AvatarFallback>
                   </Avatar>
@@ -295,7 +295,7 @@ export default function Configuracoes() {
                   </Button>
                 </div>
                 <div>
-                  <h3 className="text-2xl font-black text-foreground mb-1">Identidade da Igreja</h3>
+                  <h3 className="text-xl font-bold text-foreground mb-1">Identidade da Igreja</h3>
                   <p className="text-muted-foreground font-medium max-w-md">
                     Personalize as informações básicas da sua igreja que aparecem em relatórios e no sistema.
                   </p>
@@ -304,67 +304,67 @@ export default function Configuracoes() {
 
               <form onSubmit={onSaveSettings} className="grid gap-8 sm:grid-cols-2">
                 <div className="space-y-3">
-                  <Label htmlFor="nome" className="text-[10px] uppercase font-black tracking-widest text-primary ml-1">Nome da Igreja</Label>
+                  <Label htmlFor="nome" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">Nome da Igreja</Label>
                   <Input
                     id="nome"
                     value={settingsForm.nome}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-bold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="Nome Completo da Instituição"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="cnpj" className="text-[10px] uppercase font-black tracking-widest text-primary ml-1">CNPJ</Label>
+                  <Label htmlFor="cnpj" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">CNPJ</Label>
                   <Input
                     id="cnpj"
                     value={settingsForm.cnpj}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-bold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="00.000.000/0000-00"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="endereco" className="text-[10px] uppercase font-black tracking-widest text-primary ml-1">Endereço</Label>
+                  <Label htmlFor="endereco" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">Endereço</Label>
                   <Input
                     id="endereco"
                     value={settingsForm.endereco}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-bold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="Av. Nome da Rua, 123"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="cidade" className="text-[10px] uppercase font-black tracking-widest text-primary ml-1">Cidade / Estado</Label>
+                  <Label htmlFor="cidade" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">Cidade / Estado</Label>
                   <Input
                     id="cidade"
                     value={settingsForm.cidade}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-bold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="Cidade - UF"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="telefone" className="text-[10px] uppercase font-black tracking-widest text-primary ml-1">Telefone / WhatsApp</Label>
+                  <Label htmlFor="telefone" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">Telefone / WhatsApp</Label>
                   <Input
                     id="telefone"
                     value={settingsForm.telefone}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-bold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="(00) 00000-0000"
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="email" className="text-[10px] uppercase font-black tracking-widest text-primary ml-1">E-mail Institucional</Label>
+                  <Label htmlFor="email" className="text-[10px] uppercase font-semibold tracking-widest text-primary ml-1">E-mail Institucional</Label>
                   <Input
                     id="email"
                     value={settingsForm.email}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-bold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="contato@igreja.com"
                   />
                 </div>
@@ -372,7 +372,7 @@ export default function Configuracoes() {
                 <div className="sm:col-span-2 flex justify-end pt-8">
                   <Button
                     type="submit"
-                    className="h-14 rounded-2xl px-12 bg-primary text-primary-foreground hover:bg-primary/90 font-black gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
+                    className="h-14 rounded-2xl px-12 bg-primary text-primary-foreground hover:bg-primary/90 font-bold gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
                     disabled={saveSettingsMutation.isPending}
                   >
                     {saveSettingsMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
@@ -385,14 +385,14 @@ export default function Configuracoes() {
             <TabsContent value="usuarios" className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300">
               <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between mb-10">
                 <div>
-                  <h3 className="text-2xl font-black text-foreground">Gestão de Acesso</h3>
+                  <h3 className="text-xl font-bold text-foreground">Gestão de Acesso</h3>
                   <p className="text-muted-foreground font-medium">
                     Administre os usuários que possuem acesso ao painel de gestão.
                   </p>
                 </div>
                 <Button
                   onClick={() => setIsUserModalOpen(true)}
-                  className="h-14 rounded-2xl px-8 bg-primary text-primary-foreground hover:bg-primary/90 font-black gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
+                  className="h-14 rounded-2xl px-8 bg-primary text-primary-foreground hover:bg-primary/90 font-bold gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
                 >
                   <UserPlus className="h-6 w-6" />
                   NOVO USUÁRIO
@@ -409,11 +409,11 @@ export default function Configuracoes() {
                   <Table>
                     <TableHeader>
                       <TableRow className="bg-secondary/40 hover:bg-secondary/40 border-b-2">
-                        <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground p-6">Administrador</TableHead>
-                        <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground">E-mail</TableHead>
-                        <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground">Papel</TableHead>
-                        <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground">Status</TableHead>
-                        <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground w-20"></TableHead>
+                        <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground p-6">Administrador</TableHead>
+                        <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground">E-mail</TableHead>
+                        <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground">Papel</TableHead>
+                        <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground">Status</TableHead>
+                        <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground w-20"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -429,24 +429,24 @@ export default function Configuracoes() {
                             <TableCell className="p-6">
                               <div className="flex items-center gap-4">
                                 <Avatar className="h-12 w-12 border-2 border-white/10 shadow-lg">
-                                  <AvatarFallback className="bg-secondary text-primary font-black text-base">
+                                  <AvatarFallback className="bg-secondary text-primary font-bold text-base">
                                     {(usuario.name || "U").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
-                                <span className="font-black text-foreground group-hover:text-primary transition-colors">{usuario.name}</span>
+                                <span className="font-semibold text-foreground group-hover:text-primary transition-colors">{usuario.name}</span>
                               </div>
                             </TableCell>
                             <TableCell className="text-muted-foreground font-bold">{usuario.email}</TableCell>
                             <TableCell>
-                              <Badge variant="outline" className="font-black uppercase text-[9px] tracking-widest bg-secondary/20 px-3 py-1 rounded-lg">
+                              <Badge variant="outline" className="font-semibold uppercase text-[9px] tracking-widest bg-secondary/20 px-3 py-1 rounded-lg">
                                 {usuario.role || "Administrador"}
                               </Badge>
                             </TableCell>
                             <TableCell>
                               <Badge className={
                                 (usuario.status || "Ativo") === "Ativo"
-                                  ? "bg-success/10 text-success border-success/20 transition-all font-black"
-                                  : "bg-muted text-muted-foreground font-black"
+                                  ? "bg-success/10 text-success border-success/20 transition-all font-semibold"
+                                  : "bg-muted text-muted-foreground font-semibold"
                               }>
                                 {(usuario.status || "Ativo").toUpperCase()}
                               </Badge>
@@ -524,7 +524,7 @@ export default function Configuracoes() {
                     <div className="flex items-center gap-6">
                       {integ.icon}
                       <div>
-                        <h4 className="text-xl font-black text-foreground group-hover:text-primary transition-colors">{integ.name}</h4>
+                        <h4 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{integ.name}</h4>
                         <p className="text-sm text-muted-foreground font-medium max-w-sm">{integ.desc}</p>
                       </div>
                     </div>
@@ -555,7 +555,7 @@ export default function Configuracoes() {
               <UserPlus className="h-6 w-6" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-black text-foreground">Novo Acesso</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-foreground">Novo Acesso</DialogTitle>
               <DialogDescription className="text-xs font-bold text-primary">
                 Libere a gestão para novos usuários.
               </DialogDescription>
@@ -574,15 +574,15 @@ export default function Configuracoes() {
                     }}
                     value={userFormData.role}
                   >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
+                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      <SelectItem value="Administrador" className="font-bold">Administrador</SelectItem>
-                      <SelectItem value="Pastor" className="font-bold">Pastor</SelectItem>
-                      <SelectItem value="Financeiro" className="font-bold">Financeiro</SelectItem>
-                      <SelectItem value="Secretaria" className="font-bold">Secretaria</SelectItem>
-                      <SelectItem value="Lider de pequeno grupo" className="font-bold">Líder de Pequeno Grupo</SelectItem>
+                      <SelectItem value="Administrador" className="font-semibold">Administrador</SelectItem>
+                      <SelectItem value="Pastor" className="font-semibold">Pastor</SelectItem>
+                      <SelectItem value="Financeiro" className="font-semibold">Financeiro</SelectItem>
+                      <SelectItem value="Secretaria" className="font-semibold">Secretaria</SelectItem>
+                      <SelectItem value="Lider de pequeno grupo" className="font-semibold">Líder de Pequeno Grupo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -592,12 +592,12 @@ export default function Configuracoes() {
                     onValueChange={(v) => setUserFormData({ ...userFormData, status: v })}
                     value={userFormData.status}
                   >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
+                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      <SelectItem value="Ativo" className="font-bold text-success">Ativo</SelectItem>
-                      <SelectItem value="Inativo" className="font-bold text-destructive">Inativo</SelectItem>
+                      <SelectItem value="Ativo" className="font-semibold text-success">Ativo</SelectItem>
+                      <SelectItem value="Inativo" className="font-semibold text-destructive">Inativo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -614,7 +614,7 @@ export default function Configuracoes() {
                     onValueChange={handleMemberSelect}
                     value={userFormData.memberId}
                   >
-                    <SelectTrigger className="h-12 rounded-xl bg-primary/5 border-primary/30 font-bold text-primary">
+                    <SelectTrigger className="h-12 rounded-xl bg-primary/5 border-primary/30 font-semibold text-primary">
                       {isLoadingMembers ? <Loader2 className="h-4 w-4 animate-spin" /> : <SelectValue placeholder="Escolha um membro da lista" />}
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
@@ -625,7 +625,7 @@ export default function Configuracoes() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-[9px] text-muted-foreground ml-1 font-bold italic">* Exibindo apenas membros com cargo '{userFormData.role}' e CPF cadastrado.</p>
+                  <p className="text-[9px] text-muted-foreground ml-1 font-semibold italic">* Exibindo apenas membros com cargo '{userFormData.role}' e CPF cadastrado.</p>
                 </motion.div>
               )}
 
@@ -640,7 +640,7 @@ export default function Configuracoes() {
                     value={userFormData.name}
                     onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
                     placeholder="Ex: João da Silva"
-                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10' : ''}`}
+                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10' : ''}`}
                     required
                     readOnly={!!userFormData.memberId}
                   />
@@ -659,7 +659,7 @@ export default function Configuracoes() {
                     value={userFormData.email}
                     onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
                     placeholder="joao@igreja.com"
-                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
+                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
                     required
                     readOnly={!!userFormData.memberId}
                   />
@@ -678,7 +678,7 @@ export default function Configuracoes() {
                     value={userFormData.password}
                     onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
                     placeholder="Senha ou CPF sem pontos"
-                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
+                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
                     required
                     readOnly={!!userFormData.memberId}
                   />
@@ -687,7 +687,7 @@ export default function Configuracoes() {
             </div>
 
             <DialogFooter className="pt-4 gap-3">
-              <Button type="button" variant="ghost" onClick={() => setIsUserModalOpen(false)} className="flex-1 font-bold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
+              <Button type="button" variant="ghost" onClick={() => setIsUserModalOpen(false)} className="flex-1 font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
                 CANCELAR
               </Button>
               <Button
@@ -709,7 +709,7 @@ export default function Configuracoes() {
               <UserIcon className="h-6 w-6" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-black text-foreground">Editar Acesso</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-foreground">Editar Acesso</DialogTitle>
               <DialogDescription className="text-xs font-bold text-primary">
                 Atualize os dados do usuário.
               </DialogDescription>
@@ -725,15 +725,15 @@ export default function Configuracoes() {
                     onValueChange={(v) => setEditFormData({ ...editFormData, role: v })}
                     value={editFormData.role}
                   >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
+                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      <SelectItem value="Administrador" className="font-bold">Administrador</SelectItem>
-                      <SelectItem value="Pastor" className="font-bold">Pastor</SelectItem>
-                      <SelectItem value="Financeiro" className="font-bold">Financeiro</SelectItem>
-                      <SelectItem value="Secretaria" className="font-bold">Secretaria</SelectItem>
-                      <SelectItem value="Lider de pequeno grupo" className="font-bold">Líder de Pequeno Grupo</SelectItem>
+                      <SelectItem value="Administrador" className="font-semibold">Administrador</SelectItem>
+                      <SelectItem value="Pastor" className="font-semibold">Pastor</SelectItem>
+                      <SelectItem value="Financeiro" className="font-semibold">Financeiro</SelectItem>
+                      <SelectItem value="Secretaria" className="font-semibold">Secretaria</SelectItem>
+                      <SelectItem value="Lider de pequeno grupo" className="font-semibold">Líder de Pequeno Grupo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -743,12 +743,12 @@ export default function Configuracoes() {
                     onValueChange={(v) => setEditFormData({ ...editFormData, status: v })}
                     value={editFormData.status}
                   >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-bold border-secondary/30">
+                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      <SelectItem value="Ativo" className="font-bold text-success">Ativo</SelectItem>
-                      <SelectItem value="Inativo" className="font-bold text-destructive">Inativo</SelectItem>
+                      <SelectItem value="Ativo" className="font-semibold text-success">Ativo</SelectItem>
+                      <SelectItem value="Inativo" className="font-semibold text-destructive">Inativo</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -761,7 +761,7 @@ export default function Configuracoes() {
                   <Input
                     value={editFormData.name}
                     onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30"
+                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
                     required
                   />
                 </div>
@@ -775,7 +775,7 @@ export default function Configuracoes() {
                     type="email"
                     value={editFormData.email}
                     onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-bold border-secondary/30"
+                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
                     required
                   />
                 </div>
@@ -785,7 +785,7 @@ export default function Configuracoes() {
             </div>
 
             <DialogFooter className="pt-4 gap-3">
-              <Button type="button" variant="ghost" onClick={() => setIsEditModalOpen(false)} className="flex-1 font-bold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
+              <Button type="button" variant="ghost" onClick={() => setIsEditModalOpen(false)} className="flex-1 font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
                 CANCELAR
               </Button>
               <Button

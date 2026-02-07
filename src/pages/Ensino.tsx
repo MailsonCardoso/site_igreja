@@ -221,7 +221,7 @@ export default function Ensino() {
     <MainLayout title="Ensino" breadcrumbs={[{ label: "EBD / Cursos" }]}>
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-foreground font-display">Gestão de Ensino</h2>
+          <h2 className="text-xl font-semibold text-foreground font-display">Gestão de Ensino</h2>
           <p className="text-muted-foreground">Gerencie cursos, aulas e frequência dos alunos</p>
         </div>
         <Button
@@ -233,7 +233,7 @@ export default function Ensino() {
           className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 h-11 rounded-xl transition-all active:scale-95 flex items-center gap-2"
         >
           <Plus className="h-5 w-5" />
-          <span className="font-bold">Novo Curso</span>
+          <span className="font-semibold">Novo Curso</span>
         </Button>
       </div>
 
@@ -246,7 +246,7 @@ export default function Ensino() {
           <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10">
             <BookOpen className="h-10 w-10 text-primary" />
           </div>
-          <h3 className="text-2xl font-black text-foreground">Nenhum curso cadastrado</h3>
+          <h3 className="text-xl font-semibold text-foreground">Nenhum curso cadastrado</h3>
           <p className="mt-2 max-w-sm text-muted-foreground text-lg leading-relaxed">
             Organize o ensino da igreja criando cursos e gerenciando aulas. Comece agora!
           </p>
@@ -257,7 +257,7 @@ export default function Ensino() {
               setIsDialogOpen(true);
             }}
             variant="outline"
-            className="mt-8 border-primary text-primary hover:bg-primary hover:text-white rounded-xl h-12 px-8 font-bold transition-all"
+            className="mt-8 border-primary text-primary hover:bg-primary hover:text-white rounded-xl h-12 px-8 font-semibold transition-all"
           >
             Cadastrar Primeiro Curso
           </Button>
@@ -284,11 +284,11 @@ export default function Ensino() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="text-xl font-black text-foreground group-hover:text-primary transition-colors truncate">
+                        <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                           {course.name}
                         </h3>
                         {isCompleted && (
-                          <Badge className="bg-success/10 text-success border-success/20 text-xs font-bold">
+                          <Badge className="bg-success/10 text-success border-success/20 text-xs font-semibold">
                             Concluído
                           </Badge>
                         )}
@@ -299,19 +299,19 @@ export default function Ensino() {
                       <div className="flex items-center gap-4 flex-wrap">
                         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                           <GraduationCap className="h-4 w-4 text-primary" />
-                          <span className="font-bold">{course.teacher || "Sem professor"}</span>
+                          <span className="font-semibold">{course.teacher || "Sem professor"}</span>
                         </div>
                         <span className="text-muted-foreground">•</span>
                         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                           <Users className="h-4 w-4 text-primary" />
-                          <span className="font-bold">{studentCount} alunos</span>
+                          <span className="font-semibold">{studentCount} alunos</span>
                         </div>
                         {course.schedule && (
                           <>
                             <span className="text-muted-foreground">•</span>
                             <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                               <Calendar className="h-4 w-4 text-primary" />
-                              <span className="font-bold">{course.schedule}</span>
+                              <span className="font-semibold">{course.schedule}</span>
                             </div>
                           </>
                         )}
@@ -322,8 +322,8 @@ export default function Ensino() {
                   <div className="flex flex-col items-end gap-3 sm:min-w-64">
                     <div className="w-full">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-black text-muted-foreground uppercase tracking-wider">Progresso</span>
-                        <span className="text-sm font-black text-foreground">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Progresso</span>
+                        <span className="text-sm font-semibold text-foreground">
                           {course.completed_classes || 0}/{course.total_classes || 0} aulas
                         </span>
                       </div>
@@ -358,7 +358,7 @@ export default function Ensino() {
                       <Button
                         onClick={() => handleManage(course)}
                         size="sm"
-                        className="flex-1 gap-2 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
+                        className="flex-1 gap-2 rounded-xl font-semibold bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20"
                       >
                         <ClipboardCheck className="h-4 w-4" />
                         Gerenciar
@@ -381,7 +381,7 @@ export default function Ensino() {
                 {isEditMode ? <Pencil className="h-7 w-7 text-primary" /> : <BookOpen className="h-7 w-7 text-primary" />}
               </div>
               <div>
-                <DialogTitle className="text-xl font-black text-foreground">
+                <DialogTitle className="text-xl font-semibold text-foreground">
                   {isEditMode ? "Editar Curso" : "Novo Curso"}
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground font-medium text-xs">
@@ -394,11 +394,11 @@ export default function Ensino() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-5 bg-card">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Nome do Curso</Label>
+                <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Nome do Curso</Label>
                 <Input
                   {...form.register("name", { required: true })}
                   placeholder="Ex: Curso de Batismo"
-                  className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold transition-all focus:border-primary/50"
+                  className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold transition-all focus:border-primary/50"
                 />
               </div>
 
@@ -413,58 +413,50 @@ export default function Ensino() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Professor</Label>
-                  <Input
-                    {...form.register("teacher")}
-                    placeholder="Nome do professor"
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total de Aulas</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Total de Aulas</Label>
                   <Input
                     type="number"
                     {...form.register("total_classes")}
                     placeholder="12"
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Data de Início</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Data de Início</Label>
                   <Input
                     type="date"
                     {...form.register("start_date")}
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Data de Término</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Data de Término</Label>
                   <Input
                     type="date"
                     {...form.register("end_date")}
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Horário</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Horário</Label>
                   <Input
                     {...form.register("schedule")}
                     placeholder="Ex: Domingos 9h"
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Local</Label>
+                  <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Local</Label>
                   <Input
                     {...form.register("location")}
                     placeholder="Ex: Sala 1"
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
                   />
                 </div>
               </div>
@@ -480,14 +472,14 @@ export default function Ensino() {
                   setSelectedCourse(null);
                   reset();
                 }}
-                className="flex-1 h-11 rounded-xl font-bold"
+                className="flex-1 h-11 rounded-xl font-semibold"
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 disabled={saveCourseMutation.isPending}
-                className="flex-1 h-11 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20"
+                className="flex-1 h-11 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl shadow-primary/20"
               >
                 {saveCourseMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <><Save className="h-5 w-5 mr-2" /> {isEditMode ? "Atualizar" : "Criar Curso"}</>}
               </Button>
@@ -507,10 +499,10 @@ export default function Ensino() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="gap-2 pt-4">
-            <AlertDialogCancel className="rounded-xl font-bold">Cancelar</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl font-semibold">Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => selectedCourse && deleteCourseMutation.mutate(selectedCourse.id)}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-bold"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-semibold"
             >
               {deleteCourseMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirmar Exclusão"}
             </AlertDialogAction>
@@ -539,8 +531,8 @@ export default function Ensino() {
 
           <div className="p-8 space-y-6 bg-card">
             <div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground block mb-2">Nome do Curso</span>
-              <h2 className="text-2xl font-black text-foreground">{selectedCourse?.name}</h2>
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground block mb-2">Nome do Curso</span>
+              <h2 className="text-2xl font-bold text-foreground">{selectedCourse?.name}</h2>
             </div>
 
             {selectedCourse?.description && (
@@ -575,14 +567,14 @@ export default function Ensino() {
                   setIsViewOpen(false);
                   handleEdit(selectedCourse);
                 }}
-                className="flex-1 h-12 rounded-xl font-bold bg-primary hover:bg-primary/90 text-primary-foreground border-none"
+                className="flex-1 h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground border-none"
               >
                 <Pencil className="h-5 w-5 mr-2" /> Editar Curso
               </Button>
               <Button
                 variant="outline"
                 onClick={() => setIsViewOpen(false)}
-                className="flex-1 h-12 rounded-xl font-bold border-secondary/50 text-muted-foreground hover:bg-secondary/5"
+                className="flex-1 h-12 rounded-xl font-semibold border-secondary/50 text-muted-foreground hover:bg-secondary/5"
               >
                 Fechar
               </Button>
@@ -600,7 +592,7 @@ export default function Ensino() {
                 <ClipboardCheck className="h-7 w-7 text-primary" />
               </div>
               <div className="flex-1">
-                <DialogTitle className="text-xl font-black text-foreground">
+                <DialogTitle className="text-xl font-semibold text-foreground">
                   Gerenciar: {selectedCourse?.name}
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground font-medium text-xs">
@@ -627,45 +619,45 @@ export default function Ensino() {
                   <form onSubmit={lessonForm.handleSubmit(handleCreateLesson)} className="space-y-4">
                     <div className="grid grid-cols-3 gap-4">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Número</Label>
+                        <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Número</Label>
                         <Input
                           type="number"
                           {...lessonForm.register("lesson_number")}
                           placeholder="1"
-                          className="h-10 rounded-xl border-secondary/30 bg-background font-bold"
+                          className="h-10 rounded-xl border-secondary/30 bg-background font-semibold"
                         />
                       </div>
                       <div className="space-y-2 col-span-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Título</Label>
+                        <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Título</Label>
                         <Input
                           {...lessonForm.register("title")}
                           placeholder="Ex: Introdução ao Batismo"
-                          className="h-10 rounded-xl border-secondary/30 bg-background font-bold"
+                          className="h-10 rounded-xl border-secondary/30 bg-background font-semibold"
                         />
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Data</Label>
+                        <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Data</Label>
                         <Input
                           type="date"
                           {...lessonForm.register("date")}
-                          className="h-10 rounded-xl border-secondary/30 bg-background font-bold"
+                          className="h-10 rounded-xl border-secondary/30 bg-background font-semibold"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tópico</Label>
+                        <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Tópico</Label>
                         <Input
                           {...lessonForm.register("topic")}
                           placeholder="Assunto da aula"
-                          className="h-10 rounded-xl border-secondary/30 bg-background font-bold"
+                          className="h-10 rounded-xl border-secondary/30 bg-background font-semibold"
                         />
                       </div>
                     </div>
                     <Button
                       type="submit"
                       disabled={createLessonMutation.isPending}
-                      className="w-full h-10 rounded-xl font-bold bg-primary hover:bg-primary/90"
+                      className="w-full h-10 rounded-xl font-semibold bg-primary hover:bg-primary/90"
                     >
                       {createLessonMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4 mr-2" /> Adicionar Aula</>}
                     </Button>
@@ -693,14 +685,14 @@ export default function Ensino() {
                           />
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-black text-primary">Aula {lesson.lesson_number}</span>
+                              <span className="text-xs font-semibold text-primary">Aula {lesson.lesson_number}</span>
                               {lesson.is_completed && (
                                 <Badge className="bg-success/10 text-success border-success/20 text-[10px] h-5">
                                   <Check className="h-3 w-3 mr-1" /> Concluída
                                 </Badge>
                               )}
                             </div>
-                            <h4 className="font-bold text-foreground">{lesson.title || `Aula ${lesson.lesson_number}`}</h4>
+                            <h4 className="font-semibold text-foreground">{lesson.title || `Aula ${lesson.lesson_number}`}</h4>
                             {lesson.topic && (
                               <p className="text-xs text-muted-foreground mt-1">{lesson.topic}</p>
                             )}
@@ -708,7 +700,7 @@ export default function Ensino() {
                           {lesson.date && (
                             <div className="text-right">
                               <p className="text-xs text-muted-foreground">Data</p>
-                              <p className="text-sm font-bold text-foreground">
+                              <p className="text-sm font-semibold text-foreground">
                                 {new Date(lesson.date).toLocaleDateString('pt-BR')}
                               </p>
                             </div>
@@ -735,12 +727,12 @@ export default function Ensino() {
                           key={member.id}
                           className="flex items-center justify-between p-3 rounded-xl border border-border/30 hover:border-primary/30 transition-all"
                         >
-                          <span className="font-bold text-foreground">{member.name}</span>
+                          <span className="font-semibold text-foreground">{member.name}</span>
                           <Button
                             size="sm"
                             onClick={() => enrollStudentMutation.mutate(member.id)}
                             disabled={enrollStudentMutation.isPending}
-                            className="h-8 rounded-lg font-bold"
+                            className="h-8 rounded-lg font-semibold"
                           >
                             <UserPlus className="h-4 w-4 mr-1" /> Matricular
                           </Button>
@@ -772,7 +764,7 @@ export default function Ensino() {
                             </span>
                           </div>
                           <div>
-                            <h4 className="font-bold text-foreground">{student.name}</h4>
+                            <h4 className="font-semibold text-foreground">{student.name}</h4>
                             <p className="text-xs text-muted-foreground">
                               Matriculado em {student.pivot?.enrolled_at ? new Date(student.pivot.enrolled_at).toLocaleDateString('pt-BR') : 'N/A'}
                             </p>
