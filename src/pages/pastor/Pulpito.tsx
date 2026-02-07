@@ -193,15 +193,9 @@ export default function Pulpito() {
                                     Ponto {(index + 1).toString().padStart(2, '0')}
                                 </span>
 
-                                <h3 className="font-bold leading-tight mb-4 text-zinc-100 drop-shadow-sm" style={{ fontSize: '1.2em' }}>
+                                <h3 className="font-bold leading-tight text-zinc-100 drop-shadow-sm" style={{ fontSize: '1.2em' }}>
                                     {topic}
                                 </h3>
-
-                                <div className="h-px w-12 bg-white/5 mb-4" />
-
-                                <p className="opacity-60 font-medium leading-relaxed" style={{ fontSize: '0.85em' }}>
-                                    Desenvolva a aplicação prática e as referências bíblicas secundárias para este ponto.
-                                </p>
                             </section>
                         ))}
                     </div>
