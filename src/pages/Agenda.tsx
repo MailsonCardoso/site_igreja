@@ -367,7 +367,7 @@ export default function Agenda() {
                   <Input
                     {...form.register("title", { required: true })}
                     placeholder="Ex: Culto de Celebração"
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold transition-all focus:border-primary/50"
+                    className="h-11 rounded-xl border-input bg-background font-bold transition-all focus:border-primary/50"
                   />
                 </div>
 
@@ -377,7 +377,7 @@ export default function Agenda() {
                     <Input
                       type="date"
                       {...form.register("start_date", { required: true })}
-                      className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                      className="h-11 rounded-xl border-input bg-background font-bold"
                     />
                   </div>
                   <div className="space-y-2">
@@ -385,7 +385,7 @@ export default function Agenda() {
                     <Input
                       type="time"
                       {...form.register("horario")}
-                      className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                      className="h-11 rounded-xl border-input bg-background font-bold"
                     />
                   </div>
                 </div>
@@ -395,7 +395,7 @@ export default function Agenda() {
                   <Input
                     {...form.register("location")}
                     placeholder="Ex: Templo Principal"
-                    className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-bold"
+                    className="h-11 rounded-xl border-input bg-background font-bold"
                   />
                 </div>
               </div>
@@ -406,7 +406,7 @@ export default function Agenda() {
                   <Textarea
                     {...form.register("description")}
                     placeholder="Detalhes sobre o evento..."
-                    className="rounded-xl border-secondary/30 bg-secondary/5 min-h-[110px] font-medium text-sm resize-none"
+                    className="rounded-xl border-input bg-background min-h-[80px] font-medium text-sm resize-none"
                   />
                 </div>
 

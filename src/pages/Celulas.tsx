@@ -298,7 +298,7 @@ export default function Celulas() {
                 id="name"
                 {...form.register("name", { required: true })}
                 placeholder="Ex: Célula Esperança"
-                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 focus:bg-background font-semibold transition-all focus:border-primary/50"
+                className="h-11 rounded-xl border-input bg-background focus:bg-background font-semibold transition-all focus:border-primary/50"
               />
             </div>
 
@@ -306,7 +306,7 @@ export default function Celulas() {
               <div className="space-y-2">
                 <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Dia da Semana</Label>
                 <Select onValueChange={(val) => setValue("meeting_day", val)} value={watch("meeting_day")}>
-                  <SelectTrigger className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold focus:border-primary/50">
+                  <SelectTrigger className="h-11 rounded-xl border-input bg-background font-semibold focus:border-primary/50">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-primary/10">
@@ -323,7 +323,7 @@ export default function Celulas() {
                   id="meeting_time"
                   type="time"
                   {...form.register("meeting_time")}
-                  className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold focus:border-primary/50"
+                  className="h-11 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
                 />
               </div>
             </div>
@@ -331,7 +331,7 @@ export default function Celulas() {
             <div className="space-y-2">
               <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Líder da Célula</Label>
               <Select onValueChange={(val) => setValue("leader_id", val)} value={watch("leader_id")}>
-                <SelectTrigger className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold focus:border-primary/50">
+                <SelectTrigger className="h-11 rounded-xl border-input bg-background font-semibold focus:border-primary/50">
                   <SelectValue placeholder="Selecione um líder" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-primary/10">
@@ -352,7 +352,7 @@ export default function Celulas() {
                 id="capacity"
                 type="number"
                 {...form.register("capacity")}
-                className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold focus:border-primary/50"
+                className="h-11 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
               />
             </div>
 

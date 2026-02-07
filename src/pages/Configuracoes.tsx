@@ -309,7 +309,7 @@ export default function Configuracoes() {
                     id="nome"
                     value={settingsForm.nome}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-11 rounded-xl border-input bg-background font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="Nome Completo da Instituição"
                   />
                 </div>
@@ -320,7 +320,7 @@ export default function Configuracoes() {
                     id="cnpj"
                     value={settingsForm.cnpj}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-11 rounded-xl border-input bg-background font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="00.000.000/0000-00"
                   />
                 </div>
@@ -331,7 +331,7 @@ export default function Configuracoes() {
                     id="endereco"
                     value={settingsForm.endereco}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-11 rounded-xl border-input bg-background font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="Av. Nome da Rua, 123"
                   />
                 </div>
@@ -342,7 +342,7 @@ export default function Configuracoes() {
                     id="cidade"
                     value={settingsForm.cidade}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-11 rounded-xl border-input bg-background font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="Cidade - UF"
                   />
                 </div>
@@ -353,7 +353,7 @@ export default function Configuracoes() {
                     id="telefone"
                     value={settingsForm.telefone}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-11 rounded-xl border-input bg-background font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="(00) 00000-0000"
                   />
                 </div>
@@ -364,7 +364,7 @@ export default function Configuracoes() {
                     id="email"
                     value={settingsForm.email}
                     onChange={handleSettingsChange}
-                    className="h-14 rounded-2xl border-secondary/50 bg-secondary/5 font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
+                    className="h-11 rounded-xl border-input bg-background font-semibold focus:ring-2 focus:ring-primary/20 transition-all text-base"
                     placeholder="contato@igreja.com"
                   />
                 </div>

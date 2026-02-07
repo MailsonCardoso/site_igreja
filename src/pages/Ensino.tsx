@@ -629,7 +629,7 @@ export default function Ensino() {
                           type="number"
                           {...lessonForm.register("lesson_number")}
                           placeholder="1"
-                          className="h-10 rounded-xl border-secondary/30 bg-background font-semibold"
+                          className="h-10 rounded-xl border-input bg-background font-semibold"
                         />
                       </div>
                       <div className="space-y-2 col-span-2">
@@ -637,7 +637,7 @@ export default function Ensino() {
                         <Input
                           {...lessonForm.register("title")}
                           placeholder="Ex: Introdução ao Batismo"
-                          className="h-10 rounded-xl border-secondary/30 bg-background font-semibold"
+                          className="h-10 rounded-xl border-input bg-background font-semibold"
                         />
                       </div>
                     </div>
@@ -647,7 +647,7 @@ export default function Ensino() {
                         <Input
                           type="date"
                           {...lessonForm.register("date")}
-                          className="h-10 rounded-xl border-secondary/30 bg-background font-semibold"
+                          className="h-10 rounded-xl border-input bg-background font-semibold"
                         />
                       </div>
                       <div className="space-y-2">
@@ -655,7 +655,7 @@ export default function Ensino() {
                         <Input
                           {...lessonForm.register("topic")}
                           placeholder="Assunto da aula"
-                          className="h-10 rounded-xl border-secondary/30 bg-background font-semibold"
+                          className="h-10 rounded-xl border-input bg-background font-semibold"
                         />
                       </div>
                     </div>

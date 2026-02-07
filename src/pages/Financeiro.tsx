@@ -582,7 +582,7 @@ export default function Financeiro() {
                     placeholder="Ex: Oferta de Culto de Domingo"
                     value={formData.description}
                     onChange={handleInputChange}
-                    className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold transition-all focus:border-primary/50 pl-10"
+                    className="h-11 rounded-xl border-input bg-background font-semibold transition-all focus:border-primary/50 pl-9"
                     required
                   />
                 </div>
@@ -600,7 +600,7 @@ export default function Financeiro() {
                       placeholder="0,00"
                       value={formData.amount}
                       onChange={handleInputChange}
-                      className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold text-lg text-foreground pl-10"
+                      className="h-11 rounded-xl border-input bg-background font-semibold text-lg text-foreground pl-10"
                       required
                     />
                   </div>
@@ -613,7 +613,7 @@ export default function Financeiro() {
                     type="date"
                     value={formData.date}
                     onChange={handleInputChange}
-                    className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold"
+                    className="h-11 rounded-xl border-input bg-background font-semibold"
                     required
                   />
                 </div>
@@ -626,8 +626,8 @@ export default function Financeiro() {
                   value={formData.category_name}
                   required
                 >
-                  <SelectTrigger id="category" className="h-12 rounded-xl border-secondary/30 bg-secondary/5 font-semibold">
-                    <SelectValue placeholder="Selecione uma categoria" />
+                  <SelectTrigger id="category" className="h-11 rounded-xl border-input bg-background font-semibold">
+                    <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
                     {transactionType === "entrada" ? (
