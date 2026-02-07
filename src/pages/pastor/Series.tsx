@@ -246,24 +246,31 @@ export default function SeriesPage() {
 
                 {/* Modal Editor */}
                 <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[600px] rounded-2xl border border-border/50 bg-background shadow-2xl p-0 overflow-hidden">
-                        <DialogHeader className="p-8 pb-6 border-b bg-muted/10">
-                            <DialogTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
-                                {currentSerie ? "Editar Série" : "Nova Série"}
-                            </DialogTitle>
-                            <DialogDescription className="font-medium text-muted-foreground pt-1">
-                                Organize suas mensagens em jornadas temáticas consistentes.
-                            </DialogDescription>
-                        </DialogHeader>
+                    <DialogContent className="sm:max-w-[700px] rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                        <div className="bg-primary/5 p-8 border-b relative">
+                            <div className="flex items-center gap-4">
+                                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                    <Folder className="h-8 w-8 text-primary" />
+                                </div>
+                                <div>
+                                    <DialogTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
+                                        {currentSerie ? "Editar Série" : "Nova Série"}
+                                    </DialogTitle>
+                                    <DialogDescription className="text-muted-foreground font-medium pt-1">
+                                        Organize suas mensagens em jornadas temáticas consistentes.
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </div>
 
-                        <div className="p-8 space-y-6">
+                        <div className="p-8 space-y-6 bg-card">
                             <div className="space-y-2.5">
                                 <Label className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/70 ml-1">Título da Série *</Label>
                                 <Input
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     placeholder="Ex: Estudos em Romanos"
-                                    className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-bold text-lg px-4"
+                                    className="h-12 rounded-xl border-input bg-background focus:bg-background font-bold text-lg px-4 transition-all focus:border-primary/50"
                                 />
                             </div>
 
@@ -273,7 +280,7 @@ export default function SeriesPage() {
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     placeholder="Qual o objetivo central desta série?"
-                                    className="min-h-[100px] rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all p-4 leading-relaxed"
+                                    className="min-h-[100px] rounded-xl border-input bg-background p-4 leading-relaxed focus:border-primary/50"
                                 />
                             </div>
 
@@ -285,7 +292,7 @@ export default function SeriesPage() {
                                         min="1"
                                         value={formData.total}
                                         onChange={(e) => setFormData({ ...formData, total: parseInt(e.target.value) || 1 })}
-                                        className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-bold px-4"
+                                        className="h-12 rounded-xl border-input bg-background font-bold px-4 focus:border-primary/50"
                                     />
                                 </div>
                                 <div className="space-y-2.5">
@@ -294,7 +301,7 @@ export default function SeriesPage() {
                                         type="date"
                                         value={formData.startDate}
                                         onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                        className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-medium px-4"
+                                        className="h-12 rounded-xl border-input bg-background font-medium px-4 focus:border-primary/50"
                                     />
                                 </div>
                             </div>
@@ -315,21 +322,29 @@ export default function SeriesPage() {
                                     ))}
                                 </div>
                             </div>
-                        </div>
 
-                        <DialogFooter className="p-6 bg-muted/10 border-t flex flex-col sm:flex-row gap-3">
-                            <Button variant="ghost" onClick={() => setIsEditorOpen(false)} className="rounded-xl font-bold h-11 px-6">
-                                Cancelar
-                            </Button>
-                            <Button onClick={handleSave} className="rounded-xl font-bold h-11 px-10 gap-2 shadow-lg shadow-primary/20">
-                                <Save className="h-4 w-4" /> Salvar Série
-                            </Button>
-                        </DialogFooter>
+                            <div className="flex gap-4 pt-6 border-t border-border/40">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setIsEditorOpen(false)}
+                                    className="flex-1 h-12 rounded-xl font-semibold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    onClick={handleSave}
+                                    className="flex-1 h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
+                                >
+                                    <Save className="h-4 w-4" /> Salvar Série
+                                </Button>
+                            </div>
+                        </div>
                     </DialogContent>
                 </Dialog>
 
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-                    <AlertDialogContent className="rounded-2xl border border-border/50 shadow-2xl p-8 max-w-[450px]">
+                    <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8 max-w-[450px]">
                         <AlertDialogHeader>
                             <AlertDialogTitle className="text-2xl font-black text-foreground">Excluir Série?</AlertDialogTitle>
                             <AlertDialogDescription className="text-base font-medium text-muted-foreground pt-2">

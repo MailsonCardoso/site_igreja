@@ -309,17 +309,24 @@ export default function Altar() {
 
                 {/* Editor Modal */}
                 <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[750px] max-h-[90vh] overflow-y-auto rounded-2xl border border-border/50 bg-background shadow-2xl p-0 overflow-hidden">
-                        <DialogHeader className="p-8 pb-6 border-b bg-muted/10">
-                            <DialogTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
-                                {currentSermon ? 'Editar Mensagem' : 'Nova Mensagem'}
-                            </DialogTitle>
-                            <DialogDescription className="font-medium text-muted-foreground pt-1">
-                                Estruture sua pregação com clareza e organização.
-                            </DialogDescription>
-                        </DialogHeader>
+                    <DialogContent className="sm:max-w-[750px] max-h-[90vh] overflow-y-auto rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                        <div className="bg-primary/5 p-8 border-b relative">
+                            <div className="flex items-center gap-4">
+                                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                    <PenTool className="h-8 w-8 text-primary" />
+                                </div>
+                                <div>
+                                    <DialogTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
+                                        {currentSermon ? 'Editar Mensagem' : 'Nova Mensagem'}
+                                    </DialogTitle>
+                                    <DialogDescription className="text-muted-foreground font-medium pt-1">
+                                        Estruture sua pregação com clareza e organização para o próximo culto.
+                                    </DialogDescription>
+                                </div>
+                            </div>
+                        </div>
 
-                        <div className="p-8 space-y-8">
+                        <div className="p-8 space-y-8 bg-card">
                             {/* Campos Básicos - Layout Lateral Ajustado */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div className="space-y-2.5">
@@ -328,7 +335,7 @@ export default function Altar() {
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                         placeholder="Ex: O Poder da Ressurreição"
-                                        className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-bold text-lg px-4"
+                                        className="h-12 rounded-xl border-input bg-background focus:bg-background font-bold text-lg px-4 transition-all focus:border-primary/50"
                                     />
                                 </div>
                                 <div className="space-y-2.5">
@@ -337,10 +344,10 @@ export default function Altar() {
                                         value={formData.series}
                                         onValueChange={(val) => setFormData({ ...formData, series: val })}
                                     >
-                                        <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-medium px-4">
+                                        <SelectTrigger className="h-12 rounded-xl border-input bg-background font-medium px-4 focus:border-primary/50">
                                             <SelectValue placeholder="Selecione uma série" />
                                         </SelectTrigger>
-                                        <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                                        <SelectContent className="rounded-xl border-primary/10 shadow-xl">
                                             <SelectItem value="Avulso" className="py-2.5">Nenhuma (Mensagem Avulsa)</SelectItem>
                                             {seriesList.map(s => (
                                                 <SelectItem key={s.id} value={s.title} className="py-2.5">{s.title}</SelectItem>
@@ -357,7 +364,7 @@ export default function Altar() {
                                             type="date"
                                             value={formData.date}
                                             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                            className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-medium pl-11"
+                                            className="h-12 rounded-xl border-input bg-background font-medium pl-11 focus:border-primary/50"
                                         />
                                     </div>
                                 </div>
@@ -368,10 +375,10 @@ export default function Altar() {
                                         value={formData.status}
                                         onValueChange={(val: any) => setFormData({ ...formData, status: val })}
                                     >
-                                        <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-medium px-4">
+                                        <SelectTrigger className="h-12 rounded-xl border-input bg-background font-medium px-4 focus:border-primary/50">
                                             <SelectValue />
                                         </SelectTrigger>
-                                        <SelectContent className="rounded-xl border-border/50 shadow-xl">
+                                        <SelectContent className="rounded-xl border-primary/10 shadow-xl">
                                             <SelectItem value="Planejado" className="py-2.5">📋 Planejado</SelectItem>
                                             <SelectItem value="Pregado" className="py-2.5">🎙️ Pregado</SelectItem>
                                             <SelectItem value="Rascunho" className="py-2.5">✍️ Rascunho</SelectItem>
@@ -386,7 +393,7 @@ export default function Altar() {
                                     value={formData.verse}
                                     onChange={(e) => setFormData({ ...formData, verse: e.target.value })}
                                     placeholder="Ex: João 3:16"
-                                    className="h-12 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-serif italic text-lg px-4"
+                                    className="h-12 rounded-xl border-input bg-background font-serif italic text-lg px-4 focus:border-primary/50"
                                 />
                             </div>
 
@@ -398,7 +405,7 @@ export default function Altar() {
                                         value={formData.content.intro}
                                         onChange={(e) => setFormData({ ...formData, content: { ...formData.content, intro: e.target.value } })}
                                         placeholder="Como você pretende capturar a atenção da igreja?"
-                                        className="min-h-[120px] rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all p-4 leading-relaxed"
+                                        className="min-h-[120px] rounded-xl border-input bg-background p-4 leading-relaxed focus:border-primary/50"
                                     />
                                 </div>
 
@@ -414,7 +421,7 @@ export default function Altar() {
                                                     value={topic}
                                                     onChange={(e) => handleTopicChange(index, e.target.value)}
                                                     placeholder={`Digite o ponto central do tópico ${index + 1}`}
-                                                    className="h-10 rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all font-bold px-4"
+                                                    className="h-10 rounded-xl border-input bg-background font-bold px-4 focus:border-primary/50"
                                                 />
                                             </div>
                                         ))}
@@ -427,26 +434,34 @@ export default function Altar() {
                                         value={formData.content.conclusion}
                                         onChange={(e) => setFormData({ ...formData, content: { ...formData.content, conclusion: e.target.value } })}
                                         placeholder="Qual é a aplicação prática para a vida do ouvinte?"
-                                        className="min-h-[100px] rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 transition-all p-4 font-medium italic leading-relaxed"
+                                        className="min-h-[100px] rounded-xl border-input bg-background p-4 font-medium italic leading-relaxed focus:border-primary/50"
                                     />
                                 </div>
                             </div>
-                        </div>
 
-                        <DialogFooter className="p-6 bg-muted/10 border-t flex flex-col sm:flex-row gap-3">
-                            <Button variant="ghost" onClick={() => setIsEditorOpen(false)} className="rounded-xl font-bold h-11 px-6">
-                                Cancelar
-                            </Button>
-                            <Button onClick={handleSave} className="rounded-xl font-bold h-11 px-10 gap-2 shadow-lg shadow-primary/20">
-                                <Save className="h-4 w-4" /> Salvar Mensagem
-                            </Button>
-                        </DialogFooter>
+                            <div className="flex gap-4 pt-6 border-t border-border/40">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setIsEditorOpen(false)}
+                                    className="flex-1 h-12 rounded-xl font-semibold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
+                                >
+                                    Cancelar
+                                </Button>
+                                <Button
+                                    onClick={handleSave}
+                                    className="flex-1 h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
+                                >
+                                    <Save className="h-5 w-5" /> Salvar Mensagem
+                                </Button>
+                            </div>
+                        </div>
                     </DialogContent>
                 </Dialog>
 
                 {/* AlertDialog de Exclusão - Estilo Corrigido */}
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-                    <AlertDialogContent className="rounded-2xl border border-border/50 shadow-2xl p-8 max-w-[450px]">
+                    <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8 max-w-[450px]">
                         <AlertDialogHeader>
                             <AlertDialogTitle className="text-2xl font-black text-foreground">Excluir Mensagem?</AlertDialogTitle>
                             <AlertDialogDescription className="text-base font-medium text-muted-foreground pt-2">
