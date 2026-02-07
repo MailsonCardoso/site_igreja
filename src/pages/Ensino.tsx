@@ -411,6 +411,15 @@ export default function Ensino() {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Nome do Professor</Label>
+                <Input
+                  {...form.register("teacher")}
+                  placeholder="Nome do professor responsável"
+                  className="h-11 rounded-xl border-secondary/30 bg-secondary/5 font-semibold transition-all focus:border-primary/50"
+                />
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Total de Aulas</Label>
