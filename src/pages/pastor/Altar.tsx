@@ -10,7 +10,10 @@ import {
     Clock,
     MoreVertical,
     PenTool,
-    Play
+    Play,
+    X,
+    Trash2,
+    Save
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +25,17 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter
+} from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Mock Data
 export const mockSermons = [
@@ -73,6 +87,69 @@ export default function Altar() {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
 
+    // Editor State
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [currentSermon, setCurrentSermon] = useState<any>(null); // Se null, é novo sermão
+
+    // Formulário (simplificado com state local para este exemplo)
+    const [formData, setFormData] = useState({
+        title: "",
+        series: "",
+        verse: "",
+        status: "Planejado",
+        content: {
+            intro: "",
+            topics: [""] as string[],
+            conclusion: ""
+        }
+    });
+
+    const handleOpenEditor = (sermon: any = null) => {
+        if (sermon) {
+            setCurrentSermon(sermon);
+            setFormData({
+                title: sermon.title,
+                series: sermon.series,
+                verse: sermon.verse,
+                status: sermon.status,
+                content: {
+                    intro: sermon.content.intro,
+                    topics: sermon.content.topics.length ? sermon.content.topics : [""],
+                    conclusion: sermon.content.conclusion
+                }
+            });
+        } else {
+            setCurrentSermon(null);
+            setFormData({
+                title: "",
+                series: "",
+                verse: "",
+                status: "Planejado",
+                content: {
+                    intro: "",
+                    topics: [""],
+                    conclusion: ""
+                }
+            });
+        }
+        setIsEditorOpen(true);
+    };
+
+    const handleTopicChange = (index: number, value: string) => {
+        const newTopics = [...formData.content.topics];
+        newTopics[index] = value;
+        setFormData({ ...formData, content: { ...formData.content, topics: newTopics } });
+    };
+
+    const addTopic = () => {
+        setFormData({ ...formData, content: { ...formData.content, topics: [...formData.content.topics, ""] } });
+    };
+
+    const removeTopic = (index: number) => {
+        const newTopics = formData.content.topics.filter((_, i) => i !== index);
+        setFormData({ ...formData, content: { ...formData.content, topics: newTopics } });
+    };
+
     const filteredSermons = mockSermons.filter(sermon =>
         sermon.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sermon.series.toLowerCase().includes(searchTerm.toLowerCase())
@@ -97,7 +174,7 @@ export default function Altar() {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <Button className="bg-primary text-primary-foreground rounded-xl gap-2 shadow-lg hover:shadow-primary/20 h-10 font-semibold px-6">
+                        <Button onClick={() => handleOpenEditor()} className="bg-primary text-primary-foreground rounded-xl gap-2 shadow-lg hover:shadow-primary/20 h-10 font-semibold px-6">
                             <Plus className="h-4 w-4" /> Novo Sermão
                         </Button>
                     </div>
@@ -176,7 +253,7 @@ export default function Altar() {
                                                 </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="rounded-xl">
-                                                <DropdownMenuItem>Editar</DropdownMenuItem>
+                                                <DropdownMenuItem onClick={() => handleOpenEditor(sermon)}>Editar</DropdownMenuItem>
                                                 <DropdownMenuItem>Duplicar</DropdownMenuItem>
                                                 <DropdownMenuItem className="text-destructive">Excluir</DropdownMenuItem>
                                             </DropdownMenuContent>
@@ -208,7 +285,7 @@ export default function Altar() {
                         ))}
 
                         {/* Card para Adicionar Novo */}
-                        <button className="flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-primary/10 bg-primary/5 hover:bg-primary/10 hover:border-primary/30 transition-all h-[280px] group">
+                        <button onClick={() => handleOpenEditor()} className="flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-primary/10 bg-primary/5 hover:bg-primary/10 hover:border-primary/30 transition-all h-[280px] group">
                             <div className="h-14 w-14 rounded-full bg-background flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                                 <Plus className="h-6 w-6 text-primary" />
                             </div>
@@ -219,6 +296,117 @@ export default function Altar() {
                         </button>
                     </div>
                 </div>
+
+                {/* Modal Editor */}
+                <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+                    <DialogContent className="sm:max-w-[900px] max-h-[90vh] flex flex-col p-0 rounded-2xl gap-0">
+                        <DialogHeader className="p-6 pb-2">
+                            <DialogTitle>{currentSermon ? "Editar Sermão" : "Novo Esboço"}</DialogTitle>
+                            <DialogDescription>
+                                Prepare sua mensagem com estrutura organizada.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <div className="flex-1 overflow-y-auto p-6 pt-2">
+                            <div className="grid gap-6">
+                                {/* Campos Principais */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label>Título da Mensagem</Label>
+                                        <Input
+                                            value={formData.title}
+                                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                            placeholder="Ex: A Graça Abundante"
+                                            className="font-bold text-lg"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Série (Opcional)</Label>
+                                        <Input
+                                            value={formData.series}
+                                            onChange={(e) => setFormData({ ...formData, series: e.target.value })}
+                                            placeholder="Ex: Estudos em Romanos"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label>Versículo Base</Label>
+                                        <Input
+                                            value={formData.verse}
+                                            onChange={(e) => setFormData({ ...formData, verse: e.target.value })}
+                                            placeholder="Ex: Romanos 8:1"
+                                            className="font-serif italic"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Data Planejada</Label>
+                                        <Input type="date" />
+                                    </div>
+                                </div>
+
+                                {/* Estrutura do Sermão */}
+                                <div className="space-y-4 pt-4 border-t">
+                                    <h3 className="font-semibold text-muted-foreground text-sm uppercase tracking-wider">Estrutura</h3>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-primary font-bold">Introdução</Label>
+                                        <Textarea
+                                            value={formData.content.intro}
+                                            onChange={(e) => setFormData({ ...formData, content: { ...formData.content, intro: e.target.value } })}
+                                            placeholder="Capture a atenção e apresente o tema..."
+                                            className="min-h-[100px]"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-4 pl-4 border-l-2 border-primary/20">
+                                        <Label className="text-primary font-bold">Tópicos</Label>
+                                        {formData.content.topics.map((topic, index) => (
+                                            <div key={index} className="flex gap-2">
+                                                <div className="flex-none flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold mt-2">
+                                                    {index + 1}
+                                                </div>
+                                                <div className="flex-1 space-y-2">
+                                                    <Input
+                                                        value={topic}
+                                                        onChange={(e) => handleTopicChange(index, e.target.value)}
+                                                        placeholder={`Tópico ${index + 1}`}
+                                                        className="font-semibold"
+                                                    />
+                                                    <Textarea placeholder="Desenvolvimento do ponto..." className="min-h-[80px]" />
+                                                </div>
+                                                <Button variant="ghost" size="icon" onClick={() => removeTopic(index)} disabled={formData.content.topics.length === 1} className="mt-2 text-muted-foreground hover:text-destructive">
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
+                                        <Button variant="outline" size="sm" onClick={addTopic} className="ml-8 border-dashed border-primary/30 text-primary">
+                                            <Plus className="h-3 w-3 mr-2" /> Adicionar Tópico
+                                        </Button>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label className="text-primary font-bold">Conclusão</Label>
+                                        <Textarea
+                                            value={formData.content.conclusion}
+                                            onChange={(e) => setFormData({ ...formData, content: { ...formData.content, conclusion: e.target.value } })}
+                                            placeholder="Fechamento e apelo..."
+                                            className="min-h-[100px]"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <DialogFooter className="p-6 pt-4 border-t bg-muted/20">
+                            <Button variant="outline" onClick={() => setIsEditorOpen(false)}>Cancelar</Button>
+                            <Button className="gap-2 font-bold shadow-lg shadow-primary/20">
+                                <Save className="h-4 w-4" /> Salvar Esboço
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </MainLayout>
     );
