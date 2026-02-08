@@ -226,7 +226,14 @@ export default function SeriesPage() {
                                                 </div>
                                                 <div className="flex flex-wrap gap-1">
                                                     {linkedSermons.slice(0, 3).map(s => (
-                                                        <Badge key={s.id} variant="secondary" className="text-[9px] px-1.5 py-0 h-5 max-w-[100px] truncate">
+                                                        <Badge
+                                                            key={s.id}
+                                                            variant="secondary"
+                                                            className={`text-[9px] px-1.5 py-0 h-5 max-w-[100px] truncate border-none font-bold ${s.status === 'Pregado' ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' :
+                                                                    s.status === 'Planejado' ? 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400' :
+                                                                        'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+                                                                }`}
+                                                        >
                                                             {s.title}
                                                         </Badge>
                                                     ))}

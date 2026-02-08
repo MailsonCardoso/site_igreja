@@ -265,7 +265,14 @@ export default function Altar() {
                                             {sermon.title}
                                         </CardTitle>
                                         <CardDescription className="flex items-center gap-2 mt-1 font-medium">
-                                            <Badge variant="secondary" className="px-2 py-0 text-[10px] h-5">{sermon.status}</Badge>
+                                            <Badge
+                                                className={`px-2 py-0 text-[10px] h-5 font-bold border-none ${sermon.status === 'Pregado' ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' :
+                                                    sermon.status === 'Planejado' ? 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400' :
+                                                        'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+                                                    }`}
+                                            >
+                                                {sermon.status}
+                                            </Badge>
                                         </CardDescription>
                                     </div>
                                     <DropdownMenu>
