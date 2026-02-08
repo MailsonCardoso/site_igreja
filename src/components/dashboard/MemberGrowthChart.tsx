@@ -21,18 +21,26 @@ export function MemberGrowthChart() {
 
     // Normalizar dados da API
     const memberGrowthData = allMonths.map((mes, index) => {
-        // Tenta encontrar o mês nos dados da API (assumindo que api retorna 'mes' ou 'month')
+        const monthNumber = index + 1; // 1 para Jan, 2 para Fev, etc.
+
+        // Tenta encontrar o mês nos dados da API com várias possibilidades
         const found = rawData.find((item: any) => {
-            // Verifica se o mês da API corresponde ao mês atual do loop
-            // Pode precisar ajustar dependendo do formato exato da API (número ou nome)
-            return item.mes === mes ||
-                item.mes === (index + 1).toString() ||
-                item.month === (index + 1);
+            // Se vier como número (ex: 1, 2, 12)
+            if (typeof item.mes === 'number') return item.mes === monthNumber;
+            if (typeof item.month === 'number') return item.month === monthNumber;
+
+            // Se vier como string numérica (ex: "01", "1")
+            if (item.mes && !isNaN(parseInt(item.mes))) return parseInt(item.mes) === monthNumber;
+
+            // Se vier como nome abreviado (ex: "Jan", "Fev")
+            if (typeof item.mes === 'string') return item.mes.toLowerCase().includes(mes.toLowerCase());
+
+            return false;
         });
 
         return {
             mes,
-            novos: found ? (found.novos || found.count || 0) : 0
+            novos: found ? (Number(found.novos) || Number(found.count) || Number(found.total) || 0) : 0
         };
     });
 
