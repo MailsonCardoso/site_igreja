@@ -30,11 +30,26 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
-  // Buscar eventos para notificações
+  // Verificar papel do usuário
+  let userRole = "";
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser && storedUser !== "undefined") {
+      const user = JSON.parse(storedUser);
+      userRole = user?.role?.toLowerCase() || "";
+    }
+  } catch (e) {
+    console.error("Error parsing user in header", e);
+  }
+
+  const isAllowedToSeeNotifications = ["administrador", "pastor", "secretaria", "secretário", "secretária"].includes(userRole);
+
+  // Buscar eventos para notificações apenas se permitido
   const { data: eventos = [] } = useQuery({
     queryKey: ["events-notifications"],
     queryFn: () => api.get("/events"),
     refetchInterval: 60000, // Atualiza a cada minuto
+    enabled: isAllowedToSeeNotifications
   });
 
   // Filtrar eventos nos próximos 3 dias
@@ -85,74 +100,76 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
       <div className="flex items-center gap-3">
         {actions && <div className="mr-2">{actions}</div>}
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative h-9 w-9 text-muted-foreground hover:text-foreground outline-none"
-            >
-              <Bell className="h-5 w-5" />
-              {urgentEvents.length > 0 && (
-                <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground shadow-sm">
-                  {urgentEvents.length}
-                </span>
-              )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 rounded-2xl p-2 shadow-2xl border-primary/10">
-            <DropdownMenuLabel className="flex items-center justify-between px-3 py-2">
-              <span className="font-bold text-sm tracking-tight">Notificações</span>
-              {urgentEvents.length > 0 && (
-                <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
-                  {urgentEvents.length} PRÓXIMOS
-                </span>
-              )}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <div className="max-h-[350px] overflow-y-auto">
-              {urgentEvents.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center px-4">
-                  <div className="h-12 w-12 rounded-full bg-secondary/20 flex items-center justify-center mb-3">
-                    <Bell className="h-6 w-6 text-muted-foreground/40" />
+        {isAllowedToSeeNotifications && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative h-9 w-9 text-muted-foreground hover:text-foreground outline-none"
+              >
+                <Bell className="h-5 w-5" />
+                {urgentEvents.length > 0 && (
+                  <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground shadow-sm">
+                    {urgentEvents.length}
+                  </span>
+                )}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80 rounded-2xl p-2 shadow-2xl border-primary/10">
+              <DropdownMenuLabel className="flex items-center justify-between px-3 py-2">
+                <span className="font-bold text-sm tracking-tight">Notificações</span>
+                {urgentEvents.length > 0 && (
+                  <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">
+                    {urgentEvents.length} PRÓXIMOS
+                  </span>
+                )}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <div className="max-h-[350px] overflow-y-auto">
+                {urgentEvents.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-8 text-center px-4">
+                    <div className="h-12 w-12 rounded-full bg-secondary/20 flex items-center justify-center mb-3">
+                      <Bell className="h-6 w-6 text-muted-foreground/40" />
+                    </div>
+                    <p className="text-xs font-semibold text-muted-foreground">Tudo tranquilo por enquanto.</p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-1">Não há eventos nos próximos 3 dias.</p>
                   </div>
-                  <p className="text-xs font-semibold text-muted-foreground">Tudo tranquilo por enquanto.</p>
-                  <p className="text-[10px] text-muted-foreground/60 mt-1">Não há eventos nos próximos 3 dias.</p>
-                </div>
-              ) : (
-                urgentEvents.map((evento: any) => (
-                  <DropdownMenuItem key={evento.id} asChild>
-                    <Link to="/agenda" className="flex flex-col items-start gap-1 p-3 rounded-xl cursor-pointer hover:bg-primary/5 focus:bg-primary/5 transition-colors">
-                      <div className="flex w-full items-center justify-between">
-                        <span className="text-xs font-bold text-foreground line-clamp-1">{evento.title}</span>
-                        <span className="text-[9px] font-bold uppercase text-primary/60">
-                          {format(new Date(evento.start_date), "dd/MM")}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground">
-                        <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(evento.start_date), "HH:mm")}</span>
-                        <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {format(new Date(evento.start_date), "EEEE", { locale: ptBR })}</span>
-                      </div>
-                      <div className="mt-1 flex items-center gap-1 text-[9px] font-bold text-primary uppercase tracking-wider">
-                        Ver na agenda <ArrowRight className="h-2 w-2" />
-                      </div>
+                ) : (
+                  urgentEvents.map((evento: any) => (
+                    <DropdownMenuItem key={evento.id} asChild>
+                      <Link to="/agenda" className="flex flex-col items-start gap-1 p-3 rounded-xl cursor-pointer hover:bg-primary/5 focus:bg-primary/5 transition-colors">
+                        <div className="flex w-full items-center justify-between">
+                          <span className="text-xs font-bold text-foreground line-clamp-1">{evento.title}</span>
+                          <span className="text-[9px] font-bold uppercase text-primary/60">
+                            {format(new Date(evento.start_date), "dd/MM")}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground">
+                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(evento.start_date), "HH:mm")}</span>
+                          <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {format(new Date(evento.start_date), "EEEE", { locale: ptBR })}</span>
+                        </div>
+                        <div className="mt-1 flex items-center gap-1 text-[9px] font-bold text-primary uppercase tracking-wider">
+                          Ver na agenda <ArrowRight className="h-2 w-2" />
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))
+                )}
+              </div>
+              {urgentEvents.length > 0 && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/agenda" className="w-full flex justify-center py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors cursor-pointer">
+                      Ver agenda completa
                     </Link>
                   </DropdownMenuItem>
-                ))
+                </>
               )}
-            </div>
-            {urgentEvents.length > 0 && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/agenda" className="w-full flex justify-center py-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors cursor-pointer">
-                    Ver agenda completa
-                  </Link>
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </header>
   );
