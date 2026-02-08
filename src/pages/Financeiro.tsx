@@ -276,7 +276,6 @@ export default function Financeiro() {
             </SelectContent>
           </Select>
 
-          {/* 
           <Button
             onClick={() => setIsReportOpen(true)}
             variant="outline"
@@ -285,7 +284,6 @@ export default function Financeiro() {
             <FileText className="h-5 w-5" />
             Balancete
           </Button>
-          */}
         </div>
       </div>
 
