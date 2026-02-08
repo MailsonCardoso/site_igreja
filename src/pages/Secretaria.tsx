@@ -328,240 +328,233 @@ export default function Secretaria() {
                 Novo Membro
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl">
-              <div className="bg-primary/5 p-6 border-b">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                    <User className="h-6 w-6 text-primary" />
+            <DialogContent className="sm:max-w-3xl max-h-[95vh] overflow-hidden flex flex-col p-0 rounded-3xl border-none shadow-2xl">
+              <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-8 border-b flex-shrink-0">
+                <div className="flex items-center gap-5">
+                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
+                    <User className="h-7 w-7 text-primary-foreground" />
                   </div>
                   <div>
-                    <DialogTitle className="text-xl font-semibold text-foreground">
-                      {isEditMode ? "Editar Membro" : "Adicionar Novo Membro"}
+                    <DialogTitle className="text-2xl font-bold text-foreground">
+                      {isEditMode ? "Editar Membro" : "Novo Membro"}
                     </DialogTitle>
-                    <DialogDescription className="text-muted-foreground text-sm">
-                      {isEditMode ? "Atualize os dados do membro da igreja." : "Preencha os dados do novo membro da igreja em etapas."}
+                    <DialogDescription className="text-muted-foreground text-sm mt-1">
+                      {isEditMode ? "Atualize as informações do membro da igreja." : "Preencha os dados do novo membro em etapas organizadas."}
                     </DialogDescription>
                   </div>
                 </div>
               </div>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden">
-                <ScrollArea className="flex-1 px-6 py-4">
-                  <Tabs defaultValue="pessoais" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 mb-6">
-                      <TabsTrigger value="pessoais">Pessoais</TabsTrigger>
-                      <TabsTrigger value="contato">Contato</TabsTrigger>
-                      <TabsTrigger value="eclesiastico">Igreja</TabsTrigger>
-                      <TabsTrigger value="familia">Família</TabsTrigger>
-                    </TabsList>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col overflow-hidden min-h-0">
+                <ScrollArea className="flex-1 max-h-[calc(95vh-280px)]">
+                  <div className="px-8 py-6">
+                    <Tabs defaultValue="pessoais" className="w-full">
+                      <TabsList className="grid w-full grid-cols-4 mb-8 h-auto p-1 bg-secondary/30 rounded-2xl">
+                        <TabsTrigger value="pessoais" className="gap-2 py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-md transition-all">
+                          <User className="h-4 w-4" />
+                          <span className="hidden sm:inline">Pessoais</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="contato" className="gap-2 py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-md transition-all">
+                          <Phone className="h-4 w-4" />
+                          <span className="hidden sm:inline">Contato</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="eclesiastico" className="gap-2 py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-md transition-all">
+                          <Church className="h-4 w-4" />
+                          <span className="hidden sm:inline">Igreja</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="familia" className="gap-2 py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-md transition-all">
+                          <Users className="h-4 w-4" />
+                          <span className="hidden sm:inline">Família</span>
+                        </TabsTrigger>
+                      </TabsList>
 
-                    <TabsContent value="pessoais" className="space-y-4">
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="sm:col-span-2 space-y-2">
-                          <Label htmlFor="name">Nome Completo *</Label>
-                          <div className="relative">
-                            <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input id="name" {...form.register("name", { required: true })} className="pl-10" placeholder="Nome do membro" />
+                      <TabsContent value="pessoais" className="space-y-6 mt-2">
+                        <div className="bg-secondary/5 p-6 rounded-2xl border border-secondary/20">
+                          <div className="flex items-center gap-2 mb-5">
+                            <User className="h-4 w-4 text-primary" />
+                            <h3 className="font-semibold text-sm text-foreground/80 uppercase tracking-wide">Dados Pessoais</h3>
                           </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="birth_date">Data de Nascimento</Label>
-                          <Input id="birth_date" type="date" {...form.register("birth_date")} />
-                        </div>
-                        <div className="space-y-2 p-0.5">
-                          <Label htmlFor="sex">Sexo</Label>
-                          <Select onValueChange={(val) => setValue("sex", val)} value={watch("sex")}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="masculino">Masculino</SelectItem>
-                              <SelectItem value="feminino">Feminino</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2 p-0.5">
-                          <Label htmlFor="marital_status">Estado Civil</Label>
-                          <Select onValueChange={(val) => setValue("marital_status", val)} value={watch("marital_status")}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="solteiro">Solteiro(a)</SelectItem>
-                              <SelectItem value="casado">Casado(a)</SelectItem>
-                              <SelectItem value="viuvo">Viúvo(a)</SelectItem>
-                              <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="cpf">CPF</Label>
-                          <Input
-                            id="cpf"
-                            {...form.register("cpf")}
-                            onChange={(e) => setValue("cpf", maskCPF(e.target.value))}
-                            placeholder="000.000.000-00"
-                          />
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="contato" className="space-y-4">
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">WhatsApp / Telefone</Label>
-                          <div className="relative">
-                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                              id="phone"
-                              {...form.register("phone")}
-                              className="pl-10"
-                              placeholder="(00) 00000-0000"
-                              onChange={(e) => setValue("phone", maskPhone(e.target.value))}
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="email">E-mail</Label>
-                          <Input id="email" type="email" {...form.register("email")} placeholder="exemplo@email.com" />
-                        </div>
-                        <div className="sm:col-span-2 border-t pt-4">
-                          <h4 className="text-sm font-medium mb-4 flex items-center gap-2">
-                            <MapPin className="h-4 w-4" /> Endereço
-                          </h4>
-                          <div className="grid gap-4 sm:grid-cols-3">
+                          <div className="grid gap-5 sm:grid-cols-2">
+                            <div className="sm:col-span-2 space-y-2">
+                              <Label htmlFor="name" className="text-sm font-semibold">
+                                Nome Completo <span className="text-destructive">*</span>
+                              </Label>
+                              <div className="relative">
+                                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                  id="name"
+                                  {...form.register("name", { required: true })}
+                                  className="pl-10 h-11 rounded-xl border-border/50 focus:border-primary"
+                                  placeholder="Digite o nome completo"
+                                />
+                              </div>
+                            </div>
                             <div className="space-y-2">
-                              <Label htmlFor="cep">CEP</Label>
+                              <Label htmlFor="birth_date" className="text-sm font-semibold">Data de Nascimento</Label>
                               <Input
-                                id="cep"
-                                {...form.register("cep")}
-                                placeholder="00000-000"
-                                onChange={(e) => setValue("cep", maskCEP(e.target.value))}
+                                id="birth_date"
+                                type="date"
+                                {...form.register("birth_date")}
+                                className="h-11 rounded-xl border-border/50 focus:border-primary"
                               />
                             </div>
-                            <div className="sm:col-span-2 space-y-2">
-                              <Label htmlFor="logradouro">Logradouro</Label>
-                              <Input id="logradouro" {...form.register("logradouro")} />
+                            <div className="space-y-2">
+                              <Label htmlFor="cpf" className="text-sm font-semibold">CPF</Label>
+                              <Input
+                                id="cpf"
+                                {...form.register("cpf")}
+                                onChange={(e) => setValue("cpf", maskCPF(e.target.value))}
+                                placeholder="000.000.000-00"
+                                className="h-11 rounded-xl border-border/50 focus:border-primary"
+                              />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="bairro">Bairro</Label>
-                              <Input id="bairro" {...form.register("bairro")} />
+                              <Label htmlFor="sex" className="text-sm font-semibold">Sexo</Label>
+                              <Select onValueChange={(val) => setValue("sex", val)} value={watch("sex")}>
+                                <SelectTrigger className="h-11 rounded-xl border-border/50">
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="masculino">Masculino</SelectItem>
+                                  <SelectItem value="feminino">Feminino</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="cidade">Cidade</Label>
-                              <Input id="cidade" {...form.register("cidade")} />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="uf">UF</Label>
-                              <Input id="uf" {...form.register("uf")} maxLength={2} className="uppercase" />
+                              <Label htmlFor="marital_status" className="text-sm font-semibold">Estado Civil</Label>
+                              <Select onValueChange={(val) => setValue("marital_status", val)} value={watch("marital_status")}>
+                                <SelectTrigger className="h-11 rounded-xl border-border/50">
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="solteiro">Solteiro(a)</SelectItem>
+                                  <SelectItem value="casado">Casado(a)</SelectItem>
+                                  <SelectItem value="viuvo">Viúvo(a)</SelectItem>
+                                  <SelectItem value="divorciado">Divorciado(a)</SelectItem>
+                                </SelectContent>
+                              </Select>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </TabsContent>
+                      </TabsContent>
 
-                    <TabsContent value="eclesiastico" className="space-y-4">
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-2 p-0.5">
-                          <Label htmlFor="status">Situação / Status</Label>
-                          <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="membro">Membro</SelectItem>
-                              <SelectItem value="visitante">Visitante</SelectItem>
-                              <SelectItem value="afastado">Afastado</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2 p-0.5">
-                          <Label htmlFor="role">Função / Cargo</Label>
-                          <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="Membro">Membro</SelectItem>
-                              <SelectItem value="Diácono">Diácono</SelectItem>
-                              <SelectItem value="Obreiro">Obreiro</SelectItem>
-                              <SelectItem value="Ministro de Louvor">Ministro de Louvor</SelectItem>
-                              <SelectItem value="Pastor">Pastor</SelectItem>
-                              <SelectItem value="Instrumentista">Instrumentista</SelectItem>
-                              <SelectItem value="Financeiro">Financeiro</SelectItem>
-                              <SelectItem value="Secretaria">Secretaria</SelectItem>
-                              <SelectItem value="Líder de Pequeno Grupo">Líder de Pequeno Grupo</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2 p-0.5">
-                          <Label htmlFor="cell_id">Célula / Pequeno Grupo</Label>
-                          <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione uma célula" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="none">Nenhuma</SelectItem>
-                              {cells.map((cell: any) => (
-                                <SelectItem key={cell.id} value={cell.id.toString()}>{cell.name}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="familia" className="space-y-4">
-                      <div className="grid gap-4 sm:grid-cols-1">
-                        <div className="space-y-2">
-                          <Label>Vínculo com Membros Já Cadastrados</Label>
-                          <p className="text-xs text-muted-foreground mb-4">Selecione membros da igreja para vincular como parentes.</p>
-                        </div>
-
+                      <TabsContent value="contato" className="space-y-4">
                         <div className="grid gap-4 sm:grid-cols-2">
                           <div className="space-y-2">
-                            <Label htmlFor="father_id">Pai (Membro)</Label>
-                            <Select onValueChange={(val) => setValue("father_id", val)} value={watch("father_id")}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione um membro" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
-                                  <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <div className="pt-2">
-                              <Label htmlFor="father_name" className="text-xs">Ou Nome do Pai (Manual)</Label>
-                              <Input id="father_name" {...form.register("father_name")} placeholder="Nome do pai" />
+                            <Label htmlFor="phone">WhatsApp / Telefone</Label>
+                            <div className="relative">
+                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                id="phone"
+                                {...form.register("phone")}
+                                className="pl-10"
+                                placeholder="(00) 00000-0000"
+                                onChange={(e) => setValue("phone", maskPhone(e.target.value))}
+                              />
                             </div>
                           </div>
-
                           <div className="space-y-2">
-                            <Label htmlFor="mother_id">Mãe (Membro)</Label>
-                            <Select onValueChange={(val) => setValue("mother_id", val)} value={watch("mother_id")}>
+                            <Label htmlFor="email">E-mail</Label>
+                            <Input id="email" type="email" {...form.register("email")} placeholder="exemplo@email.com" />
+                          </div>
+                          <div className="sm:col-span-2 border-t pt-4">
+                            <h4 className="text-sm font-medium mb-4 flex items-center gap-2">
+                              <MapPin className="h-4 w-4" /> Endereço
+                            </h4>
+                            <div className="grid gap-4 sm:grid-cols-3">
+                              <div className="space-y-2">
+                                <Label htmlFor="cep">CEP</Label>
+                                <Input
+                                  id="cep"
+                                  {...form.register("cep")}
+                                  placeholder="00000-000"
+                                  onChange={(e) => setValue("cep", maskCEP(e.target.value))}
+                                />
+                              </div>
+                              <div className="sm:col-span-2 space-y-2">
+                                <Label htmlFor="logradouro">Logradouro</Label>
+                                <Input id="logradouro" {...form.register("logradouro")} />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="bairro">Bairro</Label>
+                                <Input id="bairro" {...form.register("bairro")} />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="cidade">Cidade</Label>
+                                <Input id="cidade" {...form.register("cidade")} />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="uf">UF</Label>
+                                <Input id="uf" {...form.register("uf")} maxLength={2} className="uppercase" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="eclesiastico" className="space-y-4">
+                        <div className="grid gap-4 sm:grid-cols-2">
+                          <div className="space-y-2 p-0.5">
+                            <Label htmlFor="status">Situação / Status</Label>
+                            <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
                               <SelectTrigger>
-                                <SelectValue placeholder="Selecione um membro" />
+                                <SelectValue placeholder="Selecione" />
                               </SelectTrigger>
                               <SelectContent>
-                                {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
-                                  <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
+                                <SelectItem value="membro">Membro</SelectItem>
+                                <SelectItem value="visitante">Visitante</SelectItem>
+                                <SelectItem value="afastado">Afastado</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2 p-0.5">
+                            <Label htmlFor="role">Função / Cargo</Label>
+                            <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Membro">Membro</SelectItem>
+                                <SelectItem value="Diácono">Diácono</SelectItem>
+                                <SelectItem value="Obreiro">Obreiro</SelectItem>
+                                <SelectItem value="Ministro de Louvor">Ministro de Louvor</SelectItem>
+                                <SelectItem value="Pastor">Pastor</SelectItem>
+                                <SelectItem value="Instrumentista">Instrumentista</SelectItem>
+                                <SelectItem value="Financeiro">Financeiro</SelectItem>
+                                <SelectItem value="Secretaria">Secretaria</SelectItem>
+                                <SelectItem value="Líder de Pequeno Grupo">Líder de Pequeno Grupo</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="space-y-2 p-0.5">
+                            <Label htmlFor="cell_id">Célula / Pequeno Grupo</Label>
+                            <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione uma célula" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">Nenhuma</SelectItem>
+                                {cells.map((cell: any) => (
+                                  <SelectItem key={cell.id} value={cell.id.toString()}>{cell.name}</SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
-                            <div className="pt-2">
-                              <Label htmlFor="mother_name" className="text-xs">Ou Nome da Mãe (Manual)</Label>
-                              <Input id="mother_name" {...form.register("mother_name")} placeholder="Nome da mãe" />
-                            </div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="familia" className="space-y-4">
+                        <div className="grid gap-4 sm:grid-cols-1">
+                          <div className="space-y-2">
+                            <Label>Vínculo com Membros Já Cadastrados</Label>
+                            <p className="text-xs text-muted-foreground mb-4">Selecione membros da igreja para vincular como parentes.</p>
                           </div>
 
-                          {maritalStatusValue === "casado" && (
-                            <div className="sm:col-span-2 space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/10">
-                              <Label htmlFor="spouse_id" className="flex items-center gap-2">
-                                <Users className="h-4 w-4" /> Cônjuge (Membro)
-                              </Label>
-                              <Select onValueChange={(val) => setValue("spouse_id", val)} value={watch("spouse_id")}>
+                          <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label htmlFor="father_id">Pai (Membro)</Label>
+                              <Select onValueChange={(val) => setValue("father_id", val)} value={watch("father_id")}>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Selecione o cônjuge" />
+                                  <SelectValue placeholder="Selecione um membro" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
@@ -569,17 +562,69 @@ export default function Secretaria() {
                                   ))}
                                 </SelectContent>
                               </Select>
+                              <div className="pt-2">
+                                <Label htmlFor="father_name" className="text-xs">Ou Nome do Pai (Manual)</Label>
+                                <Input id="father_name" {...form.register("father_name")} placeholder="Nome do pai" />
+                              </div>
                             </div>
-                          )}
+
+                            <div className="space-y-2">
+                              <Label htmlFor="mother_id">Mãe (Membro)</Label>
+                              <Select onValueChange={(val) => setValue("mother_id", val)} value={watch("mother_id")}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Selecione um membro" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
+                                    <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <div className="pt-2">
+                                <Label htmlFor="mother_name" className="text-xs">Ou Nome da Mãe (Manual)</Label>
+                                <Input id="mother_name" {...form.register("mother_name")} placeholder="Nome da mãe" />
+                              </div>
+                            </div>
+
+                            {maritalStatusValue === "casado" && (
+                              <div className="sm:col-span-2 space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/10">
+                                <Label htmlFor="spouse_id" className="flex items-center gap-2">
+                                  <Users className="h-4 w-4" /> Cônjuge (Membro)
+                                </Label>
+                                <Select onValueChange={(val) => setValue("spouse_id", val)} value={watch("spouse_id")}>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Selecione o cônjuge" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
+                                      <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
+                      </TabsContent>
+                    </Tabs>
+                  </div>
                 </ScrollArea>
-                <div className="flex justify-end gap-3 p-6 border-t mt-auto">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
-                  <Button type="submit" className="bg-primary text-primary-foreground min-w-[100px]" disabled={createMemberMutation.isPending || updateMemberMutation.isPending}>
-                    {createMemberMutation.isPending || updateMemberMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Salvar"}
+                <div className="flex justify-end gap-3 p-6 border-t bg-secondary/5 flex-shrink-0">
+                  <Button type="button" variant="outline" className="px-8 rounded-xl" onClick={() => setIsDialogOpen(false)}>
+                    Cancelar
+                  </Button>
+                  <Button type="submit" className="bg-primary text-primary-foreground hover:bg-primary/90 min-w-[120px] px-8 rounded-xl shadow-md transition-all active:scale-95" disabled={createMemberMutation.isPending || updateMemberMutation.isPending}>
+                    {createMemberMutation.isPending || updateMemberMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Salvando...
+                      </>
+                    ) : (
+                      <>
+                        <User className="mr-2 h-4 w-4" />
+                        {isEditMode ? "Atualizar" : "Cadastrar"}
+                      </>
+                    )}
                   </Button>
                 </div>
               </form>
