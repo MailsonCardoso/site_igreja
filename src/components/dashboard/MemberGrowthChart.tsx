@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Loader2, TrendingUp, Users } from "lucide-react";
@@ -47,13 +47,7 @@ export function MemberGrowthChart() {
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={memberGrowthData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
-                            <defs>
-                                <linearGradient id="colorNovos" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4} />
-                                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.05} />
-                                </linearGradient>
-                            </defs>
+                        <LineChart data={memberGrowthData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted)/0.1)" vertical={false} />
                             <XAxis
                                 dataKey="mes"
@@ -79,17 +73,16 @@ export function MemberGrowthChart() {
                                 labelStyle={{ color: 'hsl(var(--muted-foreground))', fontWeight: 600, fontSize: '11px', marginBottom: '4px', textTransform: 'uppercase' }}
                                 cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 2, strokeDasharray: '4 4' }}
                             />
-                            <Area
+                            <Line
                                 type="monotone"
                                 dataKey="novos"
                                 name="Novos Membros"
                                 stroke="hsl(var(--primary))"
                                 strokeWidth={4}
-                                fillOpacity={1}
-                                fill="url(#colorNovos)"
-                                activeDot={{ r: 6, stroke: 'hsl(var(--background))', strokeWidth: 3, fill: 'hsl(var(--primary))' }}
+                                dot={{ r: 4, strokeWidth: 2, fill: 'hsl(var(--background))', stroke: 'hsl(var(--primary))' }}
+                                activeDot={{ r: 8, stroke: 'hsl(var(--background))', strokeWidth: 3, fill: 'hsl(var(--primary))' }}
                             />
-                        </AreaChart>
+                        </LineChart>
                     </ResponsiveContainer>
                 )}
             </div>
