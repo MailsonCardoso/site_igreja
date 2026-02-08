@@ -1,4 +1,4 @@
-import { Bell, Search } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,15 +56,6 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
 
       <div className="flex items-center gap-3">
         {actions && <div className="mr-2">{actions}</div>}
-
-        <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Buscar..."
-            className="w-64 pl-9 bg-secondary/50 border-border focus:bg-card"
-          />
-        </div>
 
         <Button
           variant="ghost"
