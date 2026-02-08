@@ -17,7 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Fragment, ReactNode } from "react";
+import { Fragment, ReactNode, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { format, isAfter, isBefore, addDays, startOfDay } from "date-fns";
@@ -30,19 +30,33 @@ interface PageHeaderProps {
 }
 
 export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
-  // Verificar papel do usuário
+  const [readEventIds, setReadEventIds] = useState<number[]>([]);
+
+  // Verificar papel e ID do usuário
   let userRole = "";
+  let userId = "";
   try {
     const storedUser = localStorage.getItem("user");
     if (storedUser && storedUser !== "undefined") {
       const user = JSON.parse(storedUser);
       userRole = user?.role?.toLowerCase() || "";
+      userId = user?.id || "default";
     }
   } catch (e) {
     console.error("Error parsing user in header", e);
   }
 
   const isAllowedToSeeNotifications = ["administrador", "pastor", "secretaria", "secretário", "secretária"].includes(userRole);
+
+  // Carregar IDs lidos do localStorage na inicialização
+  useEffect(() => {
+    if (userId) {
+      const stored = localStorage.getItem(`read_events_${userId}`);
+      if (stored) {
+        setReadEventIds(JSON.parse(stored));
+      }
+    }
+  }, [userId]);
 
   // Buscar eventos para notificações apenas se permitido
   const { data: eventos = [] } = useQuery({
@@ -53,7 +67,7 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
   });
 
   // Filtrar eventos nos próximos 3 dias
-  const urgentEvents = eventos.filter((evento: any) => {
+  const urgentEvents = (eventos || []).filter((evento: any) => {
     const eventDate = new Date(evento.start_date);
     const today = startOfDay(new Date());
     const limitDate = addDays(today, 3);
@@ -61,6 +75,18 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
     // Evento é entre agora e 3 dias no futuro
     return isAfter(eventDate, today) && isBefore(eventDate, limitDate);
   }).sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+
+  // Eventos não lidos (que aparecerão no badge)
+  const unreadUrgentEvents = urgentEvents.filter((e: any) => !readEventIds.includes(e.id));
+
+  // Função para marcar como lido
+  const markAsRead = () => {
+    if (unreadUrgentEvents.length > 0) {
+      const newReadIds = [...new Set([...readEventIds, ...unreadUrgentEvents.map((e: any) => e.id)])];
+      setReadEventIds(newReadIds);
+      localStorage.setItem(`read_events_${userId}`, JSON.stringify(newReadIds));
+    }
+  };
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-card/80 backdrop-blur-sm px-4 lg:px-8">
@@ -101,7 +127,9 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
         {actions && <div className="mr-2">{actions}</div>}
 
         {isAllowedToSeeNotifications && (
-          <DropdownMenu>
+          <DropdownMenu onOpenChange={(open) => {
+            if (open) markAsRead();
+          }}>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
@@ -109,9 +137,9 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
                 className="relative h-9 w-9 text-muted-foreground hover:text-foreground outline-none"
               >
                 <Bell className="h-5 w-5" />
-                {urgentEvents.length > 0 && (
+                {unreadUrgentEvents.length > 0 && (
                   <span className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground shadow-sm">
-                    {urgentEvents.length}
+                    {unreadUrgentEvents.length}
                   </span>
                 )}
               </Button>
