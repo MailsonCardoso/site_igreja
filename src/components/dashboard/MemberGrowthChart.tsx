@@ -4,13 +4,37 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Loader2, TrendingUp, Users } from "lucide-react";
 
+const allMonths = [
+    "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
+    "Jul", "Ago", "Set", "Out", "Nov", "Dez"
+];
+
 export function MemberGrowthChart() {
     const { data: dashboardData, isLoading } = useQuery({
         queryKey: ["dashboard"],
         queryFn: () => api.get("/dashboard"),
     });
 
-    const memberGrowthData = dashboardData?.member_growth || [];
+    // Processar dados para garantir todos os meses do ano
+    const rawData = dashboardData?.member_growth || [];
+    const currentYear = new Date().getFullYear();
+
+    // Normalizar dados da API
+    const memberGrowthData = allMonths.map((mes, index) => {
+        // Tenta encontrar o mês nos dados da API (assumindo que api retorna 'mes' ou 'month')
+        const found = rawData.find((item: any) => {
+            // Verifica se o mês da API corresponde ao mês atual do loop
+            // Pode precisar ajustar dependendo do formato exato da API (número ou nome)
+            return item.mes === mes ||
+                item.mes === (index + 1).toString() ||
+                item.month === (index + 1);
+        });
+
+        return {
+            mes,
+            novos: found ? (found.novos || found.count || 0) : 0
+        };
+    });
 
     return (
         <motion.div
@@ -29,9 +53,9 @@ export function MemberGrowthChart() {
                 </div>
                 <div>
                     <h3 className="text-lg font-bold text-foreground">
-                        Crescimento de Membros
+                        Crescimento Anual
                     </h3>
-                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Novos cadastros (Últimos 6 meses)</p>
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Novos Membros ({currentYear})</p>
                 </div>
             </div>
 
@@ -40,14 +64,9 @@ export function MemberGrowthChart() {
                     <div className="flex h-full items-center justify-center">
                         <Loader2 className="h-10 w-10 animate-spin text-primary" />
                     </div>
-                ) : memberGrowthData.length === 0 ? (
-                    <div className="flex h-full flex-col items-center justify-center text-muted-foreground bg-secondary/5 rounded-3xl border border-secondary/20">
-                        <TrendingUp className="h-12 w-12 mb-4 opacity-20" />
-                        <p className="font-medium opacity-50">Dados de crescimento ainda não disponíveis</p>
-                    </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={memberGrowthData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }} barSize={32}>
+                        <BarChart data={memberGrowthData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }} barSize={20}>
                             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted)/0.1)" vertical={false} />
                             <XAxis
                                 dataKey="mes"
