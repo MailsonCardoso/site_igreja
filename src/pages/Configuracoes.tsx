@@ -331,7 +331,7 @@ export default function Configuracoes() {
                 <div className="relative group">
                   <Avatar className="h-28 w-28 ring-4 ring-primary/20 shadow-2xl transition-transform group-hover:scale-105 duration-300">
                     <AvatarFallback className="bg-primary text-primary-foreground text-3xl font-bold">
-                      {settingsForm.nome ? settingsForm.nome.substring(0, 2).toUpperCase() : "IC"}
+                      {settingsForm.nome ? settingsForm.nome.substring(0, 3).toUpperCase() : "IPR"}
                     </AvatarFallback>
                   </Avatar>
                   <Button variant="outline" size="icon" className="absolute -bottom-2 -right-2 h-10 w-10 rounded-full bg-background shadow-lg text-primary border-primary/20 hover:bg-primary/5">

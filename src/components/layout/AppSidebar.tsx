@@ -91,8 +91,17 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
       {/* Logo */}
       <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
         <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-            <Cross className="h-5 w-5 text-primary-foreground" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1 shadow-sm border border-sidebar-border overflow-hidden">
+            <img
+              src="/logo_ipr.png"
+              alt="Logo IPR"
+              className="h-full w-full object-contain"
+              onError={(e) => {
+                // Fallback to Icon if image doesn't exist yet
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement?.classList.add('bg-primary');
+              }}
+            />
           </div>
           {!collapsed && (
             <motion.span
@@ -100,7 +109,7 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
               animate={{ opacity: 1 }}
               className="text-lg font-bold text-sidebar-foreground"
             >
-              Igreja Central
+              IPR Jaguarema
             </motion.span>
           )}
         </Link>
