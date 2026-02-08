@@ -17,25 +17,25 @@ export function MemberGrowthChart() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
-            className="rounded-[2rem] bg-card p-8 shadow-xl border-l-8 border-primary relative overflow-hidden group"
+            className="rounded-[2rem] bg-card p-6 shadow-xl border-l-8 border-primary relative overflow-hidden group"
         >
             <div className="absolute right-0 top-0 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none text-primary">
-                <TrendingUp className="h-64 w-64 -mr-16 -mt-16" />
+                <TrendingUp className="h-40 w-40 -mr-8 -mt-8" />
             </div>
 
-            <div className="mb-8 flex items-center gap-4 relative z-10">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
-                    <Users className="h-6 w-6" />
+            <div className="mb-6 flex items-center gap-4 relative z-10">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-inner">
+                    <Users className="h-5 w-5" />
                 </div>
                 <div>
-                    <h3 className="text-xl font-bold text-foreground">
+                    <h3 className="text-lg font-bold text-foreground">
                         Crescimento de Membros
                     </h3>
-                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Novos cadastros (Últimos 6 meses)</p>
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Novos cadastros (Últimos 6 meses)</p>
                 </div>
             </div>
 
-            <div className="h-[350px] relative z-10">
+            <div className="h-[250px] relative z-10">
                 {isLoading ? (
                     <div className="flex h-full items-center justify-center">
                         <Loader2 className="h-10 w-10 animate-spin text-primary" />
