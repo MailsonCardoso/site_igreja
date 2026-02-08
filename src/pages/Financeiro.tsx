@@ -236,7 +236,69 @@ export default function Financeiro() {
   const saldoMensal = totalEntradas - totalSaidas;
 
   const handlePrint = () => {
-    window.print();
+    const printContent = document.getElementById("printable-report");
+    if (!printContent) return;
+
+    // Criar um iframe temporário
+    const iframe = document.createElement("iframe");
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "none";
+    document.body.appendChild(iframe);
+
+    const doc = iframe.contentWindow?.document;
+    if (!doc) return;
+
+    // Injetar o conteúdo e os estilos necessários
+    doc.open();
+    doc.write(`
+      <html>
+        <head>
+          <title>Balancete Mensal</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; background: white; color: black; }
+            .no-print { display: none !important; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            th { background-color: #f8f9fa; }
+            .text-success { color: #16a34a !important; }
+            .text-destructive { color: #dc2626 !important; }
+            .font-bold { font-weight: bold; }
+            .text-3xl { font-size: 1.875rem; }
+            .text-center { text-align: center; }
+            .uppercase { text-transform: uppercase; }
+            .grid { display: grid; }
+            .grid-cols-2 { grid-template-columns: 1fr 1fr; gap: 40px; }
+            .space-y-4 > * + * { margin-top: 1rem; }
+            .pb-8 { padding-bottom: 2rem; }
+            .border-b-4 { border-bottom: 4px solid #3b82f6; }
+            .rounded-xl { border-radius: 0.75rem; }
+            .bg-primary\\/5 { background-color: rgba(59, 130, 246, 0.05); }
+            .p-4 { padding: 1rem; }
+            .p-10 { padding: 2.5rem; }
+            /* Copiar estilos essenciais do Tailwind inline conforme necessário */
+          </style>
+          <link rel="stylesheet" href="${window.location.origin}/index.css">
+        </head>
+        <body>
+          <div class="p-10">
+            ${printContent.innerHTML}
+          </div>
+          <script>
+            setTimeout(() => {
+              window.print();
+              window.onafterprint = () => {
+                window.parent.document.body.removeChild(window.frameElement);
+              };
+            }, 500);
+          </script>
+        </body>
+      </html>
+    `);
+    doc.close();
   };
 
   return (
@@ -760,79 +822,6 @@ export default function Financeiro() {
         </DialogContent>
       </Dialog>
 
-      {/* Estilos para Impressão */}
-      <style>{`
-        @media print {
-          /* 1. Ocultar TUDO por padrão */
-          body * {
-            visibility: hidden;
-            border-color: transparent !important;
-          }
-
-          /* 2. Tornar o relatório e seus pais visíveis */
-          #printable-report, 
-          #printable-report *,
-          [data-radix-portal],
-          [data-radix-portal] *,
-          [role="dialog"],
-          [role="dialog"] * {
-            visibility: visible !important;
-          }
-
-          /* 3. Posicionar o relatório no topo da folha */
-          #printable-report {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            display: block !important;
-            background: white !important;
-          }
-
-          /* 4. Resetar o Modal/Dialog para ocupara a folha toda */
-          [role="dialog"] {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 100% !important;
-            height: auto !important;
-            max-height: none !important;
-            border: none !important;
-            box-shadow: none !important;
-            transform: none !important;
-            padding: 0 !important;
-            background: white !important;
-          }
-
-          /* 5. Resetar o ScrollArea do relatório */
-          [data-radix-scroll-area-viewport] {
-            display: block !important;
-            overflow: visible !important;
-            height: auto !important;
-            max-height: none !important;
-          }
-
-          /* 6. Ocultar o fundo escuro e botões de interface */
-          .no-print,
-          [data-state="open"] > div[style*="opacity"] {
-            display: none !important;
-          }
-
-          /* 7. Configurações de Página */
-          @page {
-            margin: 1.5cm;
-            size: auto;
-          }
-
-          /* 8. Forçar cores para impressão */
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-        }
-      `}</style>
     </MainLayout>
   );
 }
