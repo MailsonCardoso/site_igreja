@@ -595,23 +595,23 @@ export default function Secretaria() {
           </Dialog>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center mb-6">
+        {/* Filters & Controls */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center mb-6 bg-secondary/10 p-4 rounded-2xl border border-secondary/20">
           <div className="relative flex-1 group">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-primary transition-colors group-focus-within:text-primary" />
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input
-              placeholder="Buscar membros por nome, CPF ou cargo..."
+              placeholder="Buscar membros..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 h-12 bg-background border-primary/20 focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-sm rounded-xl transition-all"
+              className="pl-11 h-12 bg-background border-transparent focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-none rounded-xl transition-all"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-44">
+            <SelectTrigger className="w-full sm:w-48 h-12 rounded-xl border-transparent bg-background shadow-none">
               <SelectValue placeholder="Situação" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="todos">Todas Situações</SelectItem>
+              <SelectItem value="todos">Todos</SelectItem>
               <SelectItem value="membro">Membros</SelectItem>
               <SelectItem value="congregado">Congregados</SelectItem>
               <SelectItem value="visitante">Visitantes</SelectItem>
@@ -620,33 +620,38 @@ export default function Secretaria() {
           </Select>
         </div>
 
-        {/* Table/Content */}
+        {/* Members List */}
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-            <Loader2 className="h-8 w-8 animate-spin mb-4" />
-            <p>Carregando membros...</p>
+          <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+            <p className="font-medium opacity-60">Carregando membros...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-12 text-destructive">
-            <p>Erro ao carregar dados. Verifique a conexão com o servidor.</p>
+          <div className="text-center py-20 text-destructive bg-destructive/5 rounded-3xl border border-destructive/10">
+            <p className="font-medium">Não foi possível carregar a lista de membros.</p>
           </div>
         ) : (
-          <div className="rounded-xl border overflow-hidden">
+          <div className="space-y-2">
             <Table>
-              <TableHeader>
-                <TableRow className="bg-secondary/50 hover:bg-secondary/50">
-                  <TableHead className="font-semibold uppercase text-[10px] tracking-wider">Nome</TableHead>
-                  <TableHead className="font-semibold uppercase text-[10px] tracking-wider">Cargo/Função</TableHead>
-                  <TableHead className="font-semibold uppercase text-[10px] tracking-wider hidden md:table-cell">WhatsApp</TableHead>
-                  <TableHead className="font-semibold uppercase text-[10px] tracking-wider">Situação</TableHead>
-                  <TableHead className="font-semibold w-12"></TableHead>
+              <TableHeader className="[&_tr]:border-b-0">
+                <TableRow className="hover:bg-transparent border-none">
+                  <TableHead className="ps-6 font-bold uppercase text-[11px] tracking-wider text-muted-foreground/60">Membro</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider text-muted-foreground/60">Cargo</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider text-muted-foreground/60 hidden md:table-cell">Contato</TableHead>
+                  <TableHead className="font-bold uppercase text-[11px] tracking-wider text-muted-foreground/60">Status</TableHead>
+                  <TableHead className="w-16"></TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="[&_tr:last-child]:border-0">
                 {filteredMembros.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                      Nenhum membro encontrado.
+                    <TableCell colSpan={5} className="text-center py-16 text-muted-foreground">
+                      <div className="flex flex-col items-center gap-2">
+                        <UserMinus className="h-10 w-10 opacity-20" />
+                        <p>Nenhum membro encontrado com este filtro.</p>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -655,61 +660,79 @@ export default function Secretaria() {
                       key={membro.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2, delay: index * 0.03 }}
-                      className="border-b hover:bg-secondary/30 transition-colors"
+                      transition={{ duration: 0.2, delay: index * 0.05 }}
+                      className="group bg-card hover:bg-secondary/40 border-b border-border/40 transition-all cursor-default"
                     >
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback className="bg-secondary text-foreground text-xs font-medium">
-                              {(membro.name || membro.nome || "??").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
+                      <TableCell className="py-4 ps-6 rounded-l-2xl">
+                        <div className="flex items-center gap-4">
+                          <div className="relative">
+                            <Avatar className="h-12 w-12 border-2 border-background shadow-md group-hover:scale-105 transition-transform duration-300">
+                              <AvatarFallback className={`text-sm font-bold ${membro.status === 'membro' ? 'bg-primary/10 text-primary' :
+                                  membro.status === 'afastado' ? 'bg-destructive/10 text-destructive' :
+                                    'bg-secondary text-secondary-foreground'
+                                }`}>
+                                {(membro.name || membro.nome || "??").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            {membro.status === 'membro' && (
+                              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-success border-2 border-background" />
+                            )}
+                          </div>
                           <div className="flex flex-col">
-                            <span className="font-medium text-foreground">{membro.name || membro.nome}</span>
-                            <span className="text-[10px] text-muted-foreground uppercase">{membro.cpf || "Sem CPF"}</span>
+                            <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
+                              {membro.name || membro.nome}
+                            </span>
+                            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">
+                              {membro.cpf || "CPF N/A"}
+                            </span>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
-                        <span className="text-sm text-muted-foreground">
-                          {membro.role || membro.funcao || "Membro"}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="font-medium border-primary/20 bg-primary/5 text-foreground/80">
+                            {membro.role || membro.funcao || "Membro"}
+                          </Badge>
+                        </div>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-muted-foreground">
+                      <TableCell className="hidden md:table-cell text-muted-foreground font-medium text-sm">
                         {membro.phone || membro.telefone || "-"}
                       </TableCell>
                       <TableCell>
-                        <Badge className={statusStyles[membro.status] || "bg-muted text-muted-foreground"}>
+                        <Badge className={`${statusStyles[membro.status] || "bg-muted text-muted-foreground"} border-0 px-3 py-1 font-bold shadow-sm`}>
                           {membro.status}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="rounded-r-2xl text-right pe-6">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
-                              <MoreHorizontal className="h-4 w-4" />
+                            <Button variant="ghost" size="icon" className="h-9 w-9 opacity-50 group-hover:opacity-100 transition-opacity bg-secondary/50 hover:bg-secondary hover:text-primary rounded-full">
+                              <MoreHorizontal className="h-5 w-5" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-card">
-                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleView(membro)}>
-                              <Eye className="mr-2 h-4 w-4" />
+                          <DropdownMenuContent align="end" className="w-48 p-2 rounded-xl shadow-xl border-border/50 bg-popover/95 backdrop-blur-sm">
+                            <DropdownMenuItem className="cursor-pointer rounded-lg p-2.5 font-medium focus:bg-primary/10 focus:text-primary" onClick={() => handleView(membro)}>
+                              <Eye className="mr-3 h-4 w-4 opacity-70" />
                               Ver Detalhes
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleEdit(membro)}>
-                              <Pencil className="mr-2 h-4 w-4" />
-                              Editar
+                            <DropdownMenuItem className="cursor-pointer rounded-lg p-2.5 font-medium focus:bg-primary/10 focus:text-primary" onClick={() => handleEdit(membro)}>
+                              <Pencil className="mr-3 h-4 w-4 opacity-70" />
+                              Editar Dados
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer" onClick={() => handleToggleStatus(membro)}>
+                            <DropdownMenuSeparator className="my-1 bg-border/50" />
+                            <DropdownMenuItem className="cursor-pointer rounded-lg p-2.5 font-medium focus:bg-primary/10 focus:text-primary" onClick={() => handleToggleStatus(membro)}>
                               {membro.status === "afastado" ? (
-                                <><UserCheck className="mr-2 h-4 w-4 text-success" /> Reativar</>
+                                <div className="flex items-center text-success">
+                                  <UserCheck className="mr-3 h-4 w-4" /> Reativar
+                                </div>
                               ) : (
-                                <><UserMinus className="mr-2 h-4 w-4 text-amber-500" /> Desabilitar</>
+                                <div className="flex items-center text-amber-600">
+                                  <UserMinus className="mr-3 h-4 w-4" /> Desabilitar
+                                </div>
                               )}
                             </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive" onClick={() => handleDeleteClick(membro)}>
-                              <Trash2 className="mr-2 h-4 w-4" />
+                            <DropdownMenuItem className="cursor-pointer rounded-lg p-2.5 font-medium text-destructive focus:bg-destructive/10 focus:text-destructive mt-1" onClick={() => handleDeleteClick(membro)}>
+                              <Trash2 className="mr-3 h-4 w-4 opacity-70" />
                               Excluir
                             </DropdownMenuItem>
                           </DropdownMenuContent>
