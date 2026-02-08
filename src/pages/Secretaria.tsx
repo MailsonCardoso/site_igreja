@@ -725,8 +725,8 @@ export default function Secretaria() {
 
       {/* View Modal */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-8 pb-0 bg-primary/5">
+        <DialogContent className="sm:max-w-4xl max-h-[95vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-8 pb-4 bg-primary/5 flex-shrink-0">
             <div className="flex items-center gap-6">
               <Avatar className="h-16 w-16 border-4 border-background shadow-sm">
                 <AvatarFallback className="bg-primary/10 text-primary text-2xl font-semibold">
@@ -745,7 +745,7 @@ export default function Secretaria() {
               </div>
             </div>
           </DialogHeader>
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 max-h-[calc(95vh-200px)]">
             <div className="p-8 space-y-10">
               {/* Personal Data */}
               <section>
@@ -873,7 +873,7 @@ export default function Secretaria() {
               </section>
             </div>
           </ScrollArea>
-          <div className="p-8 border-t bg-background flex justify-end gap-4">
+          <div className="p-6 border-t bg-background flex justify-end gap-4 flex-shrink-0">
             <Button variant="outline" className="px-8 shadow-sm" onClick={() => setIsViewDialogOpen(false)}>Fechar</Button>
             <Button className="bg-amber-500 hover:bg-amber-600 text-white px-8 shadow-md transition-all active:scale-95" onClick={() => {
               setIsViewDialogOpen(false);
