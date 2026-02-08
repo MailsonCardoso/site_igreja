@@ -16,14 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -632,119 +625,103 @@ export default function Secretaria() {
             <p className="font-medium">Não foi possível carregar a lista de membros.</p>
           </div>
         ) : (
-          <div className="space-y-2">
-            <Table>
-              <TableHeader className="[&_tr]:border-b-0">
-                <TableRow className="hover:bg-transparent border-none">
-                  <TableHead className="ps-6 font-bold uppercase text-[11px] tracking-wider text-muted-foreground/60">Membro</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider text-muted-foreground/60">Cargo</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider text-muted-foreground/60 hidden md:table-cell">Contato</TableHead>
-                  <TableHead className="font-bold uppercase text-[11px] tracking-wider text-muted-foreground/60">Status</TableHead>
-                  <TableHead className="w-16"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="[&_tr:last-child]:border-0">
-                {filteredMembros.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-16 text-muted-foreground">
-                      <div className="flex flex-col items-center gap-2">
-                        <UserMinus className="h-10 w-10 opacity-20" />
-                        <p>Nenhum membro encontrado com este filtro.</p>
+          <div className="space-y-6">
+            {filteredMembros.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground bg-secondary/5 rounded-3xl border border-dashed border-secondary/30">
+                <UserMinus className="h-12 w-12 opacity-20 mb-4" />
+                <p className="text-lg font-medium">Nenhum membro encontrado</p>
+                <p className="text-sm opacity-60">Tente buscar por outro termo.</p>
+              </div>
+            ) : (
+              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {filteredMembros.map((membro: any, index: number) => (
+                  <motion.div
+                    key={membro.id}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    onClick={() => handleView(membro)}
+                    className="group relative bg-card hover:bg-secondary/5 rounded-[1.5rem] border border-border/40 p-6 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden flex flex-col"
+                  >
+                    <div className={`absolute top-0 left-0 w-full h-1 ${membro.status === 'membro' ? 'bg-success' :
+                      membro.status === 'afastado' ? 'bg-destructive' : 'bg-primary'
+                      }`} />
+
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="relative">
+                        <Avatar className="h-16 w-16 border-4 border-background shadow-md group-hover:scale-105 transition-transform duration-300">
+                          <AvatarFallback className={`text-xl font-bold ${membro.status === 'membro' ? 'bg-blue-500/10 text-blue-600' :
+                            membro.status === 'afastado' ? 'bg-destructive/10 text-destructive' :
+                              'bg-secondary text-secondary-foreground'
+                            }`}>
+                            {(membro.name || membro.nome || "??").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        {membro.status === 'membro' && (
+                          <span className="absolute bottom-0 right-0 h-4 w-4 rounded-full bg-success border-2 border-background shadow-sm" title="Membro Ativo" />
+                        )}
                       </div>
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredMembros.map((membro: any, index: number) => (
-                    <motion.tr
-                      key={membro.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2, delay: index * 0.05 }}
-                      className="group bg-card hover:bg-secondary/40 border-b border-border/40 transition-all cursor-default"
-                    >
-                      <TableCell className="py-4 ps-6 rounded-l-2xl">
-                        <div className="flex items-center gap-4">
-                          <div className="relative">
-                            <Avatar className="h-12 w-12 border-2 border-background shadow-md group-hover:scale-105 transition-transform duration-300">
-                              <AvatarFallback className={`text-sm font-bold ${membro.status === 'membro' ? 'bg-primary/10 text-primary' :
-                                membro.status === 'afastado' ? 'bg-destructive/10 text-destructive' :
-                                  'bg-secondary text-secondary-foreground'
-                                }`}>
-                                {(membro.name || membro.nome || "??").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                            {membro.status === 'membro' && (
-                              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-success border-2 border-background" />
-                            )}
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="font-bold text-base text-foreground group-hover:text-primary transition-colors">
-                              {membro.name || membro.nome}
-                            </span>
-                            <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity">
-                              {membro.cpf || "CPF N/A"}
-                            </span>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="font-medium border-primary/20 bg-primary/5 text-foreground/80">
-                            {membro.role || membro.funcao || "Membro"}
-                          </Badge>
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell text-muted-foreground font-medium text-sm">
-                        {membro.phone || membro.telefone || "-"}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={`${statusStyles[membro.status] || "bg-muted text-muted-foreground"} border-0 px-3 py-1 font-bold shadow-sm`}>
+
+                      <div className="flex gap-1">
+                        <Badge variant="outline" className={`capitalize font-semibold border-0 ${statusStyles[membro.status]}`}>
                           {membro.status}
                         </Badge>
-                      </TableCell>
-                      <TableCell className="rounded-r-2xl text-right pe-6">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-9 w-9 opacity-50 group-hover:opacity-100 transition-opacity bg-secondary/50 hover:bg-secondary hover:text-primary rounded-full">
-                              <MoreHorizontal className="h-5 w-5" />
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-secondary" onClick={(e) => e.stopPropagation()}>
+                              <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-48 p-2 rounded-xl shadow-xl border-border/50 bg-popover/95 backdrop-blur-sm">
-                            <DropdownMenuItem className="cursor-pointer rounded-lg p-2.5 font-medium focus:bg-primary/10 focus:text-primary" onClick={() => handleView(membro)}>
-                              <Eye className="mr-3 h-4 w-4 opacity-70" />
-                              Ver Detalhes
+                          <DropdownMenuContent align="end" className="w-48 rounded-xl bg-popover/95 backdrop-blur-sm shadow-xl p-1">
+                            <DropdownMenuItem className="cursor-pointer rounded-lg font-medium" onClick={(e) => { e.stopPropagation(); handleEdit(membro); }}>
+                              <Pencil className="mr-2 h-4 w-4" /> Editar
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer rounded-lg p-2.5 font-medium focus:bg-primary/10 focus:text-primary" onClick={() => handleEdit(membro)}>
-                              <Pencil className="mr-3 h-4 w-4 opacity-70" />
-                              Editar Dados
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator className="my-1 bg-border/50" />
-                            <DropdownMenuItem className="cursor-pointer rounded-lg p-2.5 font-medium focus:bg-primary/10 focus:text-primary" onClick={() => handleToggleStatus(membro)}>
+                            <DropdownMenuItem className="cursor-pointer rounded-lg font-medium" onClick={(e) => { e.stopPropagation(); handleToggleStatus(membro); }}>
                               {membro.status === "afastado" ? (
-                                <div className="flex items-center text-success">
-                                  <UserCheck className="mr-3 h-4 w-4" /> Reativar
-                                </div>
+                                <div className="flex items-center text-success"><UserCheck className="mr-2 h-4 w-4" /> Reativar</div>
                               ) : (
-                                <div className="flex items-center text-amber-600">
-                                  <UserMinus className="mr-3 h-4 w-4" /> Desabilitar
-                                </div>
+                                <div className="flex items-center text-amber-600"><UserMinus className="mr-2 h-4 w-4" /> Desabilitar</div>
                               )}
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer rounded-lg p-2.5 font-medium text-destructive focus:bg-destructive/10 focus:text-destructive mt-1" onClick={() => handleDeleteClick(membro)}>
-                              <Trash2 className="mr-3 h-4 w-4 opacity-70" />
-                              Excluir
+                            <DropdownMenuSeparator className="bg-border/50" />
+                            <DropdownMenuItem className="cursor-pointer rounded-lg font-medium text-destructive focus:bg-destructive/10 focus:text-destructive" onClick={(e) => { e.stopPropagation(); handleDeleteClick(membro); }}>
+                              <Trash2 className="mr-2 h-4 w-4" /> Excluir
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      </TableCell>
-                    </motion.tr>
-                  ))
-                )}
-              </TableBody>
-            </Table>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 mb-4">
+                      <h3 className="text-lg font-bold text-foreground leading-tight group-hover:text-primary transition-colors line-clamp-1" title={membro.name || membro.nome}>
+                        {membro.name || membro.nome}
+                      </h3>
+                      <p className="text-sm font-medium text-muted-foreground/80 flex items-center gap-1.5">
+                        <Church className="h-3.5 w-3.5" />
+                        {membro.role || "Membro"}
+                      </p>
+                    </div>
+
+                    <div className="mt-auto pt-4 border-t border-border/30 flex items-center justify-between text-xs font-medium text-muted-foreground">
+                      <div className="flex items-center gap-1.5" title="Telefone/WhatsApp">
+                        <Phone className="h-3.5 w-3.5 opacity-70" />
+                        {membro.phone || membro.telefone || "Sem contato"}
+                      </div>
+                      {membro.cell_id && membro.cell_id !== "none" && (
+                        <div className="flex items-center gap-1.5 text-primary/80" title="Célula">
+                          <Users className="h-3.5 w-3.5" />
+                          <span className="bg-primary/5 px-2 py-0.5 rounded-full">Célula</span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </motion.div>
+
 
       {/* View Modal */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
