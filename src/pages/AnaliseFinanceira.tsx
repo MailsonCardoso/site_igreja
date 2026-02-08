@@ -77,15 +77,12 @@ export default function AnaliseFinanceira() {
         queryFn: () => api.get(`/transactions/report?month=${selectedMonth}&year=${selectedYear}`),
     });
 
-    // Busca do Histórico Real (Janeiro até o mês selecionado)
+    // Busca do Histórico Real (Sempre os 12 meses do ano selecionado)
     const { data: historyData, isLoading: isLoadingHistory } = useQuery({
-        queryKey: ["report", "history", selectedYear, selectedMonth],
+        queryKey: ["report", "history", selectedYear], // Chave fixa no ano para não mudar ao trocar o mês
         queryFn: async () => {
-            const currentMonthInt = parseInt(selectedMonth);
-            const history = [];
-
-            // Criamos uma lista de promessas para buscar todos os meses de Jan até o selecionado
-            const promises = Array.from({ length: currentMonthInt }, (_, i) => {
+            // Buscamos sempre os 12 meses para o gráfico ficar fixo
+            const promises = Array.from({ length: 12 }, (_, i) => {
                 const month = (i + 1).toString();
                 return api.get(`/transactions/report?month=${month}&year=${selectedYear}`);
             });
@@ -95,7 +92,8 @@ export default function AnaliseFinanceira() {
             return results.map((data, index) => ({
                 name: meses[index].label.substring(0, 3),
                 valor: data?.total_expense || 0,
-                fullValue: data?.total_expense || 0
+                fullValue: data?.total_expense || 0,
+                monthIndex: index + 1
             }));
         },
     });
