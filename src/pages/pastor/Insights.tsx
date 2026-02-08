@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { PenTool, Quote, Plus, X, Search, Lightbulb, Trash2, BookOpen } from "lucide-react";
+import { PenTool, Quote, Plus, X, Search, Lightbulb, Trash2, BookOpen, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -43,6 +43,7 @@ export default function Insights() {
     const [searchTerm, setSearchTerm] = useState("");
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [insightToDelete, setInsightToDelete] = useState<Insight | null>(null);
+    const [editingId, setEditingId] = useState<number | null>(null);
 
     // Carregar dados
     useEffect(() => {
@@ -77,7 +78,7 @@ export default function Insights() {
         }
 
         const newInsight: Insight = {
-            id: Date.now(),
+            id: editingId || Date.now(),
             type: newType,
             content: formData.content,
             ...(newType === 'note' ? { title: formData.title } : { reference: formData.reference }),
@@ -85,10 +86,17 @@ export default function Insights() {
             sermonId: formData.sermonId === "none" ? undefined : Number(formData.sermonId)
         };
 
-        const updatedInsights = [newInsight, ...insights];
+        let updatedInsights;
+        if (editingId) {
+            updatedInsights = insights.map(i => i.id === editingId ? newInsight : i);
+            toast.success("Insight atualizado!");
+        } else {
+            updatedInsights = [newInsight, ...insights];
+            toast.success("Insight salvo!");
+        }
+
         setInsights(updatedInsights);
         PastoralStore.saveInsights(updatedInsights);
-        toast.success("Insight salvo com sucesso!");
 
         // Reset Form
         setFormData({
@@ -98,15 +106,41 @@ export default function Insights() {
             tags: "",
             sermonId: "none"
         });
+        setEditingId(null);
     };
 
-    const handleDelete = (insight: any) => {
+    const handleEdit = (insight: Insight) => {
+        setEditingId(insight.id);
+        setNewType(insight.type);
+        setFormData({
+            title: insight.title || "",
+            content: insight.content,
+            reference: insight.reference || "",
+            tags: insight.tags.join(", "),
+            sermonId: insight.sermonId?.toString() || "none"
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setFormData({
+            title: "",
+            content: "",
+            reference: "",
+            tags: "",
+            sermonId: "none"
+        });
+    };
+
+    const handleDelete = (insight: Insight) => {
         setInsightToDelete(insight);
         setIsDeleteOpen(true);
     };
 
     const confirmDelete = () => {
-        const updatedInsights = insights.filter(i => i.id !== (insightToDelete?.id || 0));
+        if (!insightToDelete) return;
+        const updatedInsights = insights.filter(i => i.id !== insightToDelete.id);
         setInsights(updatedInsights);
         PastoralStore.saveInsights(updatedInsights);
         toast.success("Insight removido!");
@@ -130,9 +164,16 @@ export default function Insights() {
 
                 {/* Widget de Entrada Rápida */}
                 <div className="bg-card rounded-2xl p-6 shadow-sm border border-border/50">
-                    <div className="flex items-center gap-2 mb-4">
-                        <Lightbulb className="h-5 w-5 text-amber-500" />
-                        <h3 className="font-bold text-lg">Capturar Insight</h3>
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            <Lightbulb className={`h-5 w-5 ${editingId ? 'text-primary animate-pulse' : 'text-amber-500'}`} />
+                            <h3 className="font-bold text-lg">{editingId ? 'Editando Insight' : 'Capturar Insight'}</h3>
+                        </div>
+                        {editingId && (
+                            <Button variant="ghost" size="sm" onClick={cancelEdit} className="text-muted-foreground hover:text-foreground">
+                                <X className="h-4 w-4 mr-1" /> Cancelar Edição
+                            </Button>
+                        )}
                     </div>
                     <div className="flex flex-col gap-4">
                         <Tabs value={newType} onValueChange={setNewType} className="w-full">
@@ -201,7 +242,7 @@ export default function Insights() {
 
                         <div className="flex justify-end pt-4">
                             <Button onClick={handleSave} className="w-full sm:w-auto rounded-xl px-12 h-11 font-semibold shadow-lg shadow-primary/20">
-                                Salvar no Banco de Insights
+                                {editingId ? 'Atualizar Insight' : 'Salvar no Banco de Insights'}
                             </Button>
                         </div>
                     </div>
@@ -233,14 +274,24 @@ export default function Insights() {
                                 <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-md ${insight.type === 'verse' ? 'bg-secondary/50 text-secondary-foreground' : 'bg-yellow-200/50 text-yellow-800 dark:text-yellow-200'}`}>
                                     {insight.type === 'verse' ? 'Versículo' : 'Nota'}
                                 </span>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleDelete(insight)}
-                                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
-                                >
-                                    <Trash2 className="h-3 w-3" />
-                                </Button>
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleEdit(insight)}
+                                        className="h-8 w-8 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/5"
+                                    >
+                                        <Edit2 className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleDelete(insight)}
+                                        className="h-8 w-8 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/5"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                </div>
                             </div>
 
                             {insight.type === 'verse' ? (
