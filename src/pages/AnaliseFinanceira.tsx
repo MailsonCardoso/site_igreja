@@ -71,24 +71,37 @@ export default function AnaliseFinanceira() {
         queryFn: () => api.get("/settings"),
     });
 
-    // Relatório do mês selecionado
-    const { data: reportData, isLoading } = useQuery({
+    // Relatório do mês selecionado (DRE e Listas)
+    const { data: reportData, isLoading: isLoadingCurrent } = useQuery({
         queryKey: ["report-analytics", selectedMonth, selectedYear],
         queryFn: () => api.get(`/transactions/report?month=${selectedMonth}&year=${selectedYear}`),
     });
 
-    // Mock para evolução de 6 meses (Simulando uma API que retornaria o histórico)
-    // Em uma implementação real, poderíamos ter um endpoint /transactions/history
-    const chartData = [
-        { name: "Ago", valor: 4500 },
-        { name: "Set", valor: 5200 },
-        { name: "Out", valor: 4800 },
-        { name: "Nov", valor: 6100 },
-        { name: "Dez", valor: 5900 },
-        { name: "Jan", valor: reportData?.total_expense || 4200 },
-    ];
+    // Busca do Histórico Real (Janeiro até o mês selecionado)
+    const { data: historyData, isLoading: isLoadingHistory } = useQuery({
+        queryKey: ["report-history", selectedYear, selectedMonth],
+        queryFn: async () => {
+            const currentMonthInt = parseInt(selectedMonth);
+            const history = [];
 
-    const maxExpense = Math.max(...chartData.map(d => d.valor));
+            // Criamos uma lista de promessas para buscar todos os meses de Jan até o selecionado
+            const promises = Array.from({ length: currentMonthInt }, (_, i) => {
+                const month = (i + 1).toString();
+                return api.get(`/transactions/report?month=${month}&year=${selectedYear}`);
+            });
+
+            const results = await Promise.all(promises);
+
+            return results.map((data, index) => ({
+                name: meses[index].label.substring(0, 3),
+                valor: data?.total_expense || 0,
+                fullValue: data?.total_expense || 0
+            }));
+        },
+    });
+
+    const chartData = historyData || [];
+    const maxExpense = chartData.length > 0 ? Math.max(...chartData.map(d => d.valor)) : 0;
 
     const handlePrint = () => {
         const printContent = document.getElementById("analytics-page");
@@ -218,7 +231,13 @@ export default function AnaliseFinanceira() {
                         </div>
                     </div>
 
-                    <div className="h-[300px] w-full">
+                    <div className="h-[300px] w-full relative">
+                        {isLoadingHistory ? (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/50 backdrop-blur-sm z-20">
+                                <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
+                                <p className="text-xs font-bold text-muted-foreground uppercase">Sincronizando Histórico...</p>
+                            </div>
+                        ) : null}
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
