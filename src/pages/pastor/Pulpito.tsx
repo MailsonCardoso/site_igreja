@@ -11,8 +11,6 @@ import {
     Minimize,
     Maximize,
     Lightbulb,
-    Maximize,
-    Lightbulb,
     X,
     CheckCircle
 } from "lucide-react";
@@ -179,9 +177,16 @@ export default function Pulpito() {
 
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="outline" size="sm" className={`gap-2 border-dashed rounded-full ${isDark ? 'border-zinc-700 hover:bg-zinc-800' : 'border-zinc-300'}`}>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className={`gap-2 border-dashed rounded-full transition-all ${isDark
+                                        ? 'border-amber-500/30 bg-amber-500/5 text-amber-50 hover:bg-amber-500/10 hover:border-amber-500/50'
+                                        : 'border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100'
+                                    }`}
+                            >
                                 <Lightbulb className="h-4 w-4 text-amber-500" />
-                                <span className="hidden sm:inline">Insights</span>
+                                <span className="hidden sm:inline font-semibold">Insights</span>
                             </Button>
                         </SheetTrigger>
                         <SheetContent className={`w-[400px] border-l ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : ''}`}>
