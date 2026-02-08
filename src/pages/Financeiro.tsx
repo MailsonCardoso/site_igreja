@@ -763,33 +763,73 @@ export default function Financeiro() {
       {/* Estilos para Impressão */}
       <style>{`
         @media print {
-          body {
-            visibility: hidden !important;
-            background: white !important;
+          /* 1. Ocultar TUDO por padrão */
+          body * {
+            visibility: hidden;
+            border-color: transparent !important;
           }
-          #printable-report, #printable-report * {
+
+          /* 2. Tornar o relatório e seus pais visíveis */
+          #printable-report, 
+          #printable-report *,
+          [data-radix-portal],
+          [data-radix-portal] *,
+          [role="dialog"],
+          [role="dialog"] * {
             visibility: visible !important;
           }
+
+          /* 3. Posicionar o relatório no topo da folha */
           #printable-report {
             position: absolute !important;
             left: 0 !important;
             top: 0 !important;
             width: 100% !important;
             margin: 0 !important;
-            padding: 2cm !important;
+            padding: 0 !important;
             display: block !important;
+            background: white !important;
           }
-          .no-print {
-            display: none !important;
+
+          /* 4. Resetar o Modal/Dialog para ocupara a folha toda */
+          [role="dialog"] {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            max-height: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+            padding: 0 !important;
+            background: white !important;
           }
-          @page {
-            margin: 1cm;
-            size: auto;
-          }
+
+          /* 5. Resetar o ScrollArea do relatório */
           [data-radix-scroll-area-viewport] {
             display: block !important;
             overflow: visible !important;
             height: auto !important;
+            max-height: none !important;
+          }
+
+          /* 6. Ocultar o fundo escuro e botões de interface */
+          .no-print,
+          [data-state="open"] > div[style*="opacity"] {
+            display: none !important;
+          }
+
+          /* 7. Configurações de Página */
+          @page {
+            margin: 1.5cm;
+            size: auto;
+          }
+
+          /* 8. Forçar cores para impressão */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
         }
       `}</style>
