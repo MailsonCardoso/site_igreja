@@ -1,0 +1,327 @@
+﻿
+>                 {filteredM
+embros.map((membro: any, 
+index: number) => (
+                    
+<motion.div
+                      
+key={membro.id}
+                      
+initial={{ opacity: 0, 
+scale: 0.95 }}
+                      
+animate={{ opacity: 1, 
+scale: 1 }}
+                      
+transition={{ duration: 
+0.3, delay: index * 0.05 }}
+                      
+onClick={() => 
+handleView(membro)}
+                      
+className="group relative 
+bg-card 
+hover:bg-secondary/5 
+rounded-[1.5rem] border 
+border-border/40 p-6 
+shadow-sm hover:shadow-xl 
+transition-all duration-300 
+cursor-pointer 
+overflow-hidden flex 
+flex-col"
+                    >
+                      <div 
+className={`absolute top-0 
+left-0 w-full h-1 
+${membro.status === 
+'membro' ? 'bg-success' :
+                        
+membro.status === 
+'afastado' ? 
+'bg-destructive' : 
+'bg-primary'
+                        }`} 
+/>
+  
+                      <div 
+className="flex 
+justify-between items-start 
+mb-4">
+                        
+<div className="relative">
+                          
+<Avatar className="h-16 
+w-16 border-4 
+border-background shadow-md 
+group-hover:scale-105 
+transition-transform 
+duration-300">
+                            
+<AvatarFallback 
+className={`text-xl 
+font-bold ${membro.status 
+=== 'membro' ? 
+'bg-blue-500/10 
+text-blue-600' :
+                            
+  membro.status === 
+'afastado' ? 
+'bg-destructive/10 
+text-destructive' :
+                            
+    'bg-secondary 
+text-secondary-foreground'
+                            
+  }`}>
+                            
+  {(membro.name || 
+membro.nome || 
+"??").split(" ").map((n: 
+string) => 
+n[0]).join("").slice(0, 
+2).toUpperCase()}
+                            
+</AvatarFallback>
+                          
+</Avatar>
+                          
+{membro.status === 'membro' 
+&& (
+                            
+<span className="absolute 
+bottom-0 right-0 h-4 w-4 
+rounded-full bg-success 
+border-2 border-background 
+shadow-sm" title="Membro 
+Ativo" />
+                          )}
+                        
+</div>
+  
+                        
+<div className="flex gap-1">
+                          
+<Badge variant="outline" 
+className={`capitalize 
+font-semibold border-0 ${sta
+tusStyles[membro.status]}`}>
+                            
+{membro.status}
+                          
+</Badge>
+                          
+<DropdownMenu>
+                            
+<DropdownMenuTrigger 
+asChild>
+                            
+  <Button variant="ghost" 
+size="icon" className="h-8 
+w-8 rounded-full 
+hover:bg-secondary" 
+onClick={(e) => 
+e.stopPropagation()}>
+                            
+    <MoreHorizontal 
+className="h-4 w-4 
+text-muted-foreground" />
+                            
+  </Button>
+                            
+</DropdownMenuTrigger>
+                            
+<DropdownMenuContent 
+align="end" className="w-48 
+rounded-xl bg-popover/95 
+backdrop-blur-sm shadow-xl 
+p-1">
+                            
+  <DropdownMenuItem 
+className="cursor-pointer 
+rounded-lg font-medium" 
+onClick={(e) => { 
+e.stopPropagation(); 
+handleEdit(membro); }}>
+                            
+    <Pencil className="mr-2 
+h-4 w-4" /> Editar
+                            
+  </DropdownMenuItem>
+                            
+  <DropdownMenuItem 
+className="cursor-pointer 
+rounded-lg font-medium" 
+onClick={(e) => { 
+e.stopPropagation(); 
+handleToggleStatus(membro); 
+}}>
+                            
+    {membro.status === 
+"afastado" ? (
+                            
+      <div className="flex 
+items-center 
+text-success"><UserCheck 
+className="mr-2 h-4 w-4" /> 
+Reativar</div>
+                            
+    ) : (
+                            
+      <div className="flex 
+items-center 
+text-amber-600"><UserMinus 
+className="mr-2 h-4 w-4" /> 
+Desabilitar</div>
+                            
+    )}
+                            
+  </DropdownMenuItem>
+                            
+  <DropdownMenuSeparator 
+className="bg-border/50" />
+                            
+  <DropdownMenuItem 
+className="cursor-pointer 
+rounded-lg font-medium 
+text-destructive 
+focus:bg-destructive/10 
+focus:text-destructive" 
+onClick={(e) => { 
+e.stopPropagation(); 
+handleDeleteClick(membro); 
+}}>
+                            
+    <Trash2 className="mr-2 
+h-4 w-4" /> Excluir
+                            
+  </DropdownMenuItem>
+                            
+</DropdownMenuContent>
+                          
+</DropdownMenu>
+                        
+</div>
+                      </div>
+  
+                      <div 
+className="space-y-1 mb-4">
+                        <h3 
+className="text-lg 
+font-bold text-foreground 
+leading-tight 
+group-hover:text-primary 
+transition-colors 
+line-clamp-1" 
+title={membro.name || 
+membro.nome}>
+                          
+{membro.name || membro.nome}
+                        
+</h3>
+                        <p 
+className="text-sm 
+font-medium 
+text-muted-foreground/80 
+flex items-center gap-1.5">
+                          
+<Church className="h-3.5 
+w-3.5" />
+                          
+{membro.role || "Membro"}
+                        </p>
+                      </div>
+  
+                      <div 
+className="mt-auto pt-4 
+border-t border-border/30 
+flex items-center 
+justify-between text-xs 
+font-medium 
+text-muted-foreground">
+                        
+<div className="flex 
+items-center gap-1.5" 
+title="Telefone/WhatsApp">
+                          
+<Phone className="h-3.5 
+w-3.5 opacity-70" />
+                          
+{membro.phone || 
+membro.telefone || "Sem 
+contato"}
+                        
+</div>
+                        
+{membro.cell_id && 
+membro.cell_id !== "none" 
+&& (
+                          
+<div className="flex 
+items-center gap-1.5 
+text-primary/80" 
+title="C├®lula">
+                            
+<Users className="h-3.5 
+w-3.5" />
+                            
+<span 
+className="bg-primary/5 
+px-2 py-0.5 
+rounded-full">C├®lula</span>
+                          
+</div>
+                        )}
+                      </div>
+                    
+</motion.div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </motion.div>
+  
+  
+        {/* View Modal */}
+        <Dialog 
+open={isViewDialogOpen} onOp
+enChange={setIsViewDialogOpe
+n}>
+          <DialogContent 
+className="sm:max-w-4xl 
+max-h-[95vh] 
+overflow-hidden flex 
+flex-col p-0">
+            <DialogHeader 
+className="p-8 pb-4 
+bg-primary/5 flex-shrink-0">
+              <div 
+className="flex 
+items-center gap-6">
+                <Avatar 
+className="h-16 w-16 
+border-4 border-background 
+shadow-sm">
+                  
+<AvatarFallback 
+className="bg-primary/10 
+text-primary text-2xl 
+font-semibold">
+                    
+{(selectedMember?.name || 
+"?").split(" ").map((n: 
+string) => 
+n[0]).join("").slice(0, 
+2).toUpperCase()}
+                  
+</AvatarFallback>
+                </Avatar>
+                <div>
+                  
+<DialogTitle 
+className="text-2xl 
+font-bold text-foreground">{
+selectedMember?.name}</Dialo
+gTitle>
+
+

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Search, Plus, MoreHorizontal, Eye, Pencil, Loader2, User, Phone, MapPin, Church, Users, Trash2, UserMinus, UserCheck } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -16,14 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -208,7 +201,7 @@ export default function Secretaria() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["members"] });
       queryClient.invalidateQueries({ queryKey: ["cells"] });
-      toast.success("Membro excluído com sucesso!");
+      toast.success("Membro exclu├¡do com sucesso!");
       setIsDeleteDialogOpen(false);
       setSelectedMember(null);
     },
@@ -358,7 +351,7 @@ export default function Secretaria() {
                       <TabsTrigger value="pessoais">Pessoais</TabsTrigger>
                       <TabsTrigger value="contato">Contato</TabsTrigger>
                       <TabsTrigger value="eclesiastico">Igreja</TabsTrigger>
-                      <TabsTrigger value="familia">Família</TabsTrigger>
+                      <TabsTrigger value="familia">Fam├¡lia</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="pessoais" className="space-y-4">
@@ -395,7 +388,7 @@ export default function Secretaria() {
                             <SelectContent>
                               <SelectItem value="solteiro">Solteiro(a)</SelectItem>
                               <SelectItem value="casado">Casado(a)</SelectItem>
-                              <SelectItem value="viuvo">Viúvo(a)</SelectItem>
+                              <SelectItem value="viuvo">Vi├║vo(a)</SelectItem>
                               <SelectItem value="divorciado">Divorciado(a)</SelectItem>
                             </SelectContent>
                           </Select>
@@ -433,7 +426,7 @@ export default function Secretaria() {
                         </div>
                         <div className="sm:col-span-2 border-t pt-4">
                           <h4 className="text-sm font-medium mb-4 flex items-center gap-2">
-                            <MapPin className="h-4 w-4" /> Endereço
+                            <MapPin className="h-4 w-4" /> Endere├ºo
                           </h4>
                           <div className="grid gap-4 sm:grid-cols-3">
                             <div className="space-y-2">
@@ -469,43 +462,42 @@ export default function Secretaria() {
                     <TabsContent value="eclesiastico" className="space-y-4">
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2 p-0.5">
-                          <Label htmlFor="status">Situação / Status</Label>
+                          <Label htmlFor="status">Situa├º├úo / Status</Label>
                           <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
                             <SelectTrigger>
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="membro">Membro</SelectItem>
-                              <SelectItem value="congregado">Congregado</SelectItem>
                               <SelectItem value="visitante">Visitante</SelectItem>
                               <SelectItem value="afastado">Afastado</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div className="space-y-2 p-0.5">
-                          <Label htmlFor="role">Função / Cargo</Label>
+                          <Label htmlFor="role">Fun├º├úo / Cargo</Label>
                           <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
                             <SelectTrigger>
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="Membro">Membro</SelectItem>
-                              <SelectItem value="Diácono">Diácono</SelectItem>
+                              <SelectItem value="Di├ícono">Di├ícono</SelectItem>
                               <SelectItem value="Obreiro">Obreiro</SelectItem>
                               <SelectItem value="Ministro de Louvor">Ministro de Louvor</SelectItem>
                               <SelectItem value="Pastor">Pastor</SelectItem>
                               <SelectItem value="Instrumentista">Instrumentista</SelectItem>
                               <SelectItem value="Financeiro">Financeiro</SelectItem>
                               <SelectItem value="Secretaria">Secretaria</SelectItem>
-                              <SelectItem value="Líder de Pequeno Grupo">Líder de Pequeno Grupo</SelectItem>
+                              <SelectItem value="L├¡der de Pequeno Grupo">L├¡der de Pequeno Grupo</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
                         <div className="space-y-2 p-0.5">
-                          <Label htmlFor="cell_id">Célula / Pequeno Grupo</Label>
+                          <Label htmlFor="cell_id">C├®lula / Pequeno Grupo</Label>
                           <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Selecione uma célula" />
+                              <SelectValue placeholder="Selecione uma c├®lula" />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="none">Nenhuma</SelectItem>
@@ -521,7 +513,7 @@ export default function Secretaria() {
                     <TabsContent value="familia" className="space-y-4">
                       <div className="grid gap-4 sm:grid-cols-1">
                         <div className="space-y-2">
-                          <Label>Vínculo com Membros Já Cadastrados</Label>
+                          <Label>V├¡nculo com Membros J├í Cadastrados</Label>
                           <p className="text-xs text-muted-foreground mb-4">Selecione membros da igreja para vincular como parentes.</p>
                         </div>
 
@@ -545,7 +537,7 @@ export default function Secretaria() {
                           </div>
 
                           <div className="space-y-2">
-                            <Label htmlFor="mother_id">Mãe (Membro)</Label>
+                            <Label htmlFor="mother_id">M├úe (Membro)</Label>
                             <Select onValueChange={(val) => setValue("mother_id", val)} value={watch("mother_id")}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Selecione um membro" />
@@ -557,19 +549,19 @@ export default function Secretaria() {
                               </SelectContent>
                             </Select>
                             <div className="pt-2">
-                              <Label htmlFor="mother_name" className="text-xs">Ou Nome da Mãe (Manual)</Label>
-                              <Input id="mother_name" {...form.register("mother_name")} placeholder="Nome da mãe" />
+                              <Label htmlFor="mother_name" className="text-xs">Ou Nome da M├úe (Manual)</Label>
+                              <Input id="mother_name" {...form.register("mother_name")} placeholder="Nome da m├úe" />
                             </div>
                           </div>
 
                           {maritalStatusValue === "casado" && (
                             <div className="sm:col-span-2 space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/10">
                               <Label htmlFor="spouse_id" className="flex items-center gap-2">
-                                <Users className="h-4 w-4" /> Cônjuge (Membro)
+                                <Users className="h-4 w-4" /> C├┤njuge (Membro)
                               </Label>
                               <Select onValueChange={(val) => setValue("spouse_id", val)} value={watch("spouse_id")}>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Selecione o cônjuge" />
+                                  <SelectValue placeholder="Selecione o c├┤njuge" />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
@@ -595,23 +587,23 @@ export default function Secretaria() {
           </Dialog>
         </div>
 
-        {/* Filters */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center mb-6">
+        {/* Filters & Controls */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center mb-6 bg-secondary/10 p-4 rounded-2xl border border-secondary/20">
           <div className="relative flex-1 group">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-primary transition-colors group-focus-within:text-primary" />
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
             <Input
-              placeholder="Buscar membros por nome, CPF ou cargo..."
+              placeholder="Buscar membros..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-11 h-12 bg-background border-primary/20 focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-sm rounded-xl transition-all"
+              className="pl-11 h-12 bg-background border-transparent focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-none rounded-xl transition-all"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-44">
-              <SelectValue placeholder="Situação" />
+            <SelectTrigger className="w-full sm:w-48 h-12 rounded-xl border-transparent bg-background shadow-none">
+              <SelectValue placeholder="Situa├º├úo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="todos">Todas Situações</SelectItem>
+              <SelectItem value="todos">Todos</SelectItem>
               <SelectItem value="membro">Membros</SelectItem>
               <SelectItem value="congregado">Congregados</SelectItem>
               <SelectItem value="visitante">Visitantes</SelectItem>
@@ -620,15 +612,17 @@ export default function Secretaria() {
           </Select>
         </div>
 
-        {/* Table/Content */}
+        {/* Members List */}
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-            <Loader2 className="h-8 w-8 animate-spin mb-4" />
-            <p>Carregando membros...</p>
+          <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+            <p className="font-medium opacity-60">Carregando membros...</p>
           </div>
         ) : error ? (
-          <div className="text-center py-12 text-destructive">
-            <p>Erro ao carregar dados. Verifique a conexão com o servidor.</p>
+          <div className="text-center py-20 text-destructive bg-destructive/5 rounded-3xl border border-destructive/10">
+            <p className="font-medium">N├úo foi poss├¡vel carregar a lista de membros.</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -669,7 +663,7 @@ export default function Secretaria() {
                       </div>
 
                       <div className="flex gap-1">
-                        <Badge variant="outline" className={`capitalize font-semibold border-0 ${statusStyles[membro.status] || ""}`}>
+                        <Badge variant="outline" className={`capitalize font-semibold border-0 ${statusStyles[membro.status]}`}>
                           {membro.status}
                         </Badge>
                         <DropdownMenu>
@@ -714,9 +708,9 @@ export default function Secretaria() {
                         {membro.phone || membro.telefone || "Sem contato"}
                       </div>
                       {membro.cell_id && membro.cell_id !== "none" && (
-                        <div className="flex items-center gap-1.5 text-primary/80" title="Célula">
+                        <div className="flex items-center gap-1.5 text-primary/80" title="C├®lula">
                           <Users className="h-3.5 w-3.5" />
-                          <span className="bg-primary/5 px-2 py-0.5 rounded-full">Célula</span>
+                          <span className="bg-primary/5 px-2 py-0.5 rounded-full">C├®lula</span>
                         </div>
                       )}
                     </div>
@@ -728,10 +722,11 @@ export default function Secretaria() {
         )}
       </motion.div>
 
+
       {/* View Modal */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-8 pb-0 bg-primary/5">
+        <DialogContent className="sm:max-w-4xl max-h-[95vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-8 pb-4 bg-primary/5 flex-shrink-0">
             <div className="flex items-center gap-6">
               <Avatar className="h-16 w-16 border-4 border-background shadow-sm">
                 <AvatarFallback className="bg-primary/10 text-primary text-2xl font-semibold">
@@ -744,38 +739,38 @@ export default function Secretaria() {
                   <Badge className={`${statusStyles[selectedMember?.status] || "bg-muted text-muted-foreground"} font-semibold`}>
                     {selectedMember?.status || "visitante"}
                   </Badge>
-                  <span className="text-muted-foreground">•</span>
+                  <span className="text-muted-foreground">ÔÇó</span>
                   <span className="font-semibold text-foreground/70">{selectedMember?.role || "Membro"}</span>
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 max-h-[calc(95vh-200px)]">
             <div className="p-8 space-y-10">
               {/* Personal Data */}
               <section>
                 <div className="flex items-center gap-2 mb-6 border-b pb-2">
                   <User className="h-5 w-5 text-primary" />
-                  <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Informações Pessoais</h4>
+                  <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Informa├º├Áes Pessoais</h4>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 bg-secondary/5 p-6 rounded-2xl border border-secondary/20">
                   <div className="space-y-1">
                     <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">CPF</p>
-                    <p className="text-base font-semibold text-foreground">{selectedMember?.cpf || "Não informado"}</p>
+                    <p className="text-base font-semibold text-foreground">{selectedMember?.cpf || "N├úo informado"}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Nascimento</p>
                     <p className="text-base font-semibold text-foreground">
-                      {selectedMember?.birth_date ? new Date(selectedMember.birth_date).toLocaleDateString('pt-BR') : "Não informada"}
+                      {selectedMember?.birth_date ? new Date(selectedMember.birth_date).toLocaleDateString('pt-BR') : "N├úo informada"}
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Gênero</p>
-                    <p className="text-base font-semibold text-foreground capitalize">{selectedMember?.sex || "Não informado"}</p>
+                    <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">G├¬nero</p>
+                    <p className="text-base font-semibold text-foreground capitalize">{selectedMember?.sex || "N├úo informado"}</p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Estado Civil</p>
-                    <p className="text-base font-semibold text-foreground capitalize">{selectedMember?.marital_status || "Não informado"}</p>
+                    <p className="text-base font-semibold text-foreground capitalize">{selectedMember?.marital_status || "N├úo informado"}</p>
                   </div>
                 </div>
               </section>
@@ -790,11 +785,11 @@ export default function Secretaria() {
                   <div className="grid grid-cols-1 gap-6 bg-secondary/5 p-6 rounded-2xl border border-secondary/20 min-h-[140px]">
                     <div className="space-y-1">
                       <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">WhatsApp / Telefone</p>
-                      <p className="text-base font-semibold text-foreground">{selectedMember?.phone || "Não informado"}</p>
+                      <p className="text-base font-semibold text-foreground">{selectedMember?.phone || "N├úo informado"}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">E-mail</p>
-                      <p className="text-base font-semibold text-foreground truncate" title={selectedMember?.email}>{selectedMember?.email || "Não informado"}</p>
+                      <p className="text-base font-semibold text-foreground truncate" title={selectedMember?.email}>{selectedMember?.email || "N├úo informado"}</p>
                     </div>
                   </div>
                 </section>
@@ -803,11 +798,11 @@ export default function Secretaria() {
                 <section>
                   <div className="flex items-center gap-2 mb-6 border-b pb-2">
                     <Church className="h-5 w-5 text-primary" />
-                    <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Dados Eclesiásticos</h4>
+                    <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Dados Eclesi├ísticos</h4>
                   </div>
                   <div className="grid grid-cols-1 gap-6 bg-secondary/5 p-6 rounded-2xl border border-secondary/20 min-h-[140px]">
                     <div className="space-y-1">
-                      <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Cargo / Função</p>
+                      <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Cargo / Fun├º├úo</p>
                       <p className="text-base font-semibold text-foreground">{selectedMember?.role || "Membro"}</p>
                     </div>
                     <div className="space-y-1">
@@ -822,7 +817,7 @@ export default function Secretaria() {
               <section className="pb-8">
                 <div className="flex items-center gap-2 mb-6 border-b pb-2">
                   <Users className="h-5 w-5 text-primary" />
-                  <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Família e Filiação</h4>
+                  <h4 className="font-bold text-foreground uppercase text-[10px] tracking-wider opacity-60">Fam├¡lia e Filia├º├úo</h4>
                 </div>
 
                 <div className="space-y-6">
@@ -831,21 +826,21 @@ export default function Secretaria() {
                     <div className="space-y-2">
                       <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">Pai</p>
                       <p className="text-base font-semibold text-foreground leading-tight">
-                        {selectedMember?.father?.name || selectedMember?.father_name || "Não informado"}
+                        {selectedMember?.father?.name || selectedMember?.father_name || "N├úo informado"}
                       </p>
                       {selectedMember?.father?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
                     </div>
                     <div className="space-y-2">
-                      <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">Mãe</p>
+                      <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">M├úe</p>
                       <p className="text-base font-semibold text-foreground leading-tight">
-                        {selectedMember?.mother?.name || selectedMember?.mother_name || "Não informada"}
+                        {selectedMember?.mother?.name || selectedMember?.mother_name || "N├úo informada"}
                       </p>
                       {selectedMember?.mother?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
                     </div>
                     <div className="space-y-2">
-                      <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">Cônjuge</p>
+                      <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">C├┤njuge</p>
                       <p className="text-base font-semibold text-foreground leading-tight">
-                        {selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Nome não vinculado" : "N/A")}
+                        {selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Nome n├úo vinculado" : "N/A")}
                       </p>
                       {selectedMember?.spouse?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
                     </div>
@@ -878,7 +873,7 @@ export default function Secretaria() {
               </section>
             </div>
           </ScrollArea>
-          <div className="p-8 border-t bg-background flex justify-end gap-4">
+          <div className="p-6 border-t bg-background flex justify-end gap-4 flex-shrink-0">
             <Button variant="outline" className="px-8 shadow-sm" onClick={() => setIsViewDialogOpen(false)}>Fechar</Button>
             <Button className="bg-amber-500 hover:bg-amber-600 text-white px-8 shadow-md transition-all active:scale-95" onClick={() => {
               setIsViewDialogOpen(false);
@@ -896,7 +891,7 @@ export default function Secretaria() {
           <AlertDialogHeader>
             <AlertDialogTitle>Excluir Membro</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja excluir <strong>{selectedMember?.name}</strong>? Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir <strong>{selectedMember?.name}</strong>? Esta a├º├úo n├úo pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
