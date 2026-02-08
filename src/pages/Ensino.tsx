@@ -215,7 +215,10 @@ export default function Ensino() {
     return (completed / course.total_classes) * 100;
   };
 
-  const enrolledStudentIds = selectedCourse?.students?.map((s: any) => s.id) || [];
+  // Obter a versão mais recente do curso selecionado diretamente do cache reativo (courses)
+  const currentCourse = selectedCourse ? courses.find((c: any) => c.id === selectedCourse.id) || selectedCourse : null;
+
+  const enrolledStudentIds = currentCourse?.students?.map((s: any) => s.id) || [];
   const availableMembers = members.filter((m: any) =>
     !enrolledStudentIds.includes(m.id) &&
     (m.name?.toLowerCase().includes(studentSearch.toLowerCase()) || studentSearch === "")
@@ -602,7 +605,7 @@ export default function Ensino() {
               </div>
               <div className="flex-1">
                 <DialogTitle className="text-xl font-semibold text-foreground">
-                  Gerenciar: {selectedCourse?.name}
+                  Gerenciar: {currentCourse?.name}
                 </DialogTitle>
                 <DialogDescription className="text-muted-foreground font-medium text-xs">
                   Gerencie aulas, alunos e frequência do curso.
@@ -769,15 +772,15 @@ export default function Ensino() {
 
                 <div className="space-y-3">
                   <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-                    Alunos Matriculados ({selectedCourse?.students?.length || 0})
+                    Alunos Matriculados ({currentCourse?.students?.length || 0})
                   </h3>
-                  {!selectedCourse?.students || selectedCourse.students.length === 0 ? (
+                  {!currentCourse?.students || currentCourse.students.length === 0 ? (
                     <div className="text-center py-12 text-muted-foreground">
                       <Users className="h-12 w-12 mx-auto mb-3 opacity-20" />
                       <p className="font-medium">Nenhum aluno matriculado</p>
                     </div>
                   ) : (
-                    selectedCourse.students.map((student: any) => (
+                    currentCourse.students.map((student: any) => (
                       <div
                         key={student.id}
                         className="flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-all bg-card"
@@ -815,15 +818,15 @@ export default function Ensino() {
                 <div className="grid grid-cols-3 gap-4">
                   <div className="bg-primary/5 p-5 rounded-2xl border border-primary/10">
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Total de Aulas</p>
-                    <p className="text-3xl font-bold text-foreground">{selectedCourse?.total_classes || 0}</p>
+                    <p className="text-3xl font-bold text-foreground">{currentCourse?.total_classes || 0}</p>
                   </div>
                   <div className="bg-success/5 p-5 rounded-2xl border border-success/10">
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Concluídas</p>
-                    <p className="text-3xl font-bold text-success">{selectedCourse?.completed_classes || 0}</p>
+                    <p className="text-3xl font-bold text-success">{currentCourse?.completed_classes || 0}</p>
                   </div>
                   <div className="bg-blue-500/5 p-5 rounded-2xl border border-blue-500/10">
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Alunos</p>
-                    <p className="text-3xl font-bold text-blue-600">{selectedCourse?.students?.length || 0}</p>
+                    <p className="text-3xl font-bold text-blue-600">{currentCourse?.students?.length || 0}</p>
                   </div>
                 </div>
 
@@ -832,9 +835,9 @@ export default function Ensino() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-bold text-muted-foreground">Percentual Concluído</span>
-                      <span className="text-lg font-bold text-primary">{selectedCourse ? Math.round(calculateProgress(selectedCourse)) : 0}%</span>
+                      <span className="text-lg font-bold text-primary">{currentCourse ? Math.round(calculateProgress(currentCourse)) : 0}%</span>
                     </div>
-                    <Progress value={selectedCourse ? calculateProgress(selectedCourse) : 0} className="h-3" />
+                    <Progress value={currentCourse ? calculateProgress(currentCourse) : 0} className="h-3" />
                   </div>
                 </div>
 
