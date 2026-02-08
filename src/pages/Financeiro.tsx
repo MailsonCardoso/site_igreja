@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, ArrowDownRight, Plus, Loader2, Calendar, ArrowUpDown, FileText, Printer, ChevronDown, Download, Receipt } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Plus, Loader2, Calendar, ArrowUpDown, FileText, Printer, ChevronDown, Download, Receipt, Edit2, Trash2 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -64,6 +64,7 @@ export default function Financeiro() {
   const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>({ key: 'date', direction: 'desc' });
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
     description: "",
@@ -105,7 +106,51 @@ export default function Financeiro() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (transaction: any) => api.put(`/transactions/${transaction.id}`, transaction),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["report"] });
+      setIsModalOpen(false);
+      resetForm();
+      setEditingId(null);
+      toast({
+        title: "Sucesso!",
+        description: "Transação atualizada com sucesso.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao atualizar transação.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => api.delete(`/transactions/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["report"] });
+      toast({
+        title: "Sucesso!",
+        description: "Transação excluída com sucesso.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao excluir transação.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const resetForm = () => {
+    setEditingId(null);
     setFormData({
       description: "",
       amount: "",
@@ -125,11 +170,35 @@ export default function Financeiro() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createMutation.mutate({
+    const payload = {
       ...formData,
       type: transactionType,
       amount: parseFloat(formData.amount.replace(",", ".")),
+    };
+
+    if (editingId) {
+      updateMutation.mutate({ ...payload, id: editingId });
+    } else {
+      createMutation.mutate(payload);
+    }
+  };
+
+  const openEditModal = (transacao: any) => {
+    setEditingId(transacao.id);
+    setTransactionType(transacao.type || transacao.tipo);
+    setFormData({
+      description: transacao.description || transacao.descricao,
+      amount: String(transacao.amount || transacao.valor).replace(".", ","),
+      category_name: transacao.category_name || transacao.categoria,
+      date: format(new Date(transacao.date || transacao.data), "yyyy-MM-dd"),
     });
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm("Deseja realmente excluir esta transação?")) {
+      deleteMutation.mutate(id);
+    }
   };
 
   const toggleSort = (key: string) => {
@@ -346,6 +415,7 @@ export default function Financeiro() {
                         Valor <ArrowUpDown className="h-3 w-3 opacity-50 group-hover:opacity-100" />
                       </div>
                     </TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-wider text-muted-foreground text-right w-24">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -387,7 +457,7 @@ export default function Financeiro() {
                             {transacao.description || transacao.descricao}
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline" className="font-semibold uppercase text-[9px] tracking-wider bg-card border-secondary/50">
+                            <Badge variant="outline" className="font-semibold uppercase text-[11px] tracking-wider bg-card border-secondary/50">
                               {transacao.category_name || transacao.categoria}
                             </Badge>
                           </TableCell>
@@ -397,6 +467,26 @@ export default function Financeiro() {
                           <TableCell className={`text-right font-semibold tabular-nums text-lg ${tipo === "entrada" ? "text-success" : "text-destructive"}`}>
                             <span className="text-[10px] opacity-50 mr-1">{tipo === "entrada" ? "+" : "-"}</span>
                             {formatCurrency(valor)}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex justify-end gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-full"
+                                onClick={() => openEditModal(transacao)}
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/5 rounded-full"
+                                onClick={() => handleDelete(transacao.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </TableCell>
                         </motion.tr>
                       );
@@ -562,7 +652,7 @@ export default function Financeiro() {
             </div>
             <div>
               <DialogTitle className="text-xl font-semibold text-foreground">
-                {transactionType === "entrada" ? "Registrar Entrada" : "Registrar Saída"}
+                {editingId ? (transactionType === "entrada" ? "Editar Entrada" : "Editar Saída") : (transactionType === "entrada" ? "Registrar Entrada" : "Registrar Saída")}
               </DialogTitle>
               <DialogDescription className="font-medium text-muted-foreground italic">
                 {transactionType === "entrada" ? "Adicione dízimos, ofertas ou doações recebidas." : "Registre pagamentos de contas, salários e manutenções."}
@@ -660,10 +750,10 @@ export default function Financeiro() {
               <Button
                 type="submit"
                 className={`flex-1 h-12 rounded-xl font-semibold gap-2 shadow-xl ${transactionType === "entrada" ? "bg-success hover:bg-success/90 shadow-success/20" : "bg-destructive hover:bg-destructive/90 shadow-destructive/20"}`}
-                disabled={createMutation.isPending}
+                disabled={createMutation.isPending || updateMutation.isPending}
               >
-                {createMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                Efetivar Lançamento
+                {createMutation.isPending || updateMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                {editingId ? "Atualizar Lançamento" : "Efetivar Lançamento"}
               </Button>
             </DialogFooter>
           </form>
