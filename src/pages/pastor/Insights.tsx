@@ -170,8 +170,13 @@ export default function Insights() {
                             <h3 className="font-bold text-lg">{editingId ? 'Editando Insight' : 'Capturar Insight'}</h3>
                         </div>
                         {editingId && (
-                            <Button variant="ghost" size="sm" onClick={cancelEdit} className="text-muted-foreground hover:text-foreground">
-                                <X className="h-4 w-4 mr-1" /> Cancelar Edição
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={cancelEdit}
+                                className="text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 font-bold rounded-xl h-9 px-4 shadow-sm"
+                            >
+                                <X className="h-4 w-4 mr-1.5" /> Cancelar Edição
                             </Button>
                         )}
                     </div>
