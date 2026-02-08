@@ -421,7 +421,7 @@ export default function Financeiro() {
                 <TableBody>
                   {sortedTransactions.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center py-20">
+                      <TableCell colSpan={6} className="text-center py-20">
                         <div className="flex flex-col items-center gap-3 opacity-50">
                           <Receipt className="h-12 w-12" />
                           <p className="font-bold text-muted-foreground">Nenhuma transação para este período.</p>
@@ -763,50 +763,33 @@ export default function Financeiro() {
       {/* Estilos para Impressão */}
       <style>{`
         @media print {
-          /* Esconder tudo que não deve ser impresso */
-          body > *:not([data-radix-portal]) {
-            display: none !important;
+          body {
+            visibility: hidden !important;
+            background: white !important;
           }
-          
-          /* Esconder elementos do Dialog que não são o relatório */
-          [role="dialog"] > *:not(div),
+          #printable-report, #printable-report * {
+            visibility: visible !important;
+          }
+          #printable-report {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 2cm !important;
+            display: block !important;
+          }
           .no-print {
             display: none !important;
           }
-
-          /* Resetar o ScrollArea para impressão */
+          @page {
+            margin: 1cm;
+            size: auto;
+          }
           [data-radix-scroll-area-viewport] {
             display: block !important;
             overflow: visible !important;
             height: auto !important;
-          }
-
-          /* Forçar o relatório a ocupar a página toda */
-          #printable-report {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: auto !important;
-            margin: 0 !important;
-            padding: 2cm !important;
-            background: white !important;
-            color: black !important;
-            z-index: 9999999 !important;
-            display: block !important;
-            visibility: visible !important;
-          }
-
-          /* Garantir que textos e bordas apareçam mesmo em temas escuros */
-          * {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            color-adjust: exact !important;
-          }
-
-          @page {
-            margin: 0;
-            size: auto;
           }
         }
       `}</style>
