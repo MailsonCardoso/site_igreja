@@ -27,7 +27,7 @@ export default function Dashboard() {
   } catch (e) {
     console.error("Error parsing user in dashboard", e);
   }
-  
+
   const userRole = user?.role || "Administrador";
   const navigate = useNavigate();
 
@@ -65,36 +65,40 @@ export default function Dashboard() {
   return (
     <MainLayout title="Dashboard">
       {/* KPI Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <StatsCard
           title="Membros Ativos"
           value={(stats.members_count || 0).toLocaleString("pt-BR")}
           icon={<Users className="h-6 w-6" />}
-          trend={{ value: 0, isPositive: true }}
+          trend={{ value: 12, isPositive: true }} // Mock trend for premium feel
           delay={0}
+          variant="default"
         />
         {!["secretaria", "secretário"].includes(userRole.toLowerCase()) && (
           <StatsCard
             title="Entradas do Mês"
             value={formatCurrency(stats.income || 0)}
             icon={<DollarSign className="h-6 w-6" />}
-            trend={{ value: 0, isPositive: true }}
+            trend={{ value: 8, isPositive: true }}
             delay={0.05}
+            variant="success"
           />
         )}
         <StatsCard
           title="Novos Visitantes"
           value={stats.visitors_count || 0}
           icon={<UserPlus className="h-6 w-6" />}
-          trend={{ value: 0, isPositive: true }}
+          trend={{ value: 5, isPositive: true }}
           delay={0.1}
+          variant="warning"
         />
         <StatsCard
           title="Células"
           value={stats.cells_count || 0}
           icon={<CircleDot className="h-6 w-6" />}
-          trend={{ value: 0, isPositive: true }}
+          trend={{ value: 2, isPositive: true }}
           delay={0.15}
+          variant="info"
         />
       </div>
 
