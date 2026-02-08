@@ -347,294 +347,274 @@ export default function Secretaria() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 flex flex-col min-h-0 bg-card">
                 <ScrollArea className="flex-1">
                   <div className="p-8 pb-10">
-                    <Tabs defaultValue="pessoais" className="w-full">
-                      <TabsList className="grid w-full grid-cols-4 mb-10 h-auto p-1.5 bg-secondary/10 rounded-[1.25rem] border border-border/40">
-                        <TabsTrigger value="pessoais" className="gap-2 py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all font-semibold text-xs">
-                          <User className="h-4 w-4" />
-                          <span className="hidden sm:inline uppercase tracking-wider">Pessoais</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="contato" className="gap-2 py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all font-semibold text-xs">
-                          <Phone className="h-4 w-4" />
-                          <span className="hidden sm:inline uppercase tracking-wider">Contato</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="eclesiastico" className="gap-2 py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all font-semibold text-xs">
-                          <Church className="h-4 w-4" />
-                          <span className="hidden sm:inline uppercase tracking-wider">Igreja</span>
-                        </TabsTrigger>
-                        <TabsTrigger value="familia" className="gap-2 py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-lg data-[state=active]:text-primary transition-all font-semibold text-xs">
-                          <Users className="h-4 w-4" />
-                          <span className="hidden sm:inline uppercase tracking-wider">Família</span>
-                        </TabsTrigger>
-                      </TabsList>
-
-                      <TabsContent value="pessoais" className="space-y-8 animate-in fade-in-50 duration-300">
-                        <div className="grid gap-6 sm:grid-cols-2">
-                          <div className="sm:col-span-2 space-y-2.5">
-                            <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
-                              Nome Completo <span className="text-destructive">*</span>
-                            </Label>
-                            <div className="relative">
-                              <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/60" />
-                              <Input
-                                id="name"
-                                {...form.register("name", { required: true })}
-                                className="pl-11 h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold transition-all focus:border-primary/40 focus:bg-background shadow-inner"
-                                placeholder="Ex: João da Silva"
-                              />
+                    <div className="p-8 pb-10 space-y-10">
+                      <div className="grid gap-8 lg:grid-cols-2">
+                        {/* Left Column: Personal and Church Info */}
+                        <div className="space-y-10">
+                          <section className="space-y-6">
+                            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary flex items-center gap-2 mb-4">
+                              <User className="h-4 w-4" /> Informações Pessoais
+                            </h3>
+                            <div className="grid gap-5">
+                              <div className="space-y-2.5">
+                                <Label htmlFor="name" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+                                  Nome Completo <span className="text-destructive">*</span>
+                                </Label>
+                                <div className="relative">
+                                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/60" />
+                                  <Input
+                                    id="name"
+                                    {...form.register("name", { required: true })}
+                                    className="pl-11 h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold transition-all focus:border-primary/40 focus:bg-background shadow-inner"
+                                    placeholder="Ex: João da Silva"
+                                  />
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2.5">
+                                  <Label htmlFor="birth_date" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Nascimento</Label>
+                                  <Input
+                                    id="birth_date"
+                                    type="date"
+                                    {...form.register("birth_date")}
+                                    className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner text-xs"
+                                  />
+                                </div>
+                                <div className="space-y-2.5">
+                                  <Label htmlFor="marital_status" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Estado Civil</Label>
+                                  <Select onValueChange={(val) => setValue("marital_status", val)} value={watch("marital_status")}>
+                                    <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
+                                      <SelectValue placeholder="Selecione" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-2xl shadow-xl border-border/40">
+                                      <SelectItem value="solteiro" className="rounded-xl font-medium">Solteiro(a)</SelectItem>
+                                      <SelectItem value="casado" className="rounded-xl font-medium">Casado(a)</SelectItem>
+                                      <SelectItem value="viuvo" className="rounded-xl font-medium">Viúvo(a)</SelectItem>
+                                      <SelectItem value="divorciado" className="rounded-xl font-medium">Divorciado(a)</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2.5">
+                                  <Label htmlFor="cpf" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">CPF</Label>
+                                  <Input
+                                    id="cpf"
+                                    {...form.register("cpf")}
+                                    onChange={(e) => setValue("cpf", maskCPF(e.target.value))}
+                                    className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
+                                  />
+                                </div>
+                                <div className="space-y-2.5">
+                                  <Label htmlFor="sex" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Sexo</Label>
+                                  <Select onValueChange={(val) => setValue("sex", val)} value={watch("sex")}>
+                                    <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
+                                      <SelectValue placeholder="Selecione" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-2xl shadow-xl border-border/40">
+                                      <SelectItem value="masculino" className="rounded-xl font-medium">Masculino</SelectItem>
+                                      <SelectItem value="feminino" className="rounded-xl font-medium">Feminino</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                          <div className="space-y-2.5">
-                            <Label htmlFor="birth_date" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Data de Nascimento</Label>
-                            <Input
-                              id="birth_date"
-                              type="date"
-                              {...form.register("birth_date")}
-                              className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
-                            />
-                          </div>
-                          <div className="space-y-2.5">
-                            <Label htmlFor="cpf" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">CPF</Label>
-                            <Input
-                              id="cpf"
-                              {...form.register("cpf")}
-                              onChange={(e) => setValue("cpf", maskCPF(e.target.value))}
-                              placeholder="000.000.000-00"
-                              className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
-                            />
-                          </div>
-                          <div className="space-y-2.5">
-                            <Label htmlFor="sex" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Sexo</Label>
-                            <Select onValueChange={(val) => setValue("sex", val)} value={watch("sex")}>
-                              <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent className="rounded-2xl shadow-xl border-border/40">
-                                <SelectItem value="masculino" className="rounded-xl font-medium">Masculino</SelectItem>
-                                <SelectItem value="feminino" className="rounded-xl font-medium">Feminino</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2.5">
-                            <Label htmlFor="marital_status" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Estado Civil</Label>
-                            <Select onValueChange={(val) => setValue("marital_status", val)} value={watch("marital_status")}>
-                              <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent className="rounded-2xl shadow-xl border-border/40">
-                                <SelectItem value="solteiro" className="rounded-xl font-medium">Solteiro(a)</SelectItem>
-                                <SelectItem value="casado" className="rounded-xl font-medium">Casado(a)</SelectItem>
-                                <SelectItem value="viuvo" className="rounded-xl font-medium">Viúvo(a)</SelectItem>
-                                <SelectItem value="divorciado" className="rounded-xl font-medium">Divorciado(a)</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </TabsContent>
+                          </section>
 
-                      <TabsContent value="contato" className="space-y-10 animate-in fade-in-50 duration-300">
-                        <div className="space-y-6">
-                          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/80 flex items-center gap-2 mb-2 ml-1">
-                            <Phone className="h-3 w-3" /> Comunicação Direta
-                          </h3>
-                          <div className="grid gap-6 sm:grid-cols-2">
-                            <div className="space-y-2.5">
-                              <Label htmlFor="phone" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">WhatsApp / Telefone</Label>
-                              <div className="relative">
-                                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/60" />
+                          <section className="space-y-6 pt-4 border-t border-border/40">
+                            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80 flex items-center gap-2">
+                              <Church className="h-4 w-4" /> Informações Eclesiásticas
+                            </h3>
+                            <div className="grid gap-5">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2.5">
+                                  <Label htmlFor="status" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Situação / Status</Label>
+                                  <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
+                                    <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
+                                      <SelectValue placeholder="Selecione" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-2xl shadow-xl border-border/40">
+                                      <SelectItem value="membro" className="rounded-xl font-medium">Membro</SelectItem>
+                                      <SelectItem value="visitante" className="rounded-xl font-medium">Visitante</SelectItem>
+                                      <SelectItem value="afastado" className="rounded-xl font-medium">Afastado</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="space-y-2.5">
+                                  <Label htmlFor="role" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Função / Cargo</Label>
+                                  <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
+                                    <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
+                                      <SelectValue placeholder="Selecione" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-2xl shadow-xl border-border/40">
+                                      <SelectItem value="Membro" className="rounded-xl font-medium">Membro</SelectItem>
+                                      <SelectItem value="Diácono" className="rounded-xl font-medium">Diácono</SelectItem>
+                                      <SelectItem value="Obreiro" className="rounded-xl font-medium">Obreiro</SelectItem>
+                                      <SelectItem value="Ministro de Louvor" className="rounded-xl font-medium">Ministro de Louvor</SelectItem>
+                                      <SelectItem value="Pastor" className="rounded-xl font-medium">Pastor</SelectItem>
+                                      <SelectItem value="Financeiro" className="rounded-xl font-medium">Financeiro</SelectItem>
+                                      <SelectItem value="Secretaria" className="rounded-xl font-medium">Secretaria</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                              </div>
+                              <div className="space-y-2.5">
+                                <Label htmlFor="cell_id" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Célula / Pequeno Grupo</Label>
+                                <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
+                                  <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
+                                    <SelectValue placeholder="Selecione uma célula" />
+                                  </SelectTrigger>
+                                  <SelectContent className="rounded-2xl shadow-xl border-border/40">
+                                    <SelectItem value="none" className="rounded-xl font-medium">Nenhuma</SelectItem>
+                                    {cells.map((cell: any) => (
+                                      <SelectItem key={cell.id} value={cell.id.toString()} className="rounded-xl font-medium">{cell.name}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+                          </section>
+                        </div>
+
+                        {/* Right Column: Contact and Location */}
+                        <div className="space-y-10">
+                          <section className="space-y-6">
+                            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80 flex items-center gap-2 mb-4">
+                              <Phone className="h-4 w-4" /> Dados de Contato
+                            </h3>
+                            <div className="grid gap-5">
+                              <div className="space-y-2.5">
+                                <Label htmlFor="phone" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">WhatsApp / Telefone</Label>
+                                <div className="relative">
+                                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary/60" />
+                                  <Input
+                                    id="phone"
+                                    {...form.register("phone")}
+                                    className="pl-11 h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
+                                    placeholder="(00) 00000-0000"
+                                    onChange={(e) => setValue("phone", maskPhone(e.target.value))}
+                                  />
+                                </div>
+                              </div>
+                              <div className="space-y-2.5">
+                                <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">E-mail</Label>
                                 <Input
-                                  id="phone"
-                                  {...form.register("phone")}
-                                  className="pl-11 h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold transition-all focus:border-primary/40 focus:bg-background shadow-inner"
-                                  placeholder="(00) 00000-0000"
-                                  onChange={(e) => setValue("phone", maskPhone(e.target.value))}
+                                  id="email"
+                                  type="email"
+                                  {...form.register("email")}
+                                  placeholder="exemplo@email.com"
+                                  className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
                                 />
                               </div>
                             </div>
-                            <div className="space-y-2.5">
-                              <Label htmlFor="email" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">E-mail</Label>
-                              <Input
-                                id="email"
-                                type="email"
-                                {...form.register("email")}
-                                placeholder="exemplo@email.com"
-                                className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
-                              />
-                            </div>
-                          </div>
-                        </div>
+                          </section>
 
-                        <div className="space-y-6 pt-2">
-                          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary/80 flex items-center gap-2 mb-2 ml-1">
-                            <MapPin className="h-3 w-3" /> Localização / Residência
-                          </h3>
-                          <div className="grid gap-5 sm:grid-cols-4">
-                            <div className="space-y-2.5">
-                              <Label htmlFor="cep" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">CEP</Label>
-                              <Input
-                                id="cep"
-                                {...form.register("cep")}
-                                placeholder="00000-000"
-                                onChange={(e) => setValue("cep", maskCEP(e.target.value))}
-                                className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:border-primary/40 focus:bg-background shadow-inner"
-                              />
+                          <section className="space-y-6 pt-4 border-t border-border/40">
+                            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80 flex items-center gap-2 mb-4">
+                              <MapPin className="h-4 w-4" /> Endereço Residencial
+                            </h3>
+                            <div className="grid gap-4">
+                              <div className="grid grid-cols-3 gap-4">
+                                <div className="space-y-2.5">
+                                  <Label htmlFor="cep" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">CEP</Label>
+                                  <Input
+                                    id="cep"
+                                    {...form.register("cep")}
+                                    onChange={(e) => setValue("cep", maskCEP(e.target.value))}
+                                    className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
+                                  />
+                                </div>
+                                <div className="col-span-2 space-y-2.5">
+                                  <Label htmlFor="logradouro" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Logradouro</Label>
+                                  <Input
+                                    id="logradouro"
+                                    {...form.register("logradouro")}
+                                    className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
+                                  />
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2.5">
+                                  <Label htmlFor="bairro" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Bairro</Label>
+                                  <Input id="bairro" {...form.register("bairro")} className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div className="space-y-2.5">
+                                    <Label htmlFor="cidade" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Cidade</Label>
+                                    <Input id="cidade" {...form.register("cidade")} className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner" />
+                                  </div>
+                                  <div className="space-y-2.5">
+                                    <Label htmlFor="uf" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">UF</Label>
+                                    <Input id="uf" {...form.register("uf")} maxLength={2} className="uppercase h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background text-center shadow-inner" />
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <div className="sm:col-span-3 space-y-2.5">
-                              <Label htmlFor="logradouro" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Logradouro</Label>
-                              <Input
-                                id="logradouro"
-                                {...form.register("logradouro")}
-                                className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
-                                placeholder="Rua, Avenida, Alameda..."
-                              />
-                            </div>
-                            <div className="sm:col-span-2 space-y-2.5">
-                              <Label htmlFor="bairro" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Bairro</Label>
-                              <Input
-                                id="bairro"
-                                {...form.register("bairro")}
-                                className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
-                              />
-                            </div>
-                            <div className="space-y-2.5">
-                              <Label htmlFor="cidade" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Cidade</Label>
-                              <Input
-                                id="cidade"
-                                {...form.register("cidade")}
-                                className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner"
-                              />
-                            </div>
-                            <div className="space-y-2.5">
-                              <Label htmlFor="uf" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">UF</Label>
-                              <Input
-                                id="uf"
-                                {...form.register("uf")}
-                                maxLength={2}
-                                className="uppercase h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background text-center shadow-inner"
-                              />
-                            </div>
-                          </div>
+                          </section>
                         </div>
-                      </TabsContent>
+                      </div>
 
-                      <TabsContent value="eclesiastico" className="space-y-8 animate-in fade-in-50 duration-300">
-                        <div className="grid gap-6 sm:grid-cols-2">
-                          <div className="space-y-2.5">
-                            <Label htmlFor="status" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Situação / Status</Label>
-                            <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
-                              <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent className="rounded-2xl shadow-xl border-border/40">
-                                <SelectItem value="membro" className="rounded-xl font-medium">Membro</SelectItem>
-                                <SelectItem value="visitante" className="rounded-xl font-medium">Visitante</SelectItem>
-                                <SelectItem value="afastado" className="rounded-xl font-medium">Afastado</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2.5">
-                            <Label htmlFor="role" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Função / Cargo</Label>
-                            <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
-                              <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent className="rounded-2xl shadow-xl border-border/40">
-                                <SelectItem value="Membro" className="rounded-xl font-medium">Membro</SelectItem>
-                                <SelectItem value="Diácono" className="rounded-xl font-medium">Diácono</SelectItem>
-                                <SelectItem value="Obreiro" className="rounded-xl font-medium">Obreiro</SelectItem>
-                                <SelectItem value="Ministro de Louvor" className="rounded-xl font-medium">Ministro de Louvor</SelectItem>
-                                <SelectItem value="Pastor" className="rounded-xl font-medium">Pastor</SelectItem>
-                                <SelectItem value="Instrumentista" className="rounded-xl font-medium">Instrumentista</SelectItem>
-                                <SelectItem value="Financeiro" className="rounded-xl font-medium">Financeiro</SelectItem>
-                                <SelectItem value="Secretaria" className="rounded-xl font-medium">Secretaria</SelectItem>
-                                <SelectItem value="Líder de Pequeno Grupo" className="rounded-xl font-medium">Líder de Pequeno Grupo</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="sm:col-span-2 space-y-2.5">
-                            <Label htmlFor="cell_id" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Célula / Pequeno Grupo</Label>
-                            <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
-                              <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
-                                <SelectValue placeholder="Selecione uma célula" />
-                              </SelectTrigger>
-                              <SelectContent className="rounded-2xl shadow-xl border-border/40">
-                                <SelectItem value="none" className="rounded-xl font-medium">Nenhuma</SelectItem>
-                                {cells.map((cell: any) => (
-                                  <SelectItem key={cell.id} value={cell.id.toString()} className="rounded-xl font-medium">{cell.name}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </TabsContent>
+                      {/* Section Full-Width: Family and Parentage */}
+                      <div className="space-y-8 pt-6 border-t border-border/40">
+                        <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary flex items-center gap-2">
+                          <Users className="h-4 w-4" /> Vínculos Familiares
+                        </h3>
 
-                      <TabsContent value="familia" className="space-y-8 animate-in fade-in-50 duration-300">
-                        <div className="grid gap-8 sm:grid-cols-2">
-                          <div className="space-y-4">
-                            <Label htmlFor="father_id" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Pai (Membro Cadastrado)</Label>
+                        <div className="grid gap-8 lg:grid-cols-2">
+                          <div className="space-y-5 bg-secondary/5 p-6 rounded-3xl border border-border/60">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Pai</Label>
                             <Select onValueChange={(val) => setValue("father_id", val)} value={watch("father_id")}>
-                              <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
-                                <SelectValue placeholder="Selecione o pai" />
+                              <SelectTrigger className="h-12 rounded-2xl border-border/40 bg-background font-bold shadow-sm">
+                                <SelectValue placeholder="Membro vinculado" />
                               </SelectTrigger>
-                              <SelectContent className="rounded-2xl shadow-xl border-border/40">
+                              <SelectContent className="rounded-2xl">
                                 {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
-                                  <SelectItem key={m.id} value={m.id.toString()} className="rounded-xl font-medium">{m.name || m.nome}</SelectItem>
+                                  <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
-                            <div className="pt-1">
-                              <Label htmlFor="father_name" className="text-[10px] font-semibold text-muted-foreground/60 ml-1">Ou Nome do Pai (Manual)</Label>
-                              <Input
-                                id="father_name"
-                                {...form.register("father_name")}
-                                placeholder="Nome completo do pai"
-                                className="mt-2 h-11 rounded-xl border-border/40 bg-secondary/5 font-medium focus:bg-background shadow-inner"
-                              />
-                            </div>
+                            <Input {...form.register("father_name")} placeholder="Ou nome manual do pai" className="h-11 rounded-xl border-border/40 bg-background/50 font-medium" />
                           </div>
 
-                          <div className="space-y-4">
-                            <Label htmlFor="mother_id" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Mãe (Membro Cadastrado)</Label>
+                          <div className="space-y-5 bg-secondary/5 p-6 rounded-3xl border border-border/60">
+                            <Label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Mãe</Label>
                             <Select onValueChange={(val) => setValue("mother_id", val)} value={watch("mother_id")}>
-                              <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-secondary/5 font-bold focus:bg-background shadow-inner">
-                                <SelectValue placeholder="Selecione a mãe" />
+                              <SelectTrigger className="h-12 rounded-2xl border-border/40 bg-background font-bold shadow-sm">
+                                <SelectValue placeholder="Membro vinculado" />
                               </SelectTrigger>
-                              <SelectContent className="rounded-2xl shadow-xl border-border/40">
+                              <SelectContent className="rounded-2xl">
                                 {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
-                                  <SelectItem key={m.id} value={m.id.toString()} className="rounded-xl font-medium">{m.name || m.nome}</SelectItem>
+                                  <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
-                            <div className="pt-1">
-                              <Label htmlFor="mother_name" className="text-[10px] font-semibold text-muted-foreground/60 ml-1">Ou Nome da Mãe (Manual)</Label>
-                              <Input
-                                id="mother_name"
-                                {...form.register("mother_name")}
-                                placeholder="Nome completo da mãe"
-                                className="mt-2 h-11 rounded-xl border-border/40 bg-secondary/5 font-medium focus:bg-background shadow-inner"
-                              />
-                            </div>
+                            <Input {...form.register("mother_name")} placeholder="Ou nome manual da mãe" className="h-11 rounded-xl border-border/40 bg-background/50 font-medium" />
                           </div>
-
-                          {maritalStatusValue === "casado" && (
-                            <div className="sm:col-span-2 space-y-4 p-6 bg-primary/5 rounded-[2rem] border border-primary/20 shadow-inner">
-                              <Label htmlFor="spouse_id" className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-                                <Users className="h-4 w-4" /> Vínculo Matrimonial (Cônjuge)
-                              </Label>
-                              <Select onValueChange={(val) => setValue("spouse_id", val)} value={watch("spouse_id")}>
-                                <SelectTrigger className="h-12 rounded-2xl border-border/60 bg-background font-bold shadow-sm">
-                                  <SelectValue placeholder="Selecione o cônjuge" />
-                                </SelectTrigger>
-                                <SelectContent className="rounded-2xl shadow-xl border-border/40">
-                                  {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
-                                    <SelectItem key={m.id} value={m.id.toString()} className="rounded-xl font-medium">{m.name || m.nome}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          )}
                         </div>
-                      </TabsContent>
-                    </Tabs>
+
+                        {maritalStatusValue === "casado" && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="p-8 bg-primary/5 rounded-[2.5rem] border border-primary/20 shadow-xl space-y-4"
+                          >
+                            <Label className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.3em] text-primary">
+                              <Users className="h-5 w-5" /> Cônjuge da Igreja
+                            </Label>
+                            <Select onValueChange={(val) => setValue("spouse_id", val)} value={watch("spouse_id")}>
+                              <SelectTrigger className="h-14 rounded-2xl border-primary/30 bg-background font-bold text-lg shadow-sm">
+                                <SelectValue placeholder="Selecione o cônjuge" />
+                              </SelectTrigger>
+                              <SelectContent className="rounded-2xl">
+                                {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
+                                  <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </motion.div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </ScrollArea>
                 <div className="flex gap-4 p-8 border-t bg-secondary/5 flex-shrink-0">
