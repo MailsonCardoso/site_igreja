@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { Loader2, TrendingUp, Users } from "lucide-react";
@@ -47,7 +47,7 @@ export function MemberGrowthChart() {
                     </div>
                 ) : (
                     <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={memberGrowthData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }}>
+                        <BarChart data={memberGrowthData} margin={{ top: 20, right: 20, left: -20, bottom: 0 }} barSize={32}>
                             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted)/0.1)" vertical={false} />
                             <XAxis
                                 dataKey="mes"
@@ -62,6 +62,7 @@ export function MemberGrowthChart() {
                                 tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11, fontWeight: 600 }}
                             />
                             <Tooltip
+                                cursor={{ fill: 'hsl(var(--muted)/0.1)' }}
                                 contentStyle={{
                                     backgroundColor: 'hsl(var(--card))',
                                     border: 'none',
@@ -71,18 +72,15 @@ export function MemberGrowthChart() {
                                 }}
                                 itemStyle={{ color: 'hsl(var(--foreground))', fontWeight: 700, fontSize: '13px' }}
                                 labelStyle={{ color: 'hsl(var(--muted-foreground))', fontWeight: 600, fontSize: '11px', marginBottom: '4px', textTransform: 'uppercase' }}
-                                cursor={{ stroke: 'hsl(var(--primary))', strokeWidth: 2, strokeDasharray: '4 4' }}
                             />
-                            <Line
-                                type="monotone"
+                            <Bar
                                 dataKey="novos"
                                 name="Novos Membros"
-                                stroke="hsl(var(--primary))"
-                                strokeWidth={4}
-                                dot={{ r: 4, strokeWidth: 2, fill: 'hsl(var(--background))', stroke: 'hsl(var(--primary))' }}
-                                activeDot={{ r: 8, stroke: 'hsl(var(--background))', strokeWidth: 3, fill: 'hsl(var(--primary))' }}
+                                fill="hsl(var(--primary))"
+                                radius={[8, 8, 0, 0]}
+                                activeBar={{ fill: 'hsl(var(--primary))', opacity: 0.8 }}
                             />
-                        </LineChart>
+                        </BarChart>
                     </ResponsiveContainer>
                 )}
             </div>
