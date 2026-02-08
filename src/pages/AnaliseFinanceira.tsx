@@ -73,13 +73,13 @@ export default function AnaliseFinanceira() {
 
     // Relatório do mês selecionado (DRE e Listas)
     const { data: reportData, isLoading: isLoadingCurrent } = useQuery({
-        queryKey: ["report-analytics", selectedMonth, selectedYear],
+        queryKey: ["report", "analytics", selectedMonth, selectedYear],
         queryFn: () => api.get(`/transactions/report?month=${selectedMonth}&year=${selectedYear}`),
     });
 
     // Busca do Histórico Real (Janeiro até o mês selecionado)
     const { data: historyData, isLoading: isLoadingHistory } = useQuery({
-        queryKey: ["report-history", selectedYear, selectedMonth],
+        queryKey: ["report", "history", selectedYear, selectedMonth],
         queryFn: async () => {
             const currentMonthInt = parseInt(selectedMonth);
             const history = [];
