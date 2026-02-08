@@ -113,12 +113,16 @@ export default function Auth() {
       >
         <Card className="border-border/50 shadow-xl">
           <CardHeader className="text-center space-y-4">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-primary">
-              <Cross className="h-7 w-7 text-primary-foreground" />
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-white p-2 shadow-sm border border-border/50 overflow-hidden">
+              <img
+                src="/logo_ipr.png"
+                alt="Logo IPR"
+                className="h-full w-full object-contain"
+              />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold">
-                {isLogin ? "Bem-vindo" : "Criar conta"}
+              <CardTitle className="text-2xl font-black text-primary tracking-tight">
+                IPR Jaguarema
               </CardTitle>
               <CardDescription className="mt-2">
                 {isLogin

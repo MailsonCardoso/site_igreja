@@ -143,7 +143,7 @@ export default function AnaliseFinanceira() {
         </head>
         <body>
           <div class="header">
-            <div class="title">${churchSettings?.nome || 'IGREJA COMUNIDADE CRISTÃ'}</div>
+            <div class="title">${churchSettings?.nome || 'IPR JAGUAREMA'}</div>
             <div style="font-size: 14px; color: #666; margin-top: 5px;">ANÁLISE E INTELIGÊNCIA FINANCEIRA - ${meses.find(m => m.value === selectedMonth)?.label} / ${selectedYear}</div>
           </div>
           ${printContent.innerHTML}
