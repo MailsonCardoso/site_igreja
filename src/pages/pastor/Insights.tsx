@@ -182,34 +182,44 @@ export default function Insights() {
                     </div>
                     <div className="flex flex-col gap-4">
                         <Tabs value={newType} onValueChange={setNewType} className="w-full">
-                            <TabsList className="grid w-full grid-cols-2 mb-4">
-                                <TabsTrigger value="note">Anotação Rápida</TabsTrigger>
-                                <TabsTrigger value="verse">Versículo</TabsTrigger>
+                            <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted/50 p-1.5 h-14 rounded-2xl border border-border/50 shadow-inner">
+                                <TabsTrigger
+                                    value="note"
+                                    className="rounded-xl transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-lg data-[state=active]:scale-95 font-bold text-sm"
+                                >
+                                    <PenTool className="h-4 w-4 mr-2" /> Anotação Rápida
+                                </TabsTrigger>
+                                <TabsTrigger
+                                    value="verse"
+                                    className="rounded-xl transition-all data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-lg data-[state=active]:scale-95 font-bold text-sm"
+                                >
+                                    <Quote className="h-4 w-4 mr-2" /> Versículo
+                                </TabsTrigger>
                             </TabsList>
                             <TabsContent value="note" className="space-y-4">
                                 <Input
-                                    placeholder="Título (Opcional)"
-                                    className="font-semibold"
+                                    placeholder="Título do Insight (Opcional)"
+                                    className="h-12 rounded-xl border-input bg-background font-bold text-base transition-all focus:ring-2 focus:ring-primary/10 focus:border-primary/50 placeholder:text-muted-foreground/50 shadow-sm"
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                 />
                                 <Textarea
-                                    placeholder="O que você está pensando?"
-                                    className="min-h-[100px]"
+                                    placeholder="Escreva sua ideia, rascunho ou pensamento aqui..."
+                                    className="min-h-[120px] rounded-2xl border-input bg-background font-medium text-base transition-all focus:ring-2 focus:ring-primary/10 focus:border-primary/50 placeholder:text-muted-foreground/50 shadow-sm resize-none p-4"
                                     value={formData.content}
                                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                                 />
                             </TabsContent>
                             <TabsContent value="verse" className="space-y-4">
                                 <Input
-                                    placeholder="Referência (ex: João 3:16)"
-                                    className="font-bold font-serif"
+                                    placeholder="Referência Bíblica (ex: João 3:16)"
+                                    className="h-12 rounded-xl border-input bg-background font-black text-lg transition-all focus:ring-2 focus:ring-primary/10 focus:border-primary/50 placeholder:text-muted-foreground/50 shadow-sm font-serif"
                                     value={formData.reference}
                                     onChange={(e) => setFormData({ ...formData, reference: e.target.value })}
                                 />
                                 <Textarea
-                                    placeholder="Texto do versículo..."
-                                    className="min-h-[100px] font-serif italic"
+                                    placeholder="Digite ou cole o texto do versículo sagrado..."
+                                    className="min-h-[120px] rounded-2xl border-input bg-background font-serif italic text-lg transition-all focus:ring-2 focus:ring-primary/10 focus:border-primary/50 placeholder:text-muted-foreground/50 shadow-sm resize-none p-4 leading-relaxed"
                                     value={formData.content}
                                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                                 />
