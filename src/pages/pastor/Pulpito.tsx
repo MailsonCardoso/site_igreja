@@ -11,9 +11,13 @@ import {
     Minimize,
     Maximize,
     Lightbulb,
-    X
+    Maximize,
+    Lightbulb,
+    X,
+    CheckCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import { Slider } from "@/components/ui/slider";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -66,6 +70,21 @@ export default function Pulpito() {
             document.documentElement.classList.remove("dark"); // Reset forçado para evitar conflito
         };
     }, [isDark]);
+
+    const handleFinish = () => {
+        if (!sermon) return;
+
+        // Atualizar status no store
+        const allSermons = PastoralStore.getSermons();
+        const updatedSermons = allSermons.map(s =>
+            s.id === sermon.id ? { ...s, status: "Pregado" as const } : s
+        );
+
+        PastoralStore.saveSermons(updatedSermons);
+
+        toast.success("Pregação concluída com sucesso! Bom descanso, Pastor.");
+        navigate("/pastor");
+    };
 
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
@@ -148,6 +167,14 @@ export default function Pulpito() {
 
                     <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="hover:bg-zinc-500/20 rounded-full hidden sm:flex">
                         {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+                    </Button>
+
+                    <Button
+                        onClick={handleFinish}
+                        className="gap-2 rounded-full bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/20 px-6 h-9 transition-all active:scale-95"
+                    >
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="font-bold uppercase tracking-tight text-xs">Concluir</span>
                     </Button>
 
                     <Sheet>
