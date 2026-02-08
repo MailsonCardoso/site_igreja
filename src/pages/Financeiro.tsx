@@ -65,6 +65,10 @@ export default function Financeiro() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>({ key: 'date', direction: 'desc' });
   const [editingId, setEditingId] = useState<number | null>(null);
+  const { data: churchSettings } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => api.get("/settings"),
+  });
 
   const [formData, setFormData] = useState({
     description: "",
@@ -259,42 +263,171 @@ export default function Financeiro() {
         <head>
           <title>Balancete Mensal</title>
           <style>
-            body { font-family: sans-serif; padding: 20px; background: white; color: black; }
-            .no-print { display: none !important; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-            th { background-color: #f8f9fa; }
-            .text-success { color: #16a34a !important; }
-            .text-destructive { color: #dc2626 !important; }
-            .font-bold { font-weight: bold; }
-            .text-3xl { font-size: 1.875rem; }
+            @page { margin: 1.5cm; size: A4; }
+            body { 
+              font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+              padding: 0; 
+              margin: 0;
+              background: white; 
+              color: black; 
+              line-height: 1.4;
+            }
+            .p-10 { padding: 0; }
+            
+            /* Header */
             .text-center { text-align: center; }
             .uppercase { text-transform: uppercase; }
-            .grid { display: grid; }
-            .grid-cols-2 { grid-template-columns: 1fr 1fr; gap: 40px; }
-            .space-y-4 > * + * { margin-top: 1rem; }
             .pb-8 { padding-bottom: 2rem; }
             .border-b-4 { border-bottom: 4px solid #3b82f6; }
-            .rounded-xl { border-radius: 0.75rem; }
-            .bg-primary\\/5 { background-color: rgba(59, 130, 246, 0.05); }
-            .p-4 { padding: 1rem; }
-            .p-10 { padding: 2.5rem; }
-            /* Copiar estilos essenciais do Tailwind inline conforme necessário */
+            .mb-12 { margin-bottom: 3rem; }
+            h1 { font-size: 24px; margin-bottom: 8px; font-weight: 800; letter-spacing: -0.025em; }
+            .subtitle { font-size: 14px; font-weight: 600; color: #666; margin-bottom: 12px; }
+            .closing-badge { 
+              background: #f1f5f9; 
+              padding: 6px 16px; 
+              border-radius: 8px; 
+              display: inline-block; 
+              font-weight: 700; 
+              font-size: 16px; 
+            }
+
+            /* Resumo Financeiro */
+            .summary-container { 
+              display: flex;
+              justify-content: space-between;
+              gap: 30px;
+              margin-bottom: 40px;
+            }
+            .summary-left { flex: 1; }
+            .summary-right { 
+              width: 300px;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 20px;
+              padding: 20px;
+            }
+            .line-item { 
+              display: flex; 
+              justify-content: space-between; 
+              padding: 8px 0; 
+              border-bottom: 1px dashed #e2e8f0; 
+              font-size: 13px;
+              font-weight: 600;
+            }
+            .final-balance { 
+              display: flex; 
+              justify-content: space-between; 
+              padding: 15px; 
+              background: #f8fafc; 
+              border-radius: 12px; 
+              margin-top: 15px;
+              font-weight: 800;
+              font-size: 18px;
+            }
+
+            /* Seções de Categorias */
+            .columns { 
+              display: flex;
+              gap: 40px;
+              margin-top: 40px;
+            }
+            .column { flex: 1; }
+            h3 { 
+              font-size: 14px; 
+              font-weight: 800; 
+              border-bottom: 2px solid #000; 
+              padding-bottom: 8px; 
+              margin-bottom: 15px;
+              display: flex;
+              align-items: center;
+              gap: 8px;
+            }
+            .category-card { 
+              display: flex; 
+              justify-content: space-between; 
+              align-items: center; 
+              padding: 10px; 
+              background: #fff; 
+              border: 1px solid #f1f5f9;
+              border-radius: 8px; 
+              margin-bottom: 8px;
+            }
+            .category-name { font-size: 13px; font-weight: 700; }
+            .category-count { font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 800; }
+            .category-value { font-size: 13px; font-weight: 800; }
+            .subtotal {
+               display: flex;
+               justify-content: space-between;
+               padding-top: 10px;
+               margin-top: 10px;
+               border-top: 2px solid #e2e8f0;
+               font-weight: 800;
+               font-size: 14px;
+            }
+
+            /* Assinaturas */
+            .signatures { 
+              display: flex;
+              gap: 60px;
+              margin-top: 80px;
+              padding-bottom: 50px;
+            }
+            .sig-box { 
+              flex: 1; 
+              text-align: center; 
+            }
+            .sig-line { 
+              border-top: 2px solid #000; 
+              margin-bottom: 10px; 
+            }
+            .sig-label { font-size: 11px; font-weight: 800; color: #64748b; }
+
+            /* Utilitários de Cor */
+            .text-success { color: #16a34a !important; }
+            .text-destructive { color: #dc2626 !important; }
+            
+            /* Rodapé */
+            .footer-note {
+              text-align: center;
+              font-size: 10px;
+              color: #94a3b8;
+              font-weight: 600;
+              margin-top: 40px;
+              border-top: 1px solid #f1f5f9;
+              padding-top: 20px;
+            }
+
+            /* Esconder elementos desnecessários */
+            .no-print, .lucide { display: none !important; }
+            
+            /* Ajuste para o conteúdo capturado */
+            #printable-report { width: 100%; }
           </style>
-          <link rel="stylesheet" href="${window.location.origin}/index.css">
         </head>
         <body>
           <div class="p-10">
             ${printContent.innerHTML}
           </div>
           <script>
+            // Forçar o nome da igreja dinamicamente no topo do HTML injetado
+            const churchName = "${churchSettings?.nome || 'IGREJA COMUNIDADE CRISTÃ'}";
+            const headerTitle = document.querySelector('h1');
+            if(headerTitle) headerTitle.innerText = churchName.toUpperCase();
+
+            // Limpeza de ícones Lucide que foram copiados
+            document.querySelectorAll('svg').forEach(s => s.remove());
+
             setTimeout(() => {
               window.print();
               window.onafterprint = () => {
                 window.parent.document.body.removeChild(window.frameElement);
               };
             }, 500);
-          </script>
+          <\/script>
         </body>
       </html>
     `);
@@ -592,62 +725,61 @@ export default function Financeiro() {
             ) : reportData ? (
               <div id="printable-report" className="p-10 space-y-12 bg-white text-black min-h-full">
                 {/* Cabeçalho da Igreja no Report */}
-                <div className="text-center space-y-2 pb-8 border-b-4 border-primary">
-                  <h1 className="text-3xl font-bold uppercase tracking-tight">IGREJA COMUNIDADE CRISTÃ</h1>
-                  <p className="text-sm font-semibold opacity-60">Relatório Consolidado de Transações Financeiras</p>
-                  <p className="text-lg font-bold bg-primary/10 py-1 rounded-lg inline-block px-4">
+                <div className="text-center space-y-2 pb-8 border-b-4 border-primary mb-12">
+                  <h1 className="text-3xl font-bold uppercase tracking-tight">{churchSettings?.nome || 'IGREJA COMUNIDADE CRISTÃ'}</h1>
+                  <p className="subtitle">Relatório Consolidado de Transações Financeiras</p>
+                  <p className="closing-badge">
                     FECHAMENTO: {meses.find(m => m.value === selectedMonth)?.label.toUpperCase()} / {selectedYear}
                   </p>
                 </div>
 
                 {/* Resumo Consolidado */}
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center py-2 border-b-2 border-dashed">
-                      <span className="font-semibold uppercase text-xs">Saldo Inicial (Anterior):</span>
-                      <span className="font-semibold tabular-nums">{formatCurrency(reportData.previous_balance)}</span>
+                <div className="summary-container">
+                  <div className="summary-left">
+                    <div className="line-item">
+                      <span className="uppercase text-xs">Saldo Inicial (Anterior):</span>
+                      <span className="tabular-nums">{formatCurrency(reportData.previous_balance)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-2 border-b-2 border-dashed text-success">
-                      <span className="font-semibold uppercase text-xs">Total de Entradas:</span>
-                      <span className="font-bold tabular-nums">+ {formatCurrency(reportData.total_income)}</span>
+                    <div className="line-item text-success">
+                      <span className="uppercase text-xs">Total de Entradas:</span>
+                      <span className="tabular-nums">+ {formatCurrency(reportData.total_income)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-2 border-b-2 border-dashed text-destructive">
-                      <span className="font-semibold uppercase text-xs">Total de Saídas:</span>
-                      <span className="font-bold tabular-nums">- {formatCurrency(reportData.total_expense)}</span>
+                    <div className="line-item text-destructive">
+                      <span className="uppercase text-xs">Total de Saídas:</span>
+                      <span className="tabular-nums">- {formatCurrency(reportData.total_expense)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-4 bg-primary/5 px-4 rounded-xl">
-                      <span className="font-semibold uppercase text-sm">Saldo Final do Mês:</span>
-                      <span className="text-2xl font-bold tabular-nums">{formatCurrency(reportData.previous_balance + (reportData.total_income - reportData.total_expense))}</span>
+                    <div className="final-balance">
+                      <span className="uppercase text-sm">Saldo Final do Mês:</span>
+                      <span className="tabular-nums">{formatCurrency(reportData.previous_balance + (reportData.total_income - reportData.total_expense))}</span>
                     </div>
                   </div>
 
-                  <div className="bg-secondary/5 p-6 rounded-[2rem] border-2 border-secondary/20 flex flex-col justify-center items-center text-center">
+                  <div className="summary-right no-print">
                     <p className="text-xs font-semibold uppercase tracking-wider opacity-40 mb-2">Desempenho no Mês</p>
                     <div className={`text-3xl font-bold tabular-nums ${reportData.current_balance >= 0 ? 'text-success' : 'text-destructive'}`}>
                       {reportData.current_balance > 0 ? '+' : ''}{formatCurrency(reportData.current_balance)}
                     </div>
-                    <p className="text-[10px] font-medium mt-2 leading-tight">Este valor representa a diferença entre o que entrou e o que saiu exclusivamente neste mês.</p>
                   </div>
                 </div>
 
                 {/* Detalhamento por Categoria */}
-                <div className="grid grid-cols-2 gap-10 pt-4">
+                <div className="columns">
                   {/* Entradas Grouped */}
-                  <div className="space-y-6">
-                    <h3 className="flex items-center gap-2 font-semibold uppercase tracking-wider text-success border-b-2 border-success pb-2 text-sm">
-                      <ArrowUpRight className="h-5 w-5" /> Entradas por Categoria
+                  <div className="column">
+                    <h3 className="text-success">
+                      Entradas por Categoria
                     </h3>
                     <div className="space-y-3">
                       {reportData.grouped_data?.entrada ? Object.entries(reportData.grouped_data.entrada).map(([cat, data]: [string, any]) => (
-                        <div key={cat} className="flex justify-between items-center bg-success/5 p-3 rounded-xl border border-success/10">
+                        <div key={cat} className="category-card">
                           <div className="flex flex-col">
-                            <span className="font-semibold text-sm">{cat}</span>
-                            <span className="text-[9px] font-semibold uppercase opacity-40">{data.count} Lançamento(s)</span>
+                            <span className="category-name">{cat}</span>
+                            <span className="category-count">{data.count} Lançamento(s)</span>
                           </div>
-                          <span className="font-semibold tabular-nums text-success">{formatCurrency(data.total)}</span>
+                          <span className="category-value text-success">{formatCurrency(data.total)}</span>
                         </div>
                       )) : <p className="text-xs italic opacity-40">Sem registros de entrada.</p>}
-                      <div className="flex justify-between pt-2 border-t font-semibold">
+                      <div className="subtotal">
                         <span>SUBTOTAL:</span>
                         <span>{formatCurrency(reportData.total_income)}</span>
                       </div>
@@ -655,21 +787,21 @@ export default function Financeiro() {
                   </div>
 
                   {/* Saidas Grouped */}
-                  <div className="space-y-6">
-                    <h3 className="flex items-center gap-2 font-semibold uppercase tracking-wider text-destructive border-b-2 border-destructive pb-2 text-sm">
-                      <ArrowDownRight className="h-5 w-5" /> Saídas por Categoria
+                  <div className="column">
+                    <h3 className="text-destructive">
+                      Saídas por Categoria
                     </h3>
                     <div className="space-y-3">
                       {reportData.grouped_data?.saida ? Object.entries(reportData.grouped_data.saida).map(([cat, data]: [string, any]) => (
-                        <div key={cat} className="flex justify-between items-center bg-destructive/5 p-3 rounded-xl border border-destructive/10">
+                        <div key={cat} className="category-card">
                           <div className="flex flex-col">
-                            <span className="font-semibold text-sm">{cat}</span>
-                            <span className="text-[9px] font-semibold uppercase opacity-40">{data.count} Lançamento(s)</span>
+                            <span className="category-name">{cat}</span>
+                            <span className="category-count">{data.count} Lançamento(s)</span>
                           </div>
-                          <span className="font-semibold tabular-nums text-destructive">{formatCurrency(data.total)}</span>
+                          <span className="category-value text-destructive">{formatCurrency(data.total)}</span>
                         </div>
                       )) : <p className="text-xs italic opacity-40">Sem registros de saída.</p>}
-                      <div className="flex justify-between pt-2 border-t font-semibold">
+                      <div className="subtotal">
                         <span>SUBTOTAL:</span>
                         <span>{formatCurrency(reportData.total_expense)}</span>
                       </div>
@@ -678,18 +810,18 @@ export default function Financeiro() {
                 </div>
 
                 {/* Assinaturas */}
-                <div className="grid grid-cols-2 gap-20 pt-20 pb-10">
-                  <div className="text-center space-y-2">
-                    <div className="border-b-2 border-black w-full h-10"></div>
-                    <p className="text-[10px] font-semibold uppercase">Responsável Tesouraria</p>
+                <div className="signatures">
+                  <div className="sig-box">
+                    <div className="sig-line"></div>
+                    <p className="sig-label uppercase">Responsável Tesouraria</p>
                   </div>
-                  <div className="text-center space-y-2">
-                    <div className="border-b-2 border-black w-full h-10"></div>
-                    <p className="text-[10px] font-semibold uppercase">Conselho Fiscal / Pastor</p>
+                  <div className="sig-box">
+                    <div className="sig-line"></div>
+                    <p className="sig-label uppercase">Conselho Fiscal / Pastor</p>
                   </div>
                 </div>
 
-                <div className="text-center text-[9px] opacity-30 pt-10 border-t">
+                <div className="footer-note">
                   Gerado automaticamente pelo Sistema de Gestão Eclesiástica - {format(new Date(), "PPpp", { locale: ptBR })}
                 </div>
               </div>
