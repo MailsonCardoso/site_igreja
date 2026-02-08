@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, Users, Plus, Loader2, Save, Eye, Pencil, Trash2, ClipboardCheck, GraduationCap, Calendar, UserPlus, X, Check } from "lucide-react";
+import { BookOpen, Users, Plus, Loader2, Save, Eye, Pencil, Trash2, ClipboardCheck, GraduationCap, Calendar, UserPlus, X, Check, Search } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -40,6 +40,7 @@ export default function Ensino() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
+  const [studentSearch, setStudentSearch] = useState("");
 
   const queryClient = useQueryClient();
   const form = useForm({
@@ -215,7 +216,10 @@ export default function Ensino() {
   };
 
   const enrolledStudentIds = selectedCourse?.students?.map((s: any) => s.id) || [];
-  const availableMembers = members.filter((m: any) => !enrolledStudentIds.includes(m.id));
+  const availableMembers = members.filter((m: any) =>
+    !enrolledStudentIds.includes(m.id) &&
+    (m.name?.toLowerCase().includes(studentSearch.toLowerCase()) || studentSearch === "")
+  );
 
   return (
     <MainLayout title="Ensino" breadcrumbs={[{ label: "EBD / Cursos" }]}>
@@ -723,26 +727,42 @@ export default function Ensino() {
                   <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Matricular Aluno</h3>
                   {availableMembers.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-4">
-                      Todos os membros já estão matriculados neste curso
+                      {studentSearch ? "Nenhum membro encontrado com este nome" : "Todos os membros já estão matriculados neste curso"}
                     </p>
                   ) : (
-                    <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                      {availableMembers.map((member: any) => (
-                        <div
-                          key={member.id}
-                          className="flex items-center justify-between p-3 rounded-xl border border-border/30 hover:border-primary/30 transition-all"
-                        >
-                          <span className="font-semibold text-foreground">{member.name}</span>
-                          <Button
-                            size="sm"
-                            onClick={() => enrollStudentMutation.mutate(member.id)}
-                            disabled={enrollStudentMutation.isPending}
-                            className="h-8 rounded-lg font-semibold"
+                    <div className="space-y-2">
+                      <div className="relative mb-4">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          placeholder="Pesquisar membro para matricular..."
+                          value={studentSearch}
+                          onChange={(e) => setStudentSearch(e.target.value)}
+                          className="pl-10 h-10 rounded-xl border-input bg-background font-medium focus:border-primary/50"
+                        />
+                      </div>
+                      <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                        {availableMembers.map((member: any) => (
+                          <div
+                            key={member.id}
+                            className="flex items-center justify-between p-3 rounded-xl border border-border/30 hover:border-primary/30 transition-all bg-card/50"
                           >
-                            <UserPlus className="h-4 w-4 mr-1" /> Matricular
-                          </Button>
-                        </div>
-                      ))}
+                            <div className="flex items-center gap-3">
+                              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span className="text-xs font-bold text-primary">{member.name?.charAt(0)}</span>
+                              </div>
+                              <span className="font-semibold text-foreground text-sm">{member.name}</span>
+                            </div>
+                            <Button
+                              size="sm"
+                              onClick={() => enrollStudentMutation.mutate(member.id)}
+                              disabled={enrollStudentMutation.isPending}
+                              className="h-8 rounded-lg font-semibold px-4"
+                            >
+                              <UserPlus className="h-4 w-4 mr-1.5" /> Matricular
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
