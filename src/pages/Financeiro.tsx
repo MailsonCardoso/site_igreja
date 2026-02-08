@@ -757,8 +757,9 @@ export default function Financeiro() {
 
       {/* New Transaction Dialog */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className={`p-8 border-b flex items-center gap-4 ${transactionType === 'entrada' ? 'bg-success/5' : 'bg-destructive/5'}`}>
+        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-0 border-none shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+          {/* Header Fixo */}
+          <div className={`p-8 border-b flex items-center gap-4 shrink-0 ${transactionType === 'entrada' ? 'bg-success/5' : 'bg-destructive/5'}`}>
             <div className={`h-16 w-16 rounded-2xl flex items-center justify-center border-2 ${transactionType === 'entrada' ? 'bg-success/10 border-success/20 text-success' : 'bg-destructive/10 border-destructive/20 text-destructive'}`}>
               {transactionType === 'entrada' ? <ArrowUpRight className="h-8 w-8" /> : <ArrowDownRight className="h-8 w-8" />}
             </div>
@@ -772,90 +773,94 @@ export default function Financeiro() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="p-8 space-y-6 bg-card">
-            <div className="grid gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Descrição</Label>
-                <div className="relative">
-                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="description"
-                    name="description"
-                    placeholder="Ex: Oferta de Culto de Domingo"
-                    value={formData.description}
-                    onChange={handleInputChange}
-                    className="h-11 rounded-xl border-input bg-background font-semibold transition-all focus:border-primary/50 pl-9"
-                    required
-                  />
-                </div>
-              </div>
+          <form onSubmit={handleSubmit} className="flex-1 flex flex-col min-h-0 bg-card">
+            <ScrollArea className="flex-1">
+              <div className="p-8 space-y-6">
+                <div className="grid gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="description" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Descrição</Label>
+                    <div className="relative">
+                      <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="description"
+                        name="description"
+                        placeholder="Ex: Oferta de Culto de Domingo"
+                        value={formData.description}
+                        onChange={handleInputChange}
+                        className="h-11 rounded-xl border-input bg-background font-semibold transition-all focus:border-primary/50 pl-9"
+                        required
+                      />
+                    </div>
+                  </div>
 
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Valor (R$)</Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-muted-foreground">R$</span>
-                    <Input
-                      id="amount"
-                      name="amount"
-                      type="text"
-                      placeholder="0,00"
-                      value={formData.amount}
-                      onChange={handleInputChange}
-                      className="h-11 rounded-xl border-input bg-background font-semibold text-lg text-foreground pl-10"
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="amount" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Valor (R$)</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-muted-foreground">R$</span>
+                        <Input
+                          id="amount"
+                          name="amount"
+                          type="text"
+                          placeholder="0,00"
+                          value={formData.amount}
+                          onChange={handleInputChange}
+                          className="h-11 rounded-xl border-input bg-background font-semibold text-lg text-foreground pl-10"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="date" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Data da Operação</Label>
+                      <Input
+                        id="date"
+                        name="date"
+                        type="date"
+                        value={formData.date}
+                        onChange={handleInputChange}
+                        className="h-11 rounded-xl border-input bg-background font-semibold"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="category" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Categoria Financeira</Label>
+                    <Select
+                      onValueChange={(v) => setFormData({ ...formData, category_name: v })}
+                      value={formData.category_name}
                       required
-                    />
+                    >
+                      <SelectTrigger id="category" className="h-11 rounded-xl border-input bg-background font-semibold">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        {transactionType === "entrada" ? (
+                          <>
+                            <SelectItem value="Dízimo" className="font-semibold text-success">Dízimo</SelectItem>
+                            <SelectItem value="Oferta" className="font-semibold">Oferta</SelectItem>
+                            <SelectItem value="Doação" className="font-semibold">Doação</SelectItem>
+                            <SelectItem value="Evento" className="font-semibold">Evento</SelectItem>
+                            <SelectItem value="Outros" className="font-semibold">Outros</SelectItem>
+                          </>
+                        ) : (
+                          <>
+                            <SelectItem value="Aluguel" className="font-semibold text-destructive">Aluguel</SelectItem>
+                            <SelectItem value="Luz/Água" className="font-semibold">Luz/Água</SelectItem>
+                            <SelectItem value="Manutenção" className="font-semibold">Manutenção</SelectItem>
+                            <SelectItem value="Missões" className="font-semibold">Missões</SelectItem>
+                            <SelectItem value="Salários" className="font-semibold">Salários</SelectItem>
+                            <SelectItem value="Outros" className="font-semibold">Outros</SelectItem>
+                          </>
+                        )}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="date" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Data da Operação</Label>
-                  <Input
-                    id="date"
-                    name="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={handleInputChange}
-                    className="h-11 rounded-xl border-input bg-background font-semibold"
-                    required
-                  />
-                </div>
               </div>
+            </ScrollArea>
 
-              <div className="space-y-2">
-                <Label htmlFor="category" className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Categoria Financeira</Label>
-                <Select
-                  onValueChange={(v) => setFormData({ ...formData, category_name: v })}
-                  value={formData.category_name}
-                  required
-                >
-                  <SelectTrigger id="category" className="h-11 rounded-xl border-input bg-background font-semibold">
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    {transactionType === "entrada" ? (
-                      <>
-                        <SelectItem value="Dízimo" className="font-semibold text-success">Dízimo</SelectItem>
-                        <SelectItem value="Oferta" className="font-semibold">Oferta</SelectItem>
-                        <SelectItem value="Doação" className="font-semibold">Doação</SelectItem>
-                        <SelectItem value="Evento" className="font-semibold">Evento</SelectItem>
-                        <SelectItem value="Outros" className="font-semibold">Outros</SelectItem>
-                      </>
-                    ) : (
-                      <>
-                        <SelectItem value="Aluguel" className="font-semibold text-destructive">Aluguel</SelectItem>
-                        <SelectItem value="Luz/Água" className="font-semibold">Luz/Água</SelectItem>
-                        <SelectItem value="Manutenção" className="font-semibold">Manutenção</SelectItem>
-                        <SelectItem value="Missões" className="font-semibold">Missões</SelectItem>
-                        <SelectItem value="Salários" className="font-semibold">Salários</SelectItem>
-                        <SelectItem value="Outros" className="font-semibold">Outros</SelectItem>
-                      </>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <DialogFooter className="pt-6 border-t border-secondary/10 flex gap-4">
+            <DialogFooter className="p-8 border-t border-secondary/10 flex gap-4 shrink-0 bg-card">
               <Button type="button" variant="outline" className="flex-1 h-12 rounded-xl font-semibold" onClick={() => setIsModalOpen(false)}>
                 Cancelar
               </Button>
