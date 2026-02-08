@@ -437,141 +437,186 @@ export default function Secretaria() {
                         </div>
                       </TabsContent>
 
-                      <TabsContent value="contato" className="space-y-4">
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="phone">WhatsApp / Telefone</Label>
-                            <div className="relative">
-                              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <TabsContent value="contato" className="space-y-6 mt-2">
+                        <div className="bg-secondary/5 p-6 rounded-2xl border border-secondary/20">
+                          <div className="flex items-center gap-2 mb-5">
+                            <Phone className="h-4 w-4 text-primary" />
+                            <h3 className="font-semibold text-sm text-foreground/80 uppercase tracking-wide">Dados de Contato</h3>
+                          </div>
+                          <div className="grid gap-5 sm:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label htmlFor="phone" className="text-sm font-semibold">WhatsApp / Telefone</Label>
+                              <div className="relative">
+                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                  id="phone"
+                                  {...form.register("phone")}
+                                  className="pl-10 h-11 rounded-xl border-border/50 focus:border-primary"
+                                  placeholder="(00) 00000-0000"
+                                  onChange={(e) => setValue("phone", maskPhone(e.target.value))}
+                                />
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="email" className="text-sm font-semibold">E-mail</Label>
                               <Input
-                                id="phone"
-                                {...form.register("phone")}
-                                className="pl-10"
-                                placeholder="(00) 00000-0000"
-                                onChange={(e) => setValue("phone", maskPhone(e.target.value))}
+                                id="email"
+                                type="email"
+                                {...form.register("email")}
+                                placeholder="exemplo@email.com"
+                                className="h-11 rounded-xl border-border/50 focus:border-primary"
                               />
                             </div>
                           </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="email">E-mail</Label>
-                            <Input id="email" type="email" {...form.register("email")} placeholder="exemplo@email.com" />
+                        </div>
+
+                        <div className="bg-secondary/5 p-6 rounded-2xl border border-secondary/20">
+                          <div className="flex items-center gap-2 mb-5">
+                            <MapPin className="h-4 w-4 text-primary" />
+                            <h3 className="font-semibold text-sm text-foreground/80 uppercase tracking-wide">Endereço</h3>
                           </div>
-                          <div className="sm:col-span-2 border-t pt-4">
-                            <h4 className="text-sm font-medium mb-4 flex items-center gap-2">
-                              <MapPin className="h-4 w-4" /> Endereço
-                            </h4>
-                            <div className="grid gap-4 sm:grid-cols-3">
-                              <div className="space-y-2">
-                                <Label htmlFor="cep">CEP</Label>
+                          <div className="grid gap-5 sm:grid-cols-3">
+                            <div className="space-y-2">
+                              <Label htmlFor="cep" className="text-sm font-semibold">CEP</Label>
+                              <Input
+                                id="cep"
+                                {...form.register("cep")}
+                                placeholder="00000-000"
+                                onChange={(e) => setValue("cep", maskCEP(e.target.value))}
+                                className="h-11 rounded-xl border-border/50 focus:border-primary"
+                              />
+                            </div>
+                            <div className="sm:col-span-2 space-y-2">
+                              <Label htmlFor="logradouro" className="text-sm font-semibold">Logradouro</Label>
+                              <Input
+                                id="logradouro"
+                                {...form.register("logradouro")}
+                                className="h-11 rounded-xl border-border/50 focus:border-primary"
+                                placeholder="Rua, Avenida..."
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="bairro" className="text-sm font-semibold">Bairro</Label>
+                              <Input
+                                id="bairro"
+                                {...form.register("bairro")}
+                                className="h-11 rounded-xl border-border/50 focus:border-primary"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="cidade" className="text-sm font-semibold">Cidade</Label>
+                              <Input
+                                id="cidade"
+                                {...form.register("cidade")}
+                                className="h-11 rounded-xl border-border/50 focus:border-primary"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="uf" className="text-sm font-semibold">UF</Label>
+                              <Input
+                                id="uf"
+                                {...form.register("uf")}
+                                maxLength={2}
+                                className="uppercase h-11 rounded-xl border-border/50 focus:border-primary"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="eclesiastico" className="space-y-6 mt-2">
+                        <div className="bg-secondary/5 p-6 rounded-2xl border border-secondary/20">
+                          <div className="flex items-center gap-2 mb-5">
+                            <Church className="h-4 w-4 text-primary" />
+                            <h3 className="font-semibold text-sm text-foreground/80 uppercase tracking-wide">Informações Eclesiásticas</h3>
+                          </div>
+                          <div className="grid gap-5 sm:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label htmlFor="status" className="text-sm font-semibold">Situação / Status</Label>
+                              <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
+                                <SelectTrigger className="h-11 rounded-xl border-border/50">
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="membro">Membro</SelectItem>
+                                  <SelectItem value="visitante">Visitante</SelectItem>
+                                  <SelectItem value="afastado">Afastado</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="role" className="text-sm font-semibold">Função / Cargo</Label>
+                              <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
+                                <SelectTrigger className="h-11 rounded-xl border-border/50">
+                                  <SelectValue placeholder="Selecione" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Membro">Membro</SelectItem>
+                                  <SelectItem value="Diácono">Diácono</SelectItem>
+                                  <SelectItem value="Obreiro">Obreiro</SelectItem>
+                                  <SelectItem value="Ministro de Louvor">Ministro de Louvor</SelectItem>
+                                  <SelectItem value="Pastor">Pastor</SelectItem>
+                                  <SelectItem value="Instrumentista">Instrumentista</SelectItem>
+                                  <SelectItem value="Financeiro">Financeiro</SelectItem>
+                                  <SelectItem value="Secretaria">Secretaria</SelectItem>
+                                  <SelectItem value="Líder de Pequeno Grupo">Líder de Pequeno Grupo</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                            <div className="sm:col-span-2 space-y-2">
+                              <Label htmlFor="cell_id" className="text-sm font-semibold">Célula / Pequeno Grupo</Label>
+                              <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
+                                <SelectTrigger className="h-11 rounded-xl border-border/50">
+                                  <SelectValue placeholder="Selecione uma célula" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="none">Nenhuma</SelectItem>
+                                  {cells.map((cell: any) => (
+                                    <SelectItem key={cell.id} value={cell.id.toString()}>{cell.name}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </div>
+                        </div>
+                      </TabsContent>
+
+                      <TabsContent value="familia" className="space-y-6 mt-2">
+                        <div className="bg-secondary/5 p-6 rounded-2xl border border-secondary/20">
+                          <div className="flex items-center gap-2 mb-5">
+                            <Users className="h-4 w-4 text-primary" />
+                            <h3 className="font-semibold text-sm text-foreground/80 uppercase tracking-wide">Informações Familiares</h3>
+                          </div>
+                          <p className="text-sm text-muted-foreground mb-6">Selecione membros da igreja para vincular como parentes ou preencha manualmente.</p>
+
+                          <div className="grid gap-6 sm:grid-cols-2">
+                            <div className="space-y-3">
+                              <Label htmlFor="father_id" className="text-sm font-semibold">Pai (Membro Cadastrado)</Label>
+                              <Select onValueChange={(val) => setValue("father_id", val)} value={watch("father_id")}>
+                                <SelectTrigger className="h-11 rounded-xl border-border/50">
+                                  <SelectValue placeholder="Selecione um membro" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
+                                    <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <div className="pt-2">
+                                <Label htmlFor="father_name" className="text-xs font-medium text-muted-foreground">Ou informe o nome manualmente</Label>
                                 <Input
-                                  id="cep"
-                                  {...form.register("cep")}
-                                  placeholder="00000-000"
-                                  onChange={(e) => setValue("cep", maskCEP(e.target.value))}
+                                  id="father_name"
+                                  {...form.register("father_name")}
+                                  placeholder="Nome do pai"
+                                  className="mt-1.5 h-10 rounded-xl border-border/50 focus:border-primary"
                                 />
                               </div>
-                              <div className="sm:col-span-2 space-y-2">
-                                <Label htmlFor="logradouro">Logradouro</Label>
-                                <Input id="logradouro" {...form.register("logradouro")} />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="bairro">Bairro</Label>
-                                <Input id="bairro" {...form.register("bairro")} />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="cidade">Cidade</Label>
-                                <Input id="cidade" {...form.register("cidade")} />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="uf">UF</Label>
-                                <Input id="uf" {...form.register("uf")} maxLength={2} className="uppercase" />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </TabsContent>
-
-                      <TabsContent value="eclesiastico" className="space-y-4">
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="space-y-2 p-0.5">
-                            <Label htmlFor="status">Situação / Status</Label>
-                            <Select onValueChange={(val) => setValue("status", val)} value={watch("status")}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="membro">Membro</SelectItem>
-                                <SelectItem value="visitante">Visitante</SelectItem>
-                                <SelectItem value="afastado">Afastado</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2 p-0.5">
-                            <Label htmlFor="role">Função / Cargo</Label>
-                            <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Membro">Membro</SelectItem>
-                                <SelectItem value="Diácono">Diácono</SelectItem>
-                                <SelectItem value="Obreiro">Obreiro</SelectItem>
-                                <SelectItem value="Ministro de Louvor">Ministro de Louvor</SelectItem>
-                                <SelectItem value="Pastor">Pastor</SelectItem>
-                                <SelectItem value="Instrumentista">Instrumentista</SelectItem>
-                                <SelectItem value="Financeiro">Financeiro</SelectItem>
-                                <SelectItem value="Secretaria">Secretaria</SelectItem>
-                                <SelectItem value="Líder de Pequeno Grupo">Líder de Pequeno Grupo</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2 p-0.5">
-                            <Label htmlFor="cell_id">Célula / Pequeno Grupo</Label>
-                            <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione uma célula" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="none">Nenhuma</SelectItem>
-                                {cells.map((cell: any) => (
-                                  <SelectItem key={cell.id} value={cell.id.toString()}>{cell.name}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      </TabsContent>
-
-                      <TabsContent value="familia" className="space-y-4">
-                        <div className="grid gap-4 sm:grid-cols-1">
-                          <div className="space-y-2">
-                            <Label>Vínculo com Membros Já Cadastrados</Label>
-                            <p className="text-xs text-muted-foreground mb-4">Selecione membros da igreja para vincular como parentes.</p>
-                          </div>
-
-                          <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="space-y-2">
-                              <Label htmlFor="father_id">Pai (Membro)</Label>
-                              <Select onValueChange={(val) => setValue("father_id", val)} value={watch("father_id")}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Selecione um membro" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {members.filter((m: any) => m.id !== selectedMember?.id).map((m: any) => (
-                                    <SelectItem key={m.id} value={m.id.toString()}>{m.name || m.nome}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <div className="pt-2">
-                                <Label htmlFor="father_name" className="text-xs">Ou Nome do Pai (Manual)</Label>
-                                <Input id="father_name" {...form.register("father_name")} placeholder="Nome do pai" />
-                              </div>
                             </div>
 
-                            <div className="space-y-2">
-                              <Label htmlFor="mother_id">Mãe (Membro)</Label>
+                            <div className="space-y-3">
+                              <Label htmlFor="mother_id" className="text-sm font-semibold">Mãe (Membro Cadastrado)</Label>
                               <Select onValueChange={(val) => setValue("mother_id", val)} value={watch("mother_id")}>
-                                <SelectTrigger>
+                                <SelectTrigger className="h-11 rounded-xl border-border/50">
                                   <SelectValue placeholder="Selecione um membro" />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -581,18 +626,23 @@ export default function Secretaria() {
                                 </SelectContent>
                               </Select>
                               <div className="pt-2">
-                                <Label htmlFor="mother_name" className="text-xs">Ou Nome da Mãe (Manual)</Label>
-                                <Input id="mother_name" {...form.register("mother_name")} placeholder="Nome da mãe" />
+                                <Label htmlFor="mother_name" className="text-xs font-medium text-muted-foreground">Ou informe o nome manualmente</Label>
+                                <Input
+                                  id="mother_name"
+                                  {...form.register("mother_name")}
+                                  placeholder="Nome da mãe"
+                                  className="mt-1.5 h-10 rounded-xl border-border/50 focus:border-primary"
+                                />
                               </div>
                             </div>
 
                             {maritalStatusValue === "casado" && (
-                              <div className="sm:col-span-2 space-y-2 p-4 bg-primary/5 rounded-lg border border-primary/10">
-                                <Label htmlFor="spouse_id" className="flex items-center gap-2">
+                              <div className="sm:col-span-2 space-y-3 p-5 bg-primary/5 rounded-2xl border border-primary/20">
+                                <Label htmlFor="spouse_id" className="flex items-center gap-2 text-sm font-semibold text-primary">
                                   <Users className="h-4 w-4" /> Cônjuge (Membro)
                                 </Label>
                                 <Select onValueChange={(val) => setValue("spouse_id", val)} value={watch("spouse_id")}>
-                                  <SelectTrigger>
+                                  <SelectTrigger className="h-11 rounded-xl border-border/50">
                                     <SelectValue placeholder="Selecione o cônjuge" />
                                   </SelectTrigger>
                                   <SelectContent>
