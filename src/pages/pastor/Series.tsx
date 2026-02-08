@@ -152,11 +152,11 @@ export default function SeriesPage() {
                         <p className="text-muted-foreground">Organize suas pregações em jornadas temáticas.</p>
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto">
-                        <div className="relative flex-1 sm:w-64">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <div className="relative flex-1 sm:w-80 group">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary transition-colors group-focus-within:text-primary" />
                             <Input
-                                placeholder="Filtrar séries..."
-                                className="pl-10 rounded-xl"
+                                placeholder="Filtrar séries por título ou descrição..."
+                                className="pl-10 rounded-xl h-11 bg-background border-primary/20 focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-sm transition-all"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />

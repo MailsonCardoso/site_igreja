@@ -236,11 +236,11 @@ export default function Altar() {
                 </div>
 
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div className="relative w-full sm:w-80">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="relative w-full sm:w-96 group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary transition-colors group-focus-within:text-primary" />
                         <Input
-                            placeholder="Pesquisar sermão ou série..."
-                            className="pl-10 rounded-xl"
+                            placeholder="Pesquisar sermão ou série por título, tag ou conteúdo..."
+                            className="pl-10 rounded-xl h-11 bg-background border-primary/20 focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-sm transition-all"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />

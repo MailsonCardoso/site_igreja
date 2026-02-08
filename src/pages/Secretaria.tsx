@@ -597,13 +597,13 @@ export default function Secretaria() {
 
         {/* Filters */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <div className="relative flex-1 group">
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-primary transition-colors group-focus-within:text-primary" />
             <Input
-              placeholder="Buscar por nome..."
+              placeholder="Buscar membros por nome, CPF ou cargo..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
+              className="pl-11 h-12 bg-background border-primary/20 focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-sm rounded-xl transition-all"
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>

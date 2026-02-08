@@ -160,11 +160,11 @@ export default function Insights() {
                         <Button variant={activeTab === 'note' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('note')} className="rounded-full">Anotações</Button>
                         <Button variant={activeTab === 'verse' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('verse')} className="rounded-full">Versículos</Button>
                     </div>
-                    <div className="relative w-full sm:w-64">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <div className="relative w-full sm:w-80 group">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary transition-colors group-focus-within:text-primary" />
                         <Input
-                            placeholder="Pesquisar..."
-                            className="pl-10 rounded-xl"
+                            placeholder="Pesquisar anotações ou versículos..."
+                            className="pl-10 rounded-xl h-11 bg-background border-primary/20 focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-sm transition-all"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
