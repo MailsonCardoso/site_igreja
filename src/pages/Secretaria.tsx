@@ -476,7 +476,6 @@ export default function Secretaria() {
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="membro">Membro</SelectItem>
-                              <SelectItem value="congregado">Congregado</SelectItem>
                               <SelectItem value="visitante">Visitante</SelectItem>
                               <SelectItem value="afastado">Afastado</SelectItem>
                             </SelectContent>
@@ -668,8 +667,8 @@ export default function Secretaria() {
                           <div className="relative">
                             <Avatar className="h-12 w-12 border-2 border-background shadow-md group-hover:scale-105 transition-transform duration-300">
                               <AvatarFallback className={`text-sm font-bold ${membro.status === 'membro' ? 'bg-primary/10 text-primary' :
-                                  membro.status === 'afastado' ? 'bg-destructive/10 text-destructive' :
-                                    'bg-secondary text-secondary-foreground'
+                                membro.status === 'afastado' ? 'bg-destructive/10 text-destructive' :
+                                  'bg-secondary text-secondary-foreground'
                                 }`}>
                                 {(membro.name || membro.nome || "??").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                               </AvatarFallback>
