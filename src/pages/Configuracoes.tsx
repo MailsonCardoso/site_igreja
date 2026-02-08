@@ -30,6 +30,27 @@ import {
 } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Helper mask functions
+const maskCNPJ = (value: string) => {
+  if (!value) return "";
+  return value
+    .replace(/\D/g, "")
+    .replace(/^(\d{2})(\d)/, "$1.$2")
+    .replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3")
+    .replace(/\.(\d{3})(\d)/, ".$1/$2")
+    .replace(/(\d{4})(\d)/, "$1-$2")
+    .slice(0, 18);
+};
+
+const maskPhone = (value: string) => {
+  if (!value) return "";
+  return value
+    .replace(/\D/g, "")
+    .replace(/(\d{2})(\d)/, "($1) $2")
+    .replace(/(\d{5})(\d)/, "$1-$2")
+    .slice(0, 15);
+};
+
 export default function Configuracoes() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -75,16 +96,33 @@ export default function Configuracoes() {
   const [isLoadingMembers, setIsLoadingMembers] = useState(false);
 
   // Fetch Settings
-  const { data: settings = {}, isLoading: loadingSettings } = useQuery({
+  const { data: settings } = useQuery({
     queryKey: ["settings"],
-    queryFn: async () => {
-      const data = await api.get("/settings");
-      if (data) {
-        setSettingsForm(prev => ({ ...prev, ...data }));
-      }
-      return data;
-    }
+    queryFn: () => api.get("/settings")
   });
+
+  // Sincronizar dados carregados com o form e aplicar máscaras
+  useEffect(() => {
+    if (settings) {
+      // Lidar com retorno direto ou aninhado em 'settings'
+      const data = settings.settings || settings;
+
+      if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
+        setSettingsForm(prev => ({
+          ...prev,
+          nome: data.nome || prev.nome,
+          cnpj: data.cnpj ? maskCNPJ(data.cnpj) : prev.cnpj,
+          endereco: data.endereco || prev.endereco,
+          cidade: data.cidade || prev.cidade,
+          telefone: data.telefone ? maskPhone(data.telefone) : prev.telefone,
+          email: data.email || prev.email,
+          whatsapp_enabled: data.whatsapp_enabled || prev.whatsapp_enabled,
+          google_calendar_enabled: data.google_calendar_enabled || prev.google_calendar_enabled,
+          email_marketing_enabled: data.email_marketing_enabled || prev.email_marketing_enabled
+        }));
+      }
+    }
+  }, [settings]);
 
   // Fetch Users
   const { data: users = [], isLoading: loadingUsers } = useQuery({
@@ -173,7 +211,13 @@ export default function Configuracoes() {
   });
 
   const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSettingsForm({ ...settingsForm, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    let finalValue = value;
+
+    if (id === "cnpj") finalValue = maskCNPJ(value);
+    if (id === "telefone") finalValue = maskPhone(value);
+
+    setSettingsForm({ ...settingsForm, [id]: finalValue });
   };
 
   const handleSwitchChange = (key: string, value: boolean) => {
