@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Secretaria from "./pages/Secretaria";
 import Financeiro from "./pages/Financeiro";
+import AnaliseFinanceira from "./pages/AnaliseFinanceira";
 import Celulas from "./pages/Celulas";
 import Agenda from "./pages/Agenda";
 import Ministerios from "./pages/Ministerios";
@@ -125,6 +126,12 @@ const App = () => (
           <Route path="/financeiro" element={
             <RoleRoute allowedRoles={["Administrador", "Pastor", "Financeiro"]}>
               <Financeiro />
+            </RoleRoute>
+          } />
+
+          <Route path="/financeiro/analise" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Financeiro"]}>
+              <AnaliseFinanceira />
             </RoleRoute>
           } />
 

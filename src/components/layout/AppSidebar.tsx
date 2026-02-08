@@ -17,6 +17,7 @@ import {
   BookOpen,
   Library,
   Lightbulb,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -30,6 +31,7 @@ const navigationItems = [
   { name: "Insights", href: "/pastor/insights", icon: Lightbulb },
   { name: "Membros", href: "/secretaria", icon: Users },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
+  { name: "Análise Financeira", href: "/financeiro/analise", icon: BarChart3 },
   { name: "Células", href: "/celulas", icon: CircleDot },
   { name: "Agenda", href: "/agenda", icon: Calendar },
   { name: "Ministérios", href: "/ministerios", icon: Music },
@@ -72,12 +74,12 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
 
     if (normalizedRole === "secretaria" || normalizedRole === "secretária" || normalizedRole === "secretário") {
       // Secretaria não vê Financeiro nem Configurações
-      return !["Financeiro", "Configurações"].includes(item.name);
+      return !["Financeiro", "Análise Financeira", "Configurações"].includes(item.name);
     }
 
     if (normalizedRole === "financeiro") {
-      // Financeiro vê apenas a tela de Financeiro
-      return item.name === "Financeiro";
+      // Financeiro vê Financeiro e Análise Financeira
+      return ["Financeiro", "Análise Financeira"].includes(item.name);
     }
 
     // Outros papéis
