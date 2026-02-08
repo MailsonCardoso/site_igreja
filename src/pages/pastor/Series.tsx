@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Folder, Plus, BookOpen, MoreVertical, Calendar, Trash2, Edit, Save, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,7 @@ export default function SeriesPage() {
     const [series, setSeries] = useState<Series[]>(PastoralStore.getSeries());
     const [sermons] = useState<Sermon[]>(PastoralStore.getSermons());
     const [searchTerm, setSearchTerm] = useState("");
+    const navigate = useNavigate();
 
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -229,9 +231,10 @@ export default function SeriesPage() {
                                                         <Badge
                                                             key={s.id}
                                                             variant="secondary"
-                                                            className={`text-[9px] px-1.5 py-0 h-5 max-w-[100px] truncate border-none font-bold ${s.status === 'Pregado' ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' :
-                                                                    s.status === 'Planejado' ? 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400' :
-                                                                        'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400'
+                                                            onClick={() => navigate(`/pastor/pulpito/${s.id}`)}
+                                                            className={`text-xs px-2.5 py-1 h-7 cursor-pointer hover:scale-105 active:scale-95 transition-all border-none font-bold ${s.status === 'Pregado' ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 hover:bg-emerald-500/20' :
+                                                                s.status === 'Planejado' ? 'bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 hover:bg-blue-500/20' :
+                                                                    'bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 hover:bg-amber-500/20'
                                                                 }`}
                                                         >
                                                             {s.title}
