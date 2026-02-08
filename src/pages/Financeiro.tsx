@@ -763,29 +763,50 @@ export default function Financeiro() {
       {/* Estilos para Impressão */}
       <style>{`
         @media print {
-          body * {
-            visibility: hidden;
+          /* Esconder tudo que não deve ser impresso */
+          body > *:not([data-radix-portal]) {
+            display: none !important;
           }
-          #printable-report, #printable-report * {
-            visibility: visible;
-          }
-          #printable-report {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: auto;
-            padding: 0;
-            margin: 0;
-          }
+          
+          /* Esconder elementos do Dialog que não são o relatório */
+          [role="dialog"] > *:not(div),
           .no-print {
             display: none !important;
           }
-          .MainLayout {
-            padding: 0 !important;
+
+          /* Resetar o ScrollArea para impressão */
+          [data-radix-scroll-area-viewport] {
+            display: block !important;
+            overflow: visible !important;
+            height: auto !important;
           }
+
+          /* Forçar o relatório a ocupar a página toda */
+          #printable-report {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 2cm !important;
+            background: white !important;
+            color: black !important;
+            z-index: 9999999 !important;
+            display: block !important;
+            visibility: visible !important;
+          }
+
+          /* Garantir que textos e bordas apareçam mesmo em temas escuros */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+
           @page {
-            margin: 1cm;
+            margin: 0;
+            size: auto;
           }
         }
       `}</style>
