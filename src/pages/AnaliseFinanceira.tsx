@@ -8,7 +8,8 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    Cell
+    Cell,
+    Legend
 } from "recharts";
 import {
     BarChart3,
@@ -92,6 +93,7 @@ export default function AnaliseFinanceira() {
             return results.map((data, index) => ({
                 name: meses[index].label.substring(0, 3),
                 valor: data?.total_expense || 0,
+                receita: data?.total_income || 0,
                 fullValue: data?.total_expense || 0,
                 monthIndex: index + 1
             }));
@@ -221,15 +223,20 @@ export default function AnaliseFinanceira() {
                 >
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h3 className="text-lg font-bold text-foreground">Evolução das Despesas</h3>
-                            <p className="text-sm text-muted-foreground font-medium">Comparativo dos últimos 6 meses</p>
+                            <h3 className="text-lg font-bold text-foreground">Equilíbrio Financeiro</h3>
+                            <p className="text-sm text-muted-foreground font-medium">Comparativo anual: Entradas vs Saídas</p>
                         </div>
-                        <div className="bg-rose-500/10 px-4 py-1.5 rounded-full border border-rose-500/20 text-rose-600 text-[10px] font-extrabold uppercase tracking-wider">
-                            Destaque Mensal
+                        <div className="flex gap-2">
+                            <div className="flex items-center gap-2 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20 text-emerald-600 text-[10px] font-extrabold uppercase">
+                                <div className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Entradas
+                            </div>
+                            <div className="flex items-center gap-2 bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20 text-rose-600 text-[10px] font-extrabold uppercase">
+                                <div className="h-1.5 w-1.5 rounded-full bg-rose-500" /> Saídas
+                            </div>
                         </div>
                     </div>
 
-                    <div className="h-[300px] w-full relative">
+                    <div className="h-[350px] w-full relative">
                         {isLoadingHistory ? (
                             <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/50 backdrop-blur-sm z-20">
                                 <Loader2 className="h-8 w-8 animate-spin text-primary mb-2" />
@@ -252,9 +259,24 @@ export default function AnaliseFinanceira() {
                                     content={({ active, payload }) => {
                                         if (active && payload && payload.length) {
                                             return (
-                                                <div className="bg-white p-3 rounded-xl shadow-xl border border-slate-100">
-                                                    <p className="text-[10px] font-bold text-slate-400 uppercase">{payload[0].payload.name}</p>
-                                                    <p className="text-sm font-extrabold text-slate-900">{formatCurrency(payload[0].value as number)}</p>
+                                                <div className="bg-white p-4 rounded-2xl shadow-2xl border border-slate-100 space-y-3">
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{payload[0].payload.name}</p>
+                                                    <div className="space-y-2">
+                                                        <div className="flex items-center justify-between gap-8">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="h-2 w-2 rounded-full bg-emerald-500" />
+                                                                <span className="text-[10px] font-bold text-slate-500 uppercase">Receita</span>
+                                                            </div>
+                                                            <span className="text-sm font-black text-emerald-600">{formatCurrency(payload[0].payload.receita)}</span>
+                                                        </div>
+                                                        <div className="flex items-center justify-between gap-8">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="h-2 w-2 rounded-full bg-rose-500" />
+                                                                <span className="text-[10px] font-bold text-slate-500 uppercase">Despesa</span>
+                                                            </div>
+                                                            <span className="text-sm font-black text-rose-600">{formatCurrency(payload[0].payload.valor)}</span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             );
                                         }
@@ -262,14 +284,22 @@ export default function AnaliseFinanceira() {
                                     }}
                                 />
                                 <Bar
+                                    dataKey="receita"
+                                    fill="#10b981"
+                                    radius={[6, 6, 0, 0]}
+                                    barSize={20}
+                                    name="Receita"
+                                />
+                                <Bar
                                     dataKey="valor"
-                                    radius={[8, 8, 0, 0]}
-                                    barSize={40}
+                                    radius={[6, 6, 0, 0]}
+                                    barSize={20}
+                                    name="Despesa"
                                 >
                                     {chartData.map((entry, index) => (
                                         <Cell
                                             key={`cell-${index}`}
-                                            fill={entry.valor === maxExpense ? '#f43f5e' : '#fda4af'}
+                                            fill={entry.valor === maxExpense && entry.valor > 0 ? '#f43f5e' : '#fda4af'}
                                         />
                                     ))}
                                 </Bar>
