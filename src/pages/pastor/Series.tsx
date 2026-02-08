@@ -128,13 +128,13 @@ export default function SeriesPage() {
         return sermons.filter(s => s.series === seriesTitle);
     };
 
-    const colorOptions = [
-        { value: "bg-blue-500", label: "Azul", gradient: "from-blue-500/20 to-blue-500/5" },
-        { value: "bg-green-500", label: "Verde", gradient: "from-green-500/20 to-green-500/5" },
-        { value: "bg-amber-500", label: "Âmbar", gradient: "from-amber-500/20 to-amber-500/5" },
-        { value: "bg-purple-500", label: "Roxo", gradient: "from-purple-500/20 to-purple-500/5" },
-        { value: "bg-red-500", label: "Vermelho", gradient: "from-red-500/20 to-red-500/5" },
-        { value: "bg-pink-500", label: "Rosa", gradient: "from-pink-500/20 to-pink-500/5" },
+    const colorOptions: { value: string; label: string; gradient: string; hex: string; }[] = [
+        { value: "bg-blue-500", label: "Azul", gradient: "from-blue-500/20 to-blue-500/5", hex: "#3b82f6" },
+        { value: "bg-green-500", label: "Verde", gradient: "from-green-500/20 to-green-500/5", hex: "#22c55e" },
+        { value: "bg-amber-500", label: "Âmbar", gradient: "from-amber-500/20 to-amber-500/5", hex: "#f59e0b" },
+        { value: "bg-purple-500", label: "Roxo", gradient: "from-purple-500/20 to-purple-500/5", hex: "#a855f7" },
+        { value: "bg-red-500", label: "Vermelho", gradient: "from-red-500/20 to-red-500/5", hex: "#ef4444" },
+        { value: "bg-pink-500", label: "Rosa", gradient: "from-pink-500/20 to-pink-500/5", hex: "#ec4899" },
     ];
 
     return (
@@ -247,96 +247,103 @@ export default function SeriesPage() {
                 {/* Modal Editor */}
                 <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
                     <DialogContent className="sm:max-w-[750px] rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
-                        <div className="bg-primary/5 p-8 border-b relative">
+                        <div className="bg-primary/5 p-6 border-b relative">
                             <div className="flex items-center gap-4">
-                                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                                    <Folder className="h-8 w-8 text-primary" />
+                                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                    <Folder className="h-7 w-7 text-primary" />
                                 </div>
                                 <div>
-                                    <DialogTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
+                                    <DialogTitle className="text-xl font-semibold text-foreground">
                                         {currentSerie ? "Editar Série" : "Nova Série"}
                                     </DialogTitle>
-                                    <DialogDescription className="text-muted-foreground font-medium pt-1">
+                                    <DialogDescription className="text-muted-foreground font-medium text-xs">
                                         Organize suas mensagens em jornadas temáticas consistentes.
                                     </DialogDescription>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="p-8 space-y-6 bg-card">
-                            <div className="space-y-2.5">
-                                <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Título da Série *</Label>
-                                <Input
-                                    value={formData.title}
-                                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    placeholder="Ex: Estudos em Romanos"
-                                    className="h-12 rounded-xl border-input bg-background focus:bg-background font-semibold text-lg px-4 transition-all focus:border-primary/50"
-                                />
-                            </div>
-
-                            <div className="space-y-2.5">
-                                <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Descrição Breve</Label>
-                                <Textarea
-                                    value={formData.description}
-                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    placeholder="Qual o objetivo central desta série?"
-                                    className="min-h-[100px] rounded-xl border-input bg-background p-4 leading-relaxed focus:border-primary/50"
-                                />
-                            </div>
-
+                        <div className="p-6 space-y-5 bg-card">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Total Planejado</Label>
-                                    <Input
-                                        type="number"
-                                        min="1"
-                                        value={formData.total}
-                                        onChange={(e) => setFormData({ ...formData, total: parseInt(e.target.value) || 1 })}
-                                        className="h-12 rounded-xl border-input bg-background font-bold px-4 focus:border-primary/50"
-                                    />
+                                {/* Coluna Esquerda */}
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Título da Série *</Label>
+                                        <Input
+                                            value={formData.title}
+                                            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                            placeholder="Ex: Estudos em Romanos"
+                                            className="h-11 rounded-xl border-input bg-background font-semibold transition-all focus:border-primary/50"
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Total Planejado</Label>
+                                            <Input
+                                                type="number"
+                                                min="1"
+                                                value={formData.total}
+                                                onChange={(e) => setFormData({ ...formData, total: parseInt(e.target.value) || 1 })}
+                                                className="h-11 rounded-xl border-input bg-background font-bold px-4 focus:border-primary/50"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Data de Início</Label>
+                                            <Input
+                                                type="date"
+                                                value={formData.startDate}
+                                                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                                className="h-11 rounded-xl border-input bg-background font-medium px-4 focus:border-primary/50"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="space-y-2.5">
-                                    <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Data de Início</Label>
-                                    <Input
-                                        type="date"
-                                        value={formData.startDate}
-                                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                        className="h-12 rounded-xl border-input bg-background font-medium px-4 focus:border-primary/50"
-                                    />
+
+                                {/* Coluna Direita */}
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Descrição Breve</Label>
+                                        <Textarea
+                                            value={formData.description}
+                                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                            placeholder="Qual o objetivo central desta série?"
+                                            className="min-h-[100px] rounded-xl border-input bg-background p-4 leading-relaxed focus:border-primary/50 resize-none text-sm"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Identidade Visual (Cor)</Label>
+                                        <div className="flex flex-wrap gap-2.5">
+                                            {colorOptions.map((color) => (
+                                                <button
+                                                    key={color.value}
+                                                    type="button"
+                                                    onClick={() => setFormData({ ...formData, color: color.value, coverColor: color.gradient })}
+                                                    className={`h-9 w-9 rounded-xl border-4 transition-all ${formData.color === color.value ? 'border-primary shadow-lg scale-110' : 'border-transparent opacity-50'}`}
+                                                    style={{ backgroundColor: color.hex || '#ecb318' }}
+                                                    title={color.label}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-3 pt-2">
-                                <Label className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground/80 ml-1">Identidade Visual (Cor)</Label>
-                                <div className="grid grid-cols-6 gap-3">
-                                    {colorOptions.map((color) => (
-                                        <button
-                                            key={color.value}
-                                            type="button"
-                                            onClick={() => setFormData({ ...formData, color: color.value, coverColor: color.gradient })}
-                                            className={`h-10 rounded-xl ${color.value} transition-all relative ${formData.color === color.value ? 'ring-2 ring-offset-2 ring-primary scale-110' : 'hover:scale-105 opacity-70 hover:opacity-100'}`}
-                                            title={color.label}
-                                        >
-                                            {formData.color === color.value && <div className="absolute inset-0 flex items-center justify-center"><Save className="h-4 w-4 text-white p-0.5" /></div>}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="flex gap-4 pt-6 border-t border-border/40">
+                            <div className="flex gap-4 pt-4 border-t border-border/50">
                                 <Button
                                     type="button"
                                     variant="outline"
                                     onClick={() => setIsEditorOpen(false)}
-                                    className="flex-1 h-12 rounded-xl font-semibold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
+                                    className="flex-1 h-11 rounded-xl font-semibold border-secondary/50 text-muted-foreground hover:bg-secondary/5 transition-all"
                                 >
                                     Cancelar
                                 </Button>
                                 <Button
                                     onClick={handleSave}
-                                    className="flex-1 h-12 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
+                                    className="flex-1 h-11 rounded-xl font-semibold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 shadow-xl shadow-primary/20 transition-all active:scale-95"
                                 >
-                                    <Save className="h-4 w-4" /> Salvar Série
+                                    <Save className="h-5 w-5" /> Salvar Série
                                 </Button>
                             </div>
                         </div>
