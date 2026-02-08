@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { PenTool, Quote, Plus, X, Search, Lightbulb, Trash2 } from "lucide-react";
+import { PenTool, Quote, Plus, X, Search, Lightbulb, Trash2, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
     AlertDialog,
@@ -16,6 +17,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { PastoralStore, Sermon } from "@/data/pastoral-store";
 
 interface Insight {
     id: number;
@@ -24,30 +26,43 @@ interface Insight {
     title?: string;
     reference?: string;
     tags: string[];
+    sermonId?: number;
 }
 
 const initialInsights: Insight[] = [
     { id: 1, type: "verse", content: "Porque a palavra de Deus é viva e eficaz, e mais penetrante do que espada alguma de dois gumes...", reference: "Hebreus 4:12", tags: ["Bíblia", "Poder"] },
     { id: 2, type: "note", content: "A graça não é apenas o favor imerecido para salvação, mas o poder capacitador para vivermos a vida cristã.", title: "Definição de Graça", tags: ["Teologia", "Vida Cristã"] },
-    { id: 3, type: "note", content: "Ilustração: O equilibrista nas Cataratas do Niágara. A multidão acreditava que ele podia, mas só quem subiu nas costas dele confiou de verdade.", title: "Fé vs Crença", tags: ["Ilustração", "Fé"] },
+    { id: 3, type: "note", content: "Ilustração: O equilibrista nas Cataratas do Niágara. O público acreditava que ele podia, mas só quem subiu nas costas dele confiou de verdade.", title: "Fé vs Crença", tags: ["Ilustração", "Fé"] },
     { id: 4, type: "verse", content: "O Senhor é o meu pastor, nada me faltará.", reference: "Salmos 23:1", tags: ["Conforto", "Provisão"] },
     { id: 5, type: "note", content: "Lembrar de falar sobre a importância da oração comunitária no próximo domingo.", title: "Aviso", tags: ["Lembrete"] }
 ];
 
 export default function Insights() {
-    const [insights, setInsights] = useState<Insight[]>(initialInsights);
+    const [insights, setInsights] = useState<Insight[]>([]);
     const [activeTab, setActiveTab] = useState("todos");
     const [searchTerm, setSearchTerm] = useState("");
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [insightToDelete, setInsightToDelete] = useState<Insight | null>(null);
 
+    // Carregar dados
+    useEffect(() => {
+        const savedInsights = PastoralStore.getInsights();
+        if (savedInsights.length > 0) {
+            setInsights(savedInsights);
+        } else {
+            setInsights(initialInsights);
+        }
+    }, []);
+
     // Form States
     const [newType, setNewType] = useState("note");
+    const [sermonsList] = useState<Sermon[]>(PastoralStore.getSermons());
     const [formData, setFormData] = useState({
         title: "",
         content: "",
         reference: "",
-        tags: ""
+        tags: "",
+        sermonId: "none"
     });
 
     const handleSave = () => {
@@ -62,14 +77,17 @@ export default function Insights() {
         }
 
         const newInsight: Insight = {
-            id: Math.max(...insights.map(i => i.id), 0) + 1,
+            id: Date.now(),
             type: newType,
             content: formData.content,
             ...(newType === 'note' ? { title: formData.title } : { reference: formData.reference }),
-            tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== "")
+            tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ""),
+            sermonId: formData.sermonId === "none" ? undefined : Number(formData.sermonId)
         };
 
-        setInsights([newInsight, ...insights]);
+        const updatedInsights = [newInsight, ...insights];
+        setInsights(updatedInsights);
+        PastoralStore.saveInsights(updatedInsights);
         toast.success("Insight salvo com sucesso!");
 
         // Reset Form
@@ -77,7 +95,8 @@ export default function Insights() {
             title: "",
             content: "",
             reference: "",
-            tags: ""
+            tags: "",
+            sermonId: "none"
         });
     };
 
@@ -87,7 +106,9 @@ export default function Insights() {
     };
 
     const confirmDelete = () => {
-        setInsights(insights.filter(i => i.id !== insightToDelete.id));
+        const updatedInsights = insights.filter(i => i.id !== (insightToDelete?.id || 0));
+        setInsights(updatedInsights);
+        PastoralStore.saveInsights(updatedInsights);
         toast.success("Insight removido!");
         setIsDeleteOpen(false);
         setInsightToDelete(null);
@@ -149,16 +170,39 @@ export default function Insights() {
                             </TabsContent>
                         </Tabs>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                            <Input
-                                placeholder="Tags (separadas por vírgula)"
-                                className="text-xs"
-                                value={formData.tags}
-                                onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                            />
-                            <div className="flex justify-end">
-                                <Button onClick={handleSave} className="rounded-xl px-8 font-semibold shadow-lg shadow-primary/20">Salvar no Banco</Button>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center pt-2">
+                            <div className="space-y-2">
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Vincular à Pregação (Opcional)</p>
+                                <Select
+                                    value={formData.sermonId}
+                                    onValueChange={(val) => setFormData({ ...formData, sermonId: val })}
+                                >
+                                    <SelectTrigger className="h-10 rounded-xl border-input bg-background font-medium">
+                                        <SelectValue placeholder="Nenhuma / Insight Avulso" />
+                                    </SelectTrigger>
+                                    <SelectContent className="rounded-xl border-primary/10 shadow-xl max-h-[300px]">
+                                        <SelectItem value="none">Nenhuma (Insight Avulso)</SelectItem>
+                                        {sermonsList.map(s => (
+                                            <SelectItem key={s.id} value={s.id.toString()}>{s.title}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
+                            <div className="space-y-2">
+                                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Tags (Separe por vírgula)</p>
+                                <Input
+                                    placeholder="Ex: Teologia, Fé, Oração"
+                                    className="h-10 rounded-xl"
+                                    value={formData.tags}
+                                    onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end pt-4">
+                            <Button onClick={handleSave} className="w-full sm:w-auto rounded-xl px-12 h-11 font-semibold shadow-lg shadow-primary/20">
+                                Salvar no Banco de Insights
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -209,6 +253,13 @@ export default function Insights() {
                                     {insight.title && <h4 className="font-bold text-lg mb-2">{insight.title}</h4>}
                                     <p className="text-sm leading-relaxed text-muted-foreground">{insight.content}</p>
                                 </>
+                            )}
+
+                            {insight.sermonId && (
+                                <div className="mt-4 flex items-center gap-1.5 text-[9px] font-bold text-primary uppercase tracking-tighter bg-primary/5 px-2 py-1 rounded-md w-fit">
+                                    <BookOpen className="h-3 w-3" />
+                                    {sermonsList.find(s => s.id === insight.sermonId)?.title || 'Pregação Vinculada'}
+                                </div>
                             )}
 
                             {insight.tags.length > 0 && (

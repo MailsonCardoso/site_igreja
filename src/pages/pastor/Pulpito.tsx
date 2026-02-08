@@ -25,6 +25,7 @@ export default function Pulpito() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [sermon, setSermon] = useState<Sermon | null>(null);
+    const [insights, setInsights] = useState<any[]>([]);
 
     // Controles de Púlpito
     const [fontSize, setFontSize] = useState(24);
@@ -41,6 +42,11 @@ export default function Pulpito() {
         const foundSermon = sermons.find(s => s.id === Number(id));
         if (foundSermon) {
             setSermon(foundSermon);
+
+            // Carregar insights vinculados
+            const allInsights = PastoralStore.getInsights();
+            const linkedInsights = allInsights.filter(i => i.sermonId === foundSermon.id);
+            setInsights(linkedInsights);
         }
     }, [id]);
 
@@ -181,8 +187,8 @@ export default function Pulpito() {
                                 variant="outline"
                                 size="sm"
                                 className={`gap-2 border-dashed rounded-full transition-all ${isDark
-                                        ? 'border-amber-500/30 bg-amber-500/5 text-amber-50 hover:bg-amber-500/10 hover:border-amber-500/50'
-                                        : 'border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100'
+                                    ? 'border-amber-500/30 bg-amber-500/5 text-amber-50 hover:bg-amber-500/10 hover:border-amber-500/50'
+                                    : 'border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100'
                                     }`}
                             >
                                 <Lightbulb className="h-4 w-4 text-amber-500" />
@@ -191,14 +197,44 @@ export default function Pulpito() {
                         </SheetTrigger>
                         <SheetContent className={`w-[400px] border-l ${isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-100' : ''}`}>
                             <SheetHeader>
-                                <SheetTitle className={isDark ? 'text-zinc-100' : ''}>Banco de Insights</SheetTitle>
+                                <SheetTitle className={isDark ? 'text-zinc-100' : ''}>Insights desta Mensagem</SheetTitle>
                             </SheetHeader>
-                            <div className="mt-8 space-y-6">
-                                <div className={`p-5 rounded-2xl ${isDark ? 'bg-zinc-800' : 'bg-amber-50 border border-amber-100'}`}>
-                                    <p className="font-serif text-lg italic mb-3">"A fé é o firme fundamento das coisas que se esperam..."</p>
-                                    <span className="text-xs opacity-50 font-bold uppercase tracking-widest">Hebreus 11:1</span>
+                            <ScrollArea className="h-[calc(100vh-120px)] mt-6 pr-4">
+                                <div className="space-y-6">
+                                    {insights.length > 0 ? (
+                                        insights.map((insight) => (
+                                            <div key={insight.id} className={`p-5 rounded-2xl shadow-sm border ${isDark
+                                                    ? 'bg-zinc-800/50 border-zinc-700'
+                                                    : 'bg-amber-50/50 border-amber-100'
+                                                }`}>
+                                                {insight.type === 'verse' ? (
+                                                    <>
+                                                        <p className="font-serif text-lg italic mb-3 leading-relaxed">"{insight.content}"</p>
+                                                        <span className="text-xs font-bold text-primary uppercase tracking-widest">{insight.reference}</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        {insight.title && <h4 className="font-bold text-base mb-2">{insight.title}</h4>}
+                                                        <p className="text-sm opacity-80 leading-relaxed font-medium">{insight.content}</p>
+                                                    </>
+                                                )}
+                                                {insight.tags.length > 0 && (
+                                                    <div className="mt-3 flex flex-wrap gap-1.5 pt-3 border-t border-zinc-500/10">
+                                                        {insight.tags.map(tag => (
+                                                            <span key={tag} className="text-[10px] opacity-40 font-medium italic">#{tag}</span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center py-20 text-center opacity-40">
+                                            <Lightbulb className="h-12 w-12 mb-4" />
+                                            <p className="text-sm font-medium">Nenhum insight vinculado<br />a esta pregação.</p>
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
+                            </ScrollArea>
                         </SheetContent>
                     </Sheet>
                 </div>

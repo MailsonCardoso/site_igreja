@@ -34,6 +34,7 @@ export interface Insight {
     title?: string;
     reference?: string;
     tags: string[];
+    sermonId?: number;
 }
 
 const STORAGE_KEYS = {
