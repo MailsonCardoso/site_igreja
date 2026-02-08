@@ -17,7 +17,16 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const initialInsights = [
+interface Insight {
+    id: number;
+    type: string;
+    content: string;
+    title?: string;
+    reference?: string;
+    tags: string[];
+}
+
+const initialInsights: Insight[] = [
     { id: 1, type: "verse", content: "Porque a palavra de Deus é viva e eficaz, e mais penetrante do que espada alguma de dois gumes...", reference: "Hebreus 4:12", tags: ["Bíblia", "Poder"] },
     { id: 2, type: "note", content: "A graça não é apenas o favor imerecido para salvação, mas o poder capacitador para vivermos a vida cristã.", title: "Definição de Graça", tags: ["Teologia", "Vida Cristã"] },
     { id: 3, type: "note", content: "Ilustração: O equilibrista nas Cataratas do Niágara. A multidão acreditava que ele podia, mas só quem subiu nas costas dele confiou de verdade.", title: "Fé vs Crença", tags: ["Ilustração", "Fé"] },
@@ -26,11 +35,11 @@ const initialInsights = [
 ];
 
 export default function Insights() {
-    const [insights, setInsights] = useState(initialInsights);
+    const [insights, setInsights] = useState<Insight[]>(initialInsights);
     const [activeTab, setActiveTab] = useState("todos");
     const [searchTerm, setSearchTerm] = useState("");
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-    const [insightToDelete, setInsightToDelete] = useState<any>(null);
+    const [insightToDelete, setInsightToDelete] = useState<Insight | null>(null);
 
     // Form States
     const [newType, setNewType] = useState("note");
@@ -52,12 +61,11 @@ export default function Insights() {
             return;
         }
 
-        const newInsight = {
+        const newInsight: Insight = {
             id: Math.max(...insights.map(i => i.id), 0) + 1,
             type: newType,
             content: formData.content,
-            title: newType === 'note' ? formData.title : undefined,
-            reference: newType === 'verse' ? formData.reference : undefined,
+            ...(newType === 'note' ? { title: formData.title } : { reference: formData.reference }),
             tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== "")
         };
 
@@ -87,9 +95,11 @@ export default function Insights() {
 
     const filteredInsights = insights.filter(i => {
         const matchesTab = activeTab === 'todos' || i.type === activeTab;
-        const matchesSearch = i.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (i.title?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (i.reference?.toLowerCase().includes(searchTerm.toLowerCase()));
+        const term = searchTerm.toLowerCase().replace("#", "");
+        const matchesSearch = i.content.toLowerCase().includes(term) ||
+            (i.title?.toLowerCase().includes(term) ?? false) ||
+            (i.reference?.toLowerCase().includes(term) ?? false) ||
+            i.tags.some(tag => tag.toLowerCase().includes(term));
         return matchesTab && matchesSearch;
     });
 
@@ -163,7 +173,7 @@ export default function Insights() {
                     <div className="relative w-full sm:w-80 group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary transition-colors group-focus-within:text-primary" />
                         <Input
-                            placeholder="Pesquisar anotações ou versículos..."
+                            placeholder="Pesquisar por conteúdo, título ou #tags..."
                             className="pl-10 rounded-xl h-11 bg-background border-primary/20 focus:border-primary focus:ring-2 focus:ring-primary/10 shadow-sm transition-all"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
