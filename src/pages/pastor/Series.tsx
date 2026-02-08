@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Folder, Plus, BookOpen, MoreVertical, Calendar, Trash2, Edit, Save, List } from "lucide-react";
+import { Folder, Plus, BookOpen, MoreVertical, Calendar, Trash2, Edit, Save, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -38,6 +38,7 @@ import { PastoralStore, Series, Sermon } from "@/data/pastoral-store";
 export default function SeriesPage() {
     const [series, setSeries] = useState<Series[]>(PastoralStore.getSeries());
     const [sermons] = useState<Sermon[]>(PastoralStore.getSermons());
+    const [searchTerm, setSearchTerm] = useState("");
 
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -137,21 +138,37 @@ export default function SeriesPage() {
         { value: "bg-pink-500", label: "Rosa", gradient: "from-pink-500/20 to-pink-500/5", hex: "#ec4899" },
     ];
 
+    const filteredSeries = series.filter(s =>
+        s.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <MainLayout title="Pastoral" breadcrumbs={[{ label: "O Altar", href: "/pastor" }, { label: "Séries" }]}>
             <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <h2 className="text-2xl font-bold font-display text-foreground">Séries de Mensagens</h2>
                         <p className="text-muted-foreground">Organize suas pregações em jornadas temáticas.</p>
                     </div>
-                    <Button onClick={() => handleOpenEditor()} className="font-semibold gap-2 shadow-lg h-10 px-6 rounded-xl">
-                        <Plus className="h-4 w-4" /> Nova Série
-                    </Button>
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                        <div className="relative flex-1 sm:w-64">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Filtrar séries..."
+                                className="pl-10 rounded-xl"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                        </div>
+                        <Button onClick={() => handleOpenEditor()} className="font-semibold gap-2 shadow-lg h-10 px-6 rounded-xl shrink-0">
+                            <Plus className="h-4 w-4" /> <span className="hidden sm:inline">Nova Série</span>
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {series.map((serie) => {
+                    {filteredSeries.map((serie) => {
                         const linkedSermons = getSeriesSermons(serie.title);
                         const completedFromSermons = linkedSermons.filter(s => s.status === "Pregado").length;
                         const progress = serie.total > 0 ? (completedFromSermons / serie.total) * 100 : 0;
