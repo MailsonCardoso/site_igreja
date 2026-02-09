@@ -60,6 +60,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useForm } from "react-hook-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const itemCategories = [
     { value: "eletronicos", label: "Eletrônicos", icon: Smartphone },
@@ -83,8 +84,10 @@ export default function Inventario() {
     const [categoryFilter, setCategoryFilter] = useState("todas");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isDisposeDialogOpen, setIsDisposeDialogOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<any>(null);
     const [isEditMode, setIsEditMode] = useState(false);
+    const [disposeReason, setDisposeReason] = useState("");
 
     const queryClient = useQueryClient();
 
@@ -138,11 +141,24 @@ export default function Inventario() {
             queryClient.invalidateQueries({ queryKey: ["inventory"] });
             toast.success("Item atualizado!");
             setIsDialogOpen(false);
+            setIsDisposeDialogOpen(false);
             reset();
             setSelectedItem(null);
+            setDisposeReason("");
         },
         onError: () => toast.error("Erro ao atualizar item"),
     });
+
+    const handleDisposeConfirm = () => {
+        if (!selectedItem) return;
+
+        updateMutation.mutate({
+            id: selectedItem.id,
+            status: 'disposed',
+            disposal_reason: disposeReason,
+            disposal_date: new Date().toISOString().split('T')[0]
+        });
+    };
 
     const deleteMutation = useMutation({
         mutationFn: (id: number) => api.delete(`/inventory/${id}`),
@@ -175,11 +191,20 @@ export default function Inventario() {
         setIsDeleteDialogOpen(true);
     };
 
+    const handleDisposeClick = (item: any) => {
+        setSelectedItem(item);
+        setDisposeReason("");
+        setIsDisposeDialogOpen(true);
+    };
+
     const filteredItems = items.filter((item: any) => {
         const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = categoryFilter === "todas" || item.category === categoryFilter;
         return matchesSearch && matchesCategory;
     });
+
+    const activeItems = filteredItems.filter((i: any) => i.status !== 'disposed');
+    const disposedItems = filteredItems.filter((i: any) => i.status === 'disposed');
 
     const getCategoryIcon = (category: string) => {
         const cat = itemCategories.find(c => c.value === category);
@@ -198,7 +223,7 @@ export default function Inventario() {
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-card p-6 rounded-2xl shadow-sm border border-border/40">
                     <div>
                         <h2 className="text-2xl font-bold text-foreground">Gestão de Patrimônio</h2>
-                        <p className="text-sm text-muted-foreground">{items.length} itens catalogados no sistema</p>
+                        <p className="text-sm text-muted-foreground">{activeItems.length} itens ativos • {disposedItems.length} baixados</p>
                     </div>
 
                     <Dialog open={isDialogOpen} onOpenChange={(open) => {
@@ -332,82 +357,181 @@ export default function Inventario() {
                     </div>
                 </div>
 
-                {/* Items Grid */}
-                {isLoading ? (
-                    <div className="flex flex-col items-center justify-center py-20">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                        <p className="mt-4 text-muted-foreground">Carregando inventário...</p>
-                    </div>
-                ) : (
-                    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                        {filteredItems.map((item: any, index: number) => {
-                            const Icon = getCategoryIcon(item.category);
-                            return (
-                                <motion.div
-                                    key={item.id}
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                                    className="group bg-card hover:bg-secondary/5 rounded-[2rem] border border-border/40 p-6 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col"
-                                >
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className="h-14 w-14 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                                            <Icon className="h-7 w-7 text-muted-foreground group-hover:text-primary transition-colors" />
-                                        </div>
+                <Tabs defaultValue="active" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2 mb-8 bg-secondary/20 p-1 rounded-2xl">
+                        <TabsTrigger value="active" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-300">
+                            Em Estoque ({activeItems.length})
+                        </TabsTrigger>
+                        <TabsTrigger value="disposed" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-300">
+                            Histórico / Baixados ({disposedItems.length})
+                        </TabsTrigger>
+                    </TabsList>
 
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-secondary">
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-40 rounded-xl">
-                                                <DropdownMenuItem onClick={() => handleEdit(item)} className="cursor-pointer">
-                                                    <Pencil className="mr-2 h-4 w-4" /> Editar
-                                                </DropdownMenuItem>
-                                                <DropdownMenuSeparator />
-                                                <DropdownMenuItem onClick={() => handleDeleteClick(item)} className="cursor-pointer text-destructive focus:text-destructive">
-                                                    <Trash2 className="mr-2 h-4 w-4" /> Excluir
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
+                    <TabsContent value="active" className="mt-0">
+                        {/* Items Grid - Active */}
+                        {isLoading ? (
+                            <div className="flex flex-col items-center justify-center py-20">
+                                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                <p className="mt-4 text-muted-foreground">Carregando inventário...</p>
+                            </div>
+                        ) : (
+                            <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                {activeItems.map((item: any, index: number) => {
+                                    const Icon = getCategoryIcon(item.category);
+                                    return (
+                                        <motion.div
+                                            key={item.id}
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                                            className="group bg-card hover:bg-secondary/5 rounded-[2rem] border border-border/40 p-6 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col"
+                                        >
+                                            <div className="flex justify-between items-start mb-6">
+                                                <div className="h-14 w-14 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                                    <Icon className="h-7 w-7 text-muted-foreground group-hover:text-primary transition-colors" />
+                                                </div>
 
-                                    <div className="space-y-3 flex-1">
-                                        <div className="flex items-center justify-between">
-                                            <Badge variant="outline" className={`rounded-full px-3 py-0 border-0 ${conditions[item.condition].class}`}>
-                                                {conditions[item.condition].label}
-                                            </Badge>
-                                            <span className="text-xs font-bold text-muted-foreground opacity-50 uppercase tracking-widest">{item.category}</span>
-                                        </div>
-
-                                        <h3 className="text-lg font-bold text-foreground leading-tight">{item.name}</h3>
-                                        <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">{item.description || "Sem descrição adicional."}</p>
-
-                                        <div className="pt-4 border-t border-border/40 flex items-center justify-between">
-                                            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                                <MapPin className="h-3.5 w-3.5" />
-                                                {item.location || "Indefinido"}
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-secondary">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-48 rounded-xl p-1 bg-popover/95 backdrop-blur-sm shadow-xl">
+                                                        <DropdownMenuItem onClick={() => handleEdit(item)} className="cursor-pointer rounded-lg font-medium">
+                                                            <Pencil className="mr-2 h-4 w-4" /> Editar
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => handleDisposeClick(item)} className="cursor-pointer rounded-lg font-medium text-amber-600 focus:text-amber-700 focus:bg-amber-50">
+                                                            <Box className="mr-2 h-4 w-4" /> Dar Baixa
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator className="bg-border/50" />
+                                                        <DropdownMenuItem onClick={() => handleDeleteClick(item)} className="cursor-pointer rounded-lg font-medium text-destructive focus:text-destructive focus:bg-destructive/10">
+                                                            <Trash2 className="mr-2 h-4 w-4" /> Excluir
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </div>
-                                            <div className="bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                                                <span className="text-xs font-bold text-primary">Qtd: {item.quantity}</span>
+
+                                            <div className="space-y-3 flex-1">
+                                                <div className="flex items-center justify-between">
+                                                    <Badge variant="outline" className={`rounded-full px-3 py-0 border-0 ${conditions[item.condition].class}`}>
+                                                        {conditions[item.condition].label}
+                                                    </Badge>
+                                                    <span className="text-xs font-bold text-muted-foreground opacity-50 uppercase tracking-widest">{item.category}</span>
+                                                </div>
+
+                                                <h3 className="text-lg font-bold text-foreground leading-tight">{item.name}</h3>
+                                                <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">{item.description || "Sem descrição adicional."}</p>
+
+                                                <div className="pt-4 border-t border-border/40 flex items-center justify-between">
+                                                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                                                        <MapPin className="h-3.5 w-3.5" />
+                                                        {item.location || "Indefinido"}
+                                                    </div>
+                                                    <div className="bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
+                                                        <span className="text-xs font-bold text-primary">Qtd: {item.quantity}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                        {!isLoading && activeItems.length === 0 && (
+                            <div className="flex flex-col items-center justify-center py-20 bg-secondary/5 rounded-[3rem] border border-dashed border-secondary/20">
+                                <Package className="h-16 w-16 text-muted-foreground opacity-20 mb-4" />
+                                <h3 className="text-xl font-bold text-foreground">Nenhum item em estoque</h3>
+                                <p className="text-muted-foreground">Adicione novos itens ou verifique os baixados.</p>
+                            </div>
+                        )}
+                    </TabsContent>
+
+                    <TabsContent value="disposed" className="mt-0">
+                        {/* Items Grid - Disposed */}
+                        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                            {disposedItems.map((item: any, index: number) => {
+                                const Icon = getCategoryIcon(item.category);
+                                return (
+                                    <motion.div
+                                        key={item.id}
+                                        initial={{ opacity: 0, scale: 0.95 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                                        className="group bg-muted/30 rounded-[2rem] border border-border/40 p-6 opacity-80 hover:opacity-100 transition-all flex flex-col"
+                                    >
+                                        <div className="flex justify-between items-start mb-6">
+                                            <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center">
+                                                <Icon className="h-7 w-7 text-muted-foreground" />
+                                            </div>
+                                            <Badge variant="secondary" className="bg-muted text-muted-foreground">Baixado</Badge>
+                                        </div>
+
+                                        <div className="space-y-3 flex-1">
+                                            <h3 className="text-lg font-bold text-muted-foreground line-through decoration-destructive/50">{item.name}</h3>
+
+                                            <div className="bg-destructive/5 p-3 rounded-xl space-y-1">
+                                                <p className="text-xs font-bold text-destructive uppercase tracking-wider">Motivo da Baixa</p>
+                                                <p className="text-sm text-foreground font-medium">{item.disposal_reason || "Não informado"}</p>
+                                                <p className="text-xs text-muted-foreground pt-1">
+                                                    Data: {item.disposal_date ? new Date(item.disposal_date + 'T00:00:00').toLocaleDateString('pt-BR') : '-'}
+                                                </p>
+                                            </div>
+
+                                            <div className="pt-4 mt-auto border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
+                                                <span>{item.category}</span>
+                                                <span>Qtd anterior: {item.quantity}</span>
                                             </div>
                                         </div>
-                                    </div>
-                                </motion.div>
-                            );
-                        })}
-                    </div>
-                )}
+                                    </motion.div>
+                                );
+                            })}
+                        </div>
+                        {!isLoading && disposedItems.length === 0 && (
+                            <div className="flex flex-col items-center justify-center py-20 bg-secondary/5 rounded-[3rem] border border-dashed border-secondary/20">
+                                <Trash2 className="h-16 w-16 text-muted-foreground opacity-20 mb-4" />
+                                <h3 className="text-xl font-bold text-foreground">Histórico Limpo</h3>
+                                <p className="text-muted-foreground">Nenhum item foi baixado ou descartado ainda.</p>
+                            </div>
+                        )}
+                    </TabsContent>
+                </Tabs>
 
-                {/* Empty State */}
-                {!isLoading && filteredItems.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-20 bg-secondary/5 rounded-[3rem] border border-dashed border-secondary/20">
-                        <Package className="h-16 w-16 text-muted-foreground opacity-20 mb-4" />
-                        <h3 className="text-xl font-bold text-foreground">Nenhum item encontrado</h3>
-                        <p className="text-muted-foreground">Tente uma busca diferente ou adicione um novo item.</p>
-                    </div>
-                )}
+                {/* Dispose Dialog */}
+                <Dialog open={isDisposeDialogOpen} onOpenChange={setIsDisposeDialogOpen}>
+                    <DialogContent className="sm:max-w-md rounded-[2rem]">
+                        <DialogHeader>
+                            <DialogTitle>Dar Baixa no Item</DialogTitle>
+                            <DialogDescription>
+                                Informe o motivo para remover <strong>{selectedItem?.name}</strong> do estoque ativo.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-4">
+                            <div className="space-y-2">
+                                <Label>Motivo da Baixa</Label>
+                                <Select onValueChange={setDisposeReason}>
+                                    <SelectTrigger className="h-12 rounded-xl">
+                                        <SelectValue placeholder="Selecione o motivo" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Danificado/Sem Conserto">Danificado (Sem Conserto)</SelectItem>
+                                        <SelectItem value="Doado">Doado</SelectItem>
+                                        <SelectItem value="Vendido">Vendido</SelectItem>
+                                        <SelectItem value="Roubo/Perda">Roubo ou Perda</SelectItem>
+                                        <SelectItem value="Obsoleto">Obsoleto / Substituído</SelectItem>
+                                        <SelectItem value="Outro">Outro</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-3">
+                            <Button variant="outline" onClick={() => setIsDisposeDialogOpen(false)} className="rounded-xl h-11">Cancelar</Button>
+                            <Button onClick={handleDisposeConfirm} disabled={!disposeReason || updateMutation.isPending} className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl h-11">
+                                {updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirmar Baixa"}
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
 
                 {/* Delete Dialog */}
                 <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
@@ -427,6 +551,6 @@ export default function Inventario() {
                     </AlertDialogContent>
                 </AlertDialog>
             </motion.div>
-        </MainLayout>
+        </MainLayout >
     );
 }

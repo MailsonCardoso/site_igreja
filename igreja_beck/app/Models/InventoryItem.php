@@ -21,5 +21,8 @@ class InventoryItem extends Model
         'location',
         'condition',
         'description',
+        'status',
+        'disposal_reason',
+        'disposal_date',
     ];
 }
