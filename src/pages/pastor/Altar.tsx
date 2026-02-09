@@ -314,26 +314,26 @@ export default function Altar() {
                     ))}
                 </div>
 
-                {/* Editor Modal */}
-                <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[750px] max-h-[90vh] overflow-y-auto rounded-[2rem] border-none bg-background shadow-2xl p-0">
-                        <div className="bg-primary/5 p-8 border-b relative">
+                {/* Editor Sheet */}
+                <Sheet open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+                    <SheetContent side="right" className="sm:max-w-[750px] w-full h-full overflow-hidden border-none bg-background shadow-2xl p-0 flex flex-col">
+                        <div className="bg-primary/5 p-8 border-b relative shrink-0">
                             <div className="flex items-center gap-4">
                                 <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                                     <PenTool className="h-8 w-8 text-primary" />
                                 </div>
                                 <div>
-                                    <DialogTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
+                                    <SheetTitle className="text-2xl font-bold font-display tracking-tight text-foreground">
                                         {currentSermon ? 'Editar Mensagem' : 'Nova Mensagem'}
-                                    </DialogTitle>
-                                    <DialogDescription className="text-muted-foreground font-medium pt-1">
+                                    </SheetTitle>
+                                    <SheetDescription className="text-muted-foreground font-medium pt-1">
                                         Estruture sua pregação com clareza e organização para o próximo culto.
-                                    </DialogDescription>
+                                    </SheetDescription>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="p-8 space-y-8 bg-card">
+                        <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-card">
                             {/* Campos Básicos - Layout Lateral Ajustado */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 <div className="space-y-2.5">
@@ -463,8 +463,8 @@ export default function Altar() {
                                 </Button>
                             </div>
                         </div>
-                    </DialogContent>
-                </Dialog>
+                    </SheetContent>
+                </Sheet>
 
                 {/* AlertDialog de Exclusão - Estilo Corrigido */}
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>

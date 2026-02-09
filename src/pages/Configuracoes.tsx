@@ -28,6 +28,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Helper mask functions
@@ -585,24 +593,24 @@ export default function Configuracoes() {
         </Tabs>
       </motion.div>
 
-      {/* Modal Novo Usuário */}
-      <Dialog open={isUserModalOpen} onOpenChange={(open) => {
+      {/* Sheet Novo Usuário */}
+      <Sheet open={isUserModalOpen} onOpenChange={(open) => {
         setIsUserModalOpen(open);
         if (!open) {
           setUserFormData({ name: "", email: "", password: "", role: "Administrador", status: "Ativo", memberId: "" });
           setAvailableMembers([]);
         }
       }}>
-        <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="p-6 bg-primary/5 flex items-center gap-4 border-b">
-            <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
-              <UserPlus className="h-6 w-6" />
+        <SheetContent side="right" className="sm:max-w-[500px] w-full h-full p-0 overflow-hidden border-none shadow-2xl flex flex-col">
+          <div className="p-8 bg-primary/5 flex items-center gap-4 border-b shrink-0">
+            <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
+              <UserPlus className="h-7 w-7" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-bold text-foreground">Novo Acesso</DialogTitle>
-              <DialogDescription className="text-xs font-bold text-primary">
+              <SheetTitle className="text-xl font-bold text-foreground">Novo Acesso</SheetTitle>
+              <SheetDescription className="text-xs font-bold text-primary">
                 Libere a gestão para novos usuários.
-              </DialogDescription>
+              </SheetDescription>
             </div>
           </div>
 
@@ -730,7 +738,7 @@ export default function Configuracoes() {
               </div>
             </div>
 
-            <DialogFooter className="pt-4 gap-3">
+            <div className="p-6 pt-4 gap-3 border-t flex shrink-0">
               <Button type="button" variant="ghost" onClick={() => setIsUserModalOpen(false)} className="flex-1 font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
                 CANCELAR
               </Button>
@@ -741,22 +749,22 @@ export default function Configuracoes() {
               >
                 {createUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "CONCEDER ACESSO"}
               </Button>
-            </DialogFooter>
+            </div>
           </form>
-        </DialogContent>
-      </Dialog>
-      {/* Modal Editar Usuário */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="p-6 bg-primary/5 flex items-center gap-4 border-b">
+        </SheetContent>
+      </Sheet >
+      {/* Sheet Editar Usuário */}
+      <Sheet open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <SheetContent side="right" className="sm:max-w-[500px] w-full h-full p-0 overflow-hidden border-none shadow-2xl flex flex-col">
+          <div className="p-6 bg-primary/5 flex items-center gap-4 border-b shrink-0">
             <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
               <UserIcon className="h-6 w-6" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-bold text-foreground">Editar Acesso</DialogTitle>
-              <DialogDescription className="text-xs font-bold text-primary">
+              <SheetTitle className="text-xl font-bold text-foreground">Editar Acesso</SheetTitle>
+              <SheetDescription className="text-xs font-bold text-primary">
                 Atualize os dados do usuário.
-              </DialogDescription>
+              </SheetDescription>
             </div>
           </div>
 
@@ -828,7 +836,7 @@ export default function Configuracoes() {
               <p className="text-[10px] text-muted-foreground italic font-medium">* A senha não pode ser alterada por este painel por motivos de segurança.</p>
             </div>
 
-            <DialogFooter className="pt-4 gap-3">
+            <div className="p-6 pt-4 gap-3 border-t flex shrink-0">
               <Button type="button" variant="ghost" onClick={() => setIsEditModalOpen(false)} className="flex-1 font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
                 CANCELAR
               </Button>
@@ -839,47 +847,47 @@ export default function Configuracoes() {
               >
                 {updateUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "SALVAR ALTERAÇÕES"}
               </Button>
-            </DialogFooter>
+            </div>
           </form>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet >
 
-      {/* Modal Confirmar Exclusão */}
-      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
-          <div className="p-8 bg-destructive/5 flex flex-col items-center text-center gap-4 border-b">
+      {/* Sheet Confirmar Exclusão */}
+      <Sheet open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <SheetContent side="right" className="sm:max-w-md w-full h-full p-0 overflow-hidden border-none shadow-2xl flex flex-col">
+          <div className="p-8 bg-destructive/5 flex flex-col items-center text-center gap-4 border-b shrink-0">
             <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center border-2 border-destructive/20 text-destructive">
               <Trash2 className="h-10 w-10" />
             </div>
             <div>
-              <DialogTitle className="text-2xl font-bold text-foreground">Remover Acesso?</DialogTitle>
-              <DialogDescription className="font-semibold text-destructive mt-1">
+              <SheetTitle className="text-2xl font-bold text-foreground">Remover Acesso?</SheetTitle>
+              <SheetDescription className="font-semibold text-destructive mt-1">
                 Esta ação é irreversível e o usuário perderá acesso imediato ao sistema.
-              </DialogDescription>
+              </SheetDescription>
             </div>
           </div>
 
-          <div className="p-8 space-y-6 bg-card text-center">
+          <div className="flex-1 p-8 space-y-6 bg-card text-center overflow-y-auto">
             <p className="text-foreground font-medium">
               Tem certeza que deseja excluir o acesso de <span className="font-semibold text-primary">{userToDelete?.name}</span>?
             </p>
-
-            <DialogFooter className="flex-col sm:flex-row gap-3 pt-2">
-              <Button type="button" variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="w-full font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
-                MANTER ACESSO
-              </Button>
-              <Button
-                type="button"
-                className="w-full font-semibold h-12 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xl shadow-destructive/20"
-                onClick={() => deleteUserMutation.mutate(userToDelete?.id)}
-                disabled={deleteUserMutation.isPending}
-              >
-                {deleteUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "SIM, EXCLUIR"}
-              </Button>
-            </DialogFooter>
           </div>
-        </DialogContent>
-      </Dialog>
+
+          <div className="p-8 pt-4 gap-3 border-t flex flex-col sm:flex-row shrink-0">
+            <Button type="button" variant="ghost" onClick={() => setIsDeleteModalOpen(false)} className="w-full font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
+              MANTER ACESSO
+            </Button>
+            <Button
+              type="button"
+              className="w-full font-semibold h-12 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-xl shadow-destructive/20"
+              onClick={() => deleteUserMutation.mutate(userToDelete?.id)}
+              disabled={deleteUserMutation.isPending}
+            >
+              {deleteUserMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : "SIM, EXCLUIR"}
+            </Button>
+          </div>
+        </SheetContent>
+      </Sheet>
     </MainLayout>
   );
 }

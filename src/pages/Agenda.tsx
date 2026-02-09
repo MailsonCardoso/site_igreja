@@ -18,6 +18,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -359,21 +367,21 @@ export default function Agenda() {
         </motion.div>
       </div>
 
-      {/* Modal de Cadastro/Edição */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[750px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+      {/* Sheet de Cadastro/Edição */}
+      <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <SheetContent side="right" className="sm:max-w-[650px] w-full h-full p-0 flex flex-col border-none shadow-2xl">
           <div className="bg-primary/5 p-6 border-b relative">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 {isEditMode ? <Pencil className="h-7 w-7 text-primary" /> : <CalendarIcon className="h-7 w-7 text-primary" />}
               </div>
               <div>
-                <DialogTitle className="text-xl font-semibold text-foreground">
+                <SheetTitle className="text-xl font-semibold text-foreground">
                   {isEditMode ? "Editar Evento" : "Novo Evento"}
-                </DialogTitle>
-                <DialogDescription className="text-muted-foreground font-medium text-xs">
+                </SheetTitle>
+                <SheetDescription className="text-muted-foreground font-medium text-xs">
                   Planeje e organize as atividades da igreja.
-                </DialogDescription>
+                </SheetDescription>
               </div>
             </div>
           </div>
@@ -453,8 +461,8 @@ export default function Agenda() {
               </Button>
             </div>
           </form>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
       {/* Confirmação de Exclusão */}
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
@@ -474,21 +482,21 @@ export default function Agenda() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Modal de Visualização de Evento */}
-      <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
-        <DialogContent className="sm:max-w-[600px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+      {/* Sheet de Visualização de Evento */}
+      <Sheet open={isViewOpen} onOpenChange={setIsViewOpen}>
+        <SheetContent side="right" className="sm:max-w-[600px] w-full h-full p-0 flex flex-col border-none shadow-2xl">
           <div className="bg-primary/5 p-6 border-b">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <CalendarIcon className="h-7 w-7 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-xl font-semibold text-foreground">
+                <SheetTitle className="text-xl font-semibold text-foreground">
                   Detalhes do Evento
-                </DialogTitle>
-                <DialogDescription className="text-muted-foreground font-medium text-xs">
+                </SheetTitle>
+                <SheetDescription className="text-muted-foreground font-medium text-xs">
                   Confira as informações da atividade agendada.
-                </DialogDescription>
+                </SheetDescription>
               </div>
             </div>
           </div>
@@ -545,8 +553,8 @@ export default function Agenda() {
               </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </MainLayout>
   );
 }

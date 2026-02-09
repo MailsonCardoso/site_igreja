@@ -14,6 +14,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -292,20 +300,27 @@ export default function Celulas() {
         </div>
       )}
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[550px] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl">
+      <Sheet open={isDialogOpen} onOpenChange={(open) => {
+        setIsDialogOpen(open);
+        if (!open) {
+          setIsEditMode(false);
+          setSelectedCell(null);
+          reset();
+        }
+      }}>
+        <SheetContent side="right" className="sm:max-w-xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
           <div className="bg-primary/5 p-8 border-b relative">
             <div className="flex items-center gap-4">
               <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 {isEditMode ? <Pencil className="h-8 w-8 text-primary" /> : <Users className="h-8 w-8 text-primary" />}
               </div>
               <div>
-                <DialogTitle className="text-xl font-semibold text-foreground">
+                <SheetTitle className="text-xl font-semibold text-foreground">
                   {isEditMode ? "Editar Célula" : "Nova Célula"}
-                </DialogTitle>
-                <DialogDescription className="text-muted-foreground font-medium">
+                </SheetTitle>
+                <SheetDescription className="text-muted-foreground font-medium">
                   Preencha os dados abaixo para organizar seu pequeno grupo.
-                </DialogDescription>
+                </SheetDescription>
               </div>
             </div>
           </div>
@@ -398,8 +413,8 @@ export default function Celulas() {
               </Button>
             </div>
           </form>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
       {/* Confirmação de Exclusão */}
       <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
@@ -423,19 +438,19 @@ export default function Celulas() {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Modal de Detalhes da Célula */}
-      <Dialog open={isViewOpen} onOpenChange={setIsViewOpen}>
-        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl">
+      {/* Sheet de Detalhes da Célula */}
+      <Sheet open={isViewOpen} onOpenChange={setIsViewOpen}>
+        <SheetContent side="right" className="sm:max-w-xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
           <div className="bg-primary/5 p-5 border-b">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <Users className="h-7 w-7 text-primary" />
               </div>
               <div>
-                <DialogTitle className="text-xl font-semibold text-foreground leading-tight">{selectedCell?.name}</DialogTitle>
-                <DialogDescription className="sr-only">
+                <SheetTitle className="text-xl font-semibold text-foreground leading-tight">{selectedCell?.name}</SheetTitle>
+                <SheetDescription className="sr-only">
                   Detalhes informativos sobre a célula e seus membros.
-                </DialogDescription>
+                </SheetDescription>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge className="bg-primary text-white hover:bg-primary text-[10px] h-5 px-2">
                     {selectedCell?.meeting_day || "Não definido"}
@@ -508,8 +523,8 @@ export default function Celulas() {
               Fechar Detalhes
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </MainLayout>
   );
 }

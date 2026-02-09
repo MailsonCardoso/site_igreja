@@ -40,6 +40,14 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
+import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -226,7 +234,7 @@ export default function Inventario() {
                         <p className="text-sm text-muted-foreground">{activeItems.length} itens ativos • {disposedItems.length} baixados</p>
                     </div>
 
-                    <Dialog open={isDialogOpen} onOpenChange={(open) => {
+                    <Sheet open={isDialogOpen} onOpenChange={(open) => {
                         setIsDialogOpen(open);
                         if (!open) {
                             setIsEditMode(false);
@@ -234,90 +242,92 @@ export default function Inventario() {
                             reset();
                         }
                     }}>
-                        <DialogTrigger asChild>
+                        <SheetTrigger asChild>
                             <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-6 rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
                                 <Plus className="h-5 w-5" />
                                 Novo Equipamento
                             </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-lg rounded-[2.5rem] p-0 overflow-hidden border-none shadow-2xl">
+                        </SheetTrigger>
+                        <SheetContent side="right" className="sm:max-w-xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
                             <div className="bg-primary/5 p-8 border-b border-primary/10">
                                 <div className="flex items-center gap-4">
                                     <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                                         <Package className="h-6 w-6 text-primary" />
                                     </div>
                                     <div>
-                                        <DialogTitle className="text-xl font-bold">
+                                        <SheetTitle className="text-xl font-bold">
                                             {isEditMode ? "Editar Equipamento" : "Novo Patrimônio"}
-                                        </DialogTitle>
-                                        <DialogDescription>
+                                        </SheetTitle>
+                                        <SheetDescription>
                                             Preencha os dados técnicos e contábeis do item.
-                                        </DialogDescription>
+                                        </SheetDescription>
                                     </div>
                                 </div>
                             </div>
 
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="p-8 space-y-6">
-                                <div className="grid gap-6 sm:grid-cols-2">
-                                    <div className="sm:col-span-2 space-y-2">
-                                        <Label htmlFor="name">Nome do Item</Label>
-                                        <Input id="name" {...form.register("name", { required: true })} placeholder="Ex: Cadeira Estofada" className="h-12 rounded-xl" />
+                            <ScrollArea className="flex-1">
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="p-8 space-y-6">
+                                    <div className="grid gap-6 sm:grid-cols-2">
+                                        <div className="sm:col-span-2 space-y-2">
+                                            <Label htmlFor="name">Nome do Item</Label>
+                                            <Input id="name" {...form.register("name", { required: true })} placeholder="Ex: Cadeira Estofada" className="h-12 rounded-xl" />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Categoria</Label>
+                                            <Select onValueChange={(val) => setValue("category", val)} defaultValue={watch("category")}>
+                                                <SelectTrigger className="h-12 rounded-xl">
+                                                    <SelectValue placeholder="Selecione" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {itemCategories.map(cat => (
+                                                        <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="quantity">Quantidade</Label>
+                                            <Input id="quantity" type="number" {...form.register("quantity", { valueAsNumber: true })} className="h-12 rounded-xl" />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="location">Localização na Igreja</Label>
+                                            <Input id="location" {...form.register("location")} placeholder="Ex: Santuário" className="h-12 rounded-xl" />
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label>Estado de Conservação</Label>
+                                            <Select onValueChange={(val) => setValue("condition", val)} defaultValue={watch("condition")}>
+                                                <SelectTrigger className="h-12 rounded-xl">
+                                                    <SelectValue placeholder="Selecione" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="novo">Novo</SelectItem>
+                                                    <SelectItem value="bom">Bom</SelectItem>
+                                                    <SelectItem value="regular">Regular</SelectItem>
+                                                    <SelectItem value="ruim">Necessita Manutenção / Ruim</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        <div className="sm:col-span-2 space-y-2">
+                                            <Label htmlFor="description">Observações</Label>
+                                            <Input id="description" {...form.register("description")} placeholder="Detalhes adicionais..." className="h-12 rounded-xl" />
+                                        </div>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label>Categoria</Label>
-                                        <Select onValueChange={(val) => setValue("category", val)} defaultValue={watch("category")}>
-                                            <SelectTrigger className="h-12 rounded-xl">
-                                                <SelectValue placeholder="Selecione" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {itemCategories.map(cat => (
-                                                    <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                    <div className="flex justify-end gap-3 pt-4">
+                                        <Button variant="outline" type="button" onClick={() => setIsDialogOpen(false)} className="h-12 px-6 rounded-xl">Cancelar</Button>
+                                        <Button type="submit" className="h-12 px-8 rounded-xl bg-primary text-primary-foreground" disabled={createMutation.isPending || updateMutation.isPending}>
+                                            {createMutation.isPending || updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar Item"}
+                                        </Button>
                                     </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="quantity">Quantidade</Label>
-                                        <Input id="quantity" type="number" {...form.register("quantity", { valueAsNumber: true })} className="h-12 rounded-xl" />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="location">Localização na Igreja</Label>
-                                        <Input id="location" {...form.register("location")} placeholder="Ex: Santuário" className="h-12 rounded-xl" />
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label>Estado de Conservação</Label>
-                                        <Select onValueChange={(val) => setValue("condition", val)} defaultValue={watch("condition")}>
-                                            <SelectTrigger className="h-12 rounded-xl">
-                                                <SelectValue placeholder="Selecione" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="novo">Novo</SelectItem>
-                                                <SelectItem value="bom">Bom</SelectItem>
-                                                <SelectItem value="regular">Regular</SelectItem>
-                                                <SelectItem value="ruim">Necessita Manutenção / Ruim</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </div>
-
-                                    <div className="sm:col-span-2 space-y-2">
-                                        <Label htmlFor="description">Observações</Label>
-                                        <Input id="description" {...form.register("description")} placeholder="Detalhes adicionais..." className="h-12 rounded-xl" />
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-end gap-3 pt-4">
-                                    <Button variant="outline" type="button" onClick={() => setIsDialogOpen(false)} className="h-12 px-6 rounded-xl">Cancelar</Button>
-                                    <Button type="submit" className="h-12 px-8 rounded-xl bg-primary text-primary-foreground" disabled={createMutation.isPending || updateMutation.isPending}>
-                                        {createMutation.isPending || updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar Item"}
-                                    </Button>
-                                </div>
-                            </form>
-                        </DialogContent>
-                    </Dialog>
+                                </form>
+                            </ScrollArea>
+                        </SheetContent>
+                    </Sheet>
                 </div>
 
                 {/* Filters & Stats */}
@@ -503,41 +513,43 @@ export default function Inventario() {
                     </TabsContent>
                 </Tabs>
 
-                {/* Dispose Dialog */}
-                <Dialog open={isDisposeDialogOpen} onOpenChange={setIsDisposeDialogOpen}>
-                    <DialogContent className="sm:max-w-md rounded-[2rem]">
-                        <DialogHeader>
-                            <DialogTitle>Dar Baixa no Item</DialogTitle>
-                            <DialogDescription>
+                {/* Dispose Sheet */}
+                <Sheet open={isDisposeDialogOpen} onOpenChange={setIsDisposeDialogOpen}>
+                    <SheetContent side="right" className="sm:max-w-md w-full h-full p-0 flex flex-col border-none shadow-2xl overflow-hidden">
+                        <SheetHeader className="p-8 bg-amber-500/5 border-b">
+                            <SheetTitle className="text-xl font-bold">Dar Baixa no Item</SheetTitle>
+                            <SheetDescription className="font-semibold text-amber-600">
                                 Informe o motivo para remover <strong>{selectedItem?.name}</strong> do estoque ativo.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                                <Label>Motivo da Baixa</Label>
-                                <Select onValueChange={setDisposeReason}>
-                                    <SelectTrigger className="h-12 rounded-xl">
-                                        <SelectValue placeholder="Selecione o motivo" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="Danificado/Sem Conserto">Danificado (Sem Conserto)</SelectItem>
-                                        <SelectItem value="Doado">Doado</SelectItem>
-                                        <SelectItem value="Vendido">Vendido</SelectItem>
-                                        <SelectItem value="Roubo/Perda">Roubo ou Perda</SelectItem>
-                                        <SelectItem value="Obsoleto">Obsoleto / Substituído</SelectItem>
-                                        <SelectItem value="Outro">Outro</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                            </SheetDescription>
+                        </SheetHeader>
+                        <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-card">
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Motivo da Baixa</Label>
+                                    <Select onValueChange={setDisposeReason}>
+                                        <SelectTrigger className="h-12 rounded-xl border-input bg-background font-semibold">
+                                            <SelectValue placeholder="Selecione o motivo" />
+                                        </SelectTrigger>
+                                        <SelectContent className="rounded-xl">
+                                            <SelectItem value="Danificado/Sem Conserto">Danificado (Sem Conserto)</SelectItem>
+                                            <SelectItem value="Doado">Doado</SelectItem>
+                                            <SelectItem value="Vendido">Vendido</SelectItem>
+                                            <SelectItem value="Roubo/Perda">Roubo ou Perda</SelectItem>
+                                            <SelectItem value="Obsoleto">Obsoleto / Substituído</SelectItem>
+                                            <SelectItem value="Outro">Outro</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex justify-end gap-3">
-                            <Button variant="outline" onClick={() => setIsDisposeDialogOpen(false)} className="rounded-xl h-11">Cancelar</Button>
-                            <Button onClick={handleDisposeConfirm} disabled={!disposeReason || updateMutation.isPending} className="bg-amber-600 hover:bg-amber-700 text-white rounded-xl h-11">
+                        <div className="p-8 border-t bg-card flex gap-4 shrink-0">
+                            <Button variant="outline" onClick={() => setIsDisposeDialogOpen(false)} className="flex-1 h-12 rounded-xl font-semibold">Cancelar</Button>
+                            <Button onClick={handleDisposeConfirm} disabled={!disposeReason || updateMutation.isPending} className="flex-1 h-12 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold shadow-xl shadow-amber-600/20">
                                 {updateMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirmar Baixa"}
                             </Button>
                         </div>
-                    </DialogContent>
-                </Dialog>
+                    </SheetContent>
+                </Sheet>
 
                 {/* Delete Dialog */}
                 <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

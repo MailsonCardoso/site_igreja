@@ -18,6 +18,14 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/components/ui/sheet";
+import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
@@ -272,20 +280,20 @@ export default function SeriesPage() {
                 </div>
 
                 {/* Modal Editor */}
-                <Dialog open={isEditorOpen} onOpenChange={setIsEditorOpen}>
-                    <DialogContent className="sm:max-w-[750px] rounded-[2rem] border-none bg-background shadow-2xl p-0 overflow-hidden">
+                <Sheet open={isEditorOpen} onOpenChange={setIsEditorOpen}>
+                    <SheetContent side="right" className="sm:max-w-[650px] w-full h-full flex flex-col p-0 border-none shadow-2xl">
                         <div className="bg-primary/5 p-6 border-b relative">
                             <div className="flex items-center gap-4">
                                 <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                                     <Folder className="h-7 w-7 text-primary" />
                                 </div>
                                 <div>
-                                    <DialogTitle className="text-xl font-semibold text-foreground">
+                                    <SheetTitle className="text-xl font-semibold text-foreground">
                                         {currentSerie ? "Editar Série" : "Nova Série"}
-                                    </DialogTitle>
-                                    <DialogDescription className="text-muted-foreground font-medium text-xs">
+                                    </SheetTitle>
+                                    <SheetDescription className="text-muted-foreground font-medium text-xs">
                                         Organize suas mensagens em jornadas temáticas consistentes.
-                                    </DialogDescription>
+                                    </SheetDescription>
                                 </div>
                             </div>
                         </div>
@@ -374,8 +382,8 @@ export default function SeriesPage() {
                                 </Button>
                             </div>
                         </div>
-                    </DialogContent>
-                </Dialog>
+                    </SheetContent>
+                </Sheet>
 
                 <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
                     <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl p-8 max-w-[450px]">

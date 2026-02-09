@@ -736,29 +736,29 @@ export default function Secretaria() {
         )}
       </motion.div>
 
-      {/* View Modal */}
-      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0">
-          <DialogHeader className="p-8 pb-0 bg-primary/5">
-            <div className="flex items-center gap-6">
+      {/* View Sheet */}
+      <Sheet open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <SheetContent side="right" className="sm:max-w-4xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
+          <SheetHeader className="p-8 pb-0 bg-primary/5">
+            <div className="flex items-center gap-6 text-left">
               <Avatar className="h-16 w-16 border-4 border-background shadow-sm">
                 <AvatarFallback className="bg-primary/10 text-primary text-2xl font-semibold">
                   {(selectedMember?.name || "?").split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
-                <DialogTitle className="text-2xl font-bold text-foreground">{selectedMember?.name}</DialogTitle>
-                <DialogDescription className="flex items-center gap-3 mt-1">
-                  <Badge className={`${statusStyles[selectedMember?.status] || "bg-muted text-muted-foreground"} font-semibold`}>
+                <SheetTitle className="text-2xl font-bold text-foreground leading-none">{selectedMember?.name}</SheetTitle>
+                <SheetDescription className="flex items-center gap-3 mt-2">
+                  <Badge className={`${statusStyles[selectedMember?.status] || "bg-muted text-muted-foreground"} font-semibold border-0`}>
                     {selectedMember?.status || "visitante"}
                   </Badge>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="font-semibold text-foreground/70">{selectedMember?.role || "Membro"}</span>
-                </DialogDescription>
+                  <span className="text-muted-foreground opacity-50">•</span>
+                  <span className="font-semibold text-foreground/70 uppercase tracking-widest text-[10px]">{selectedMember?.role || "Membro"}</span>
+                </SheetDescription>
               </div>
             </div>
-          </DialogHeader>
-          <ScrollArea className="flex-1">
+          </SheetHeader>
+          <ScrollArea className="flex-1 mt-4">
             <div className="p-8 space-y-10">
               {/* Personal Data */}
               <section>
@@ -841,21 +841,21 @@ export default function Secretaria() {
                       <p className="text-base font-semibold text-foreground leading-tight">
                         {selectedMember?.father?.name || selectedMember?.father_name || "Não informado"}
                       </p>
-                      {selectedMember?.father?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
+                      {selectedMember?.father?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold border-0">Membro</Badge>}
                     </div>
                     <div className="space-y-2">
                       <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">Mãe</p>
                       <p className="text-base font-semibold text-foreground leading-tight">
                         {selectedMember?.mother?.name || selectedMember?.mother_name || "Não informada"}
                       </p>
-                      {selectedMember?.mother?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
+                      {selectedMember?.mother?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold border-0">Membro</Badge>}
                     </div>
                     <div className="space-y-2">
                       <p className="text-[9px] text-primary uppercase font-semibold tracking-wider">Cônjuge</p>
                       <p className="text-base font-semibold text-foreground leading-tight">
                         {selectedMember?.spouse?.name || (selectedMember?.marital_status === 'casado' ? "Nome não vinculado" : "N/A")}
                       </p>
-                      {selectedMember?.spouse?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold">Membro</Badge>}
+                      {selectedMember?.spouse?.name && <Badge variant="outline" className="text-[10px] h-4 bg-primary/10 font-semibold border-0">Membro</Badge>}
                     </div>
                   </div>
 
@@ -887,16 +887,16 @@ export default function Secretaria() {
             </div>
           </ScrollArea>
           <div className="p-8 border-t bg-background flex justify-end gap-4">
-            <Button variant="outline" className="px-8 shadow-sm" onClick={() => setIsViewDialogOpen(false)}>Fechar</Button>
-            <Button className="bg-amber-500 hover:bg-amber-600 text-white px-8 shadow-md transition-all active:scale-95" onClick={() => {
+            <Button variant="outline" className="px-8 shadow-sm h-11" onClick={() => setIsViewDialogOpen(false)}>Fechar</Button>
+            <Button className="bg-amber-500 hover:bg-amber-600 text-white px-8 shadow-md transition-all active:scale-95 h-11" onClick={() => {
               setIsViewDialogOpen(false);
               handleEdit(selectedMember);
             }}>
               <Pencil className="mr-2 h-4 w-4" /> Editar Membro
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
       {/* Delete Confirmation */}
       <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

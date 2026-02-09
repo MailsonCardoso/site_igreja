@@ -24,6 +24,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -612,19 +620,19 @@ export default function Financeiro() {
         </>
       )}
 
-      {/* Modal de Balancete para Impressão */}
-      <Dialog open={isReportOpen} onOpenChange={setIsReportOpen}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-[2.5rem] border-none shadow-2xl">
-          <DialogHeader className="p-8 bg-primary/5 border-b shrink-0 flex flex-row items-center justify-between no-print">
+      {/* Sheet de Balancete para Impressão */}
+      <Sheet open={isReportOpen} onOpenChange={setIsReportOpen}>
+        <SheetContent side="right" className="sm:max-w-4xl w-full h-full p-0 overflow-hidden flex flex-col border-none shadow-2xl">
+          <SheetHeader className="p-8 bg-primary/5 border-b shrink-0 flex flex-row items-center justify-between no-print space-y-0">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <FileText className="h-8 w-8 text-primary" />
               </div>
-              <div>
-                <DialogTitle className="text-xl font-semibold text-foreground">Balancete Mensal</DialogTitle>
-                <DialogDescription className="font-semibold text-primary">
+              <div className="text-left">
+                <SheetTitle className="text-xl font-semibold text-foreground">Balancete Mensal</SheetTitle>
+                <SheetDescription className="font-semibold text-primary">
                   {meses.find(m => m.value === selectedMonth)?.label} / {selectedYear}
-                </DialogDescription>
+                </SheetDescription>
               </div>
             </div>
             <div className="flex gap-2">
@@ -632,7 +640,7 @@ export default function Financeiro() {
                 <Printer className="h-4 w-4" /> Imprimir / PDF
               </Button>
             </div>
-          </DialogHeader>
+          </SheetHeader>
 
           <ScrollArea className="flex-1 print:overflow-visible">
             {isLoadingReport ? (
@@ -746,30 +754,30 @@ export default function Financeiro() {
             ) : null}
           </ScrollArea>
 
-          <DialogFooter className="p-6 border-t bg-card no-print">
+          <div className="p-6 border-t bg-card no-print flex gap-4 justify-end">
             <Button variant="outline" className="h-12 rounded-xl font-semibold px-8" onClick={() => setIsReportOpen(false)}>Fechar Fechamento</Button>
             <Button onClick={handlePrint} className="h-12 rounded-xl bg-primary hover:bg-primary/90 font-semibold px-10 gap-2 shadow-xl shadow-primary/20">
               <Printer className="h-5 w-5" /> Imprimir Balancete
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      {/* New Transaction Dialog */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[500px] rounded-[2.5rem] p-0 border-none shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      {/* New Transaction Sheet */}
+      <Sheet open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <SheetContent side="right" className="sm:max-w-[500px] w-full h-full p-0 border-none shadow-2xl overflow-hidden flex flex-col">
           {/* Header Fixo */}
           <div className={`p-8 border-b flex items-center gap-4 shrink-0 ${transactionType === 'entrada' ? 'bg-success/5' : 'bg-destructive/5'}`}>
             <div className={`h-16 w-16 rounded-2xl flex items-center justify-center border-2 ${transactionType === 'entrada' ? 'bg-success/10 border-success/20 text-success' : 'bg-destructive/10 border-destructive/20 text-destructive'}`}>
               {transactionType === 'entrada' ? <ArrowUpRight className="h-8 w-8" /> : <ArrowDownRight className="h-8 w-8" />}
             </div>
             <div>
-              <DialogTitle className="text-xl font-semibold text-foreground">
+              <SheetTitle className="text-xl font-semibold text-foreground">
                 {editingId ? (transactionType === "entrada" ? "Editar Entrada" : "Editar Saída") : (transactionType === "entrada" ? "Registrar Entrada" : "Registrar Saída")}
-              </DialogTitle>
-              <DialogDescription className="font-medium text-muted-foreground italic">
+              </SheetTitle>
+              <SheetDescription className="font-medium text-muted-foreground italic">
                 {transactionType === "entrada" ? "Adicione dízimos, ofertas ou doações recebidas." : "Registre pagamentos de contas, salários e manutenções."}
-              </DialogDescription>
+              </SheetDescription>
             </div>
           </div>
 
@@ -860,7 +868,7 @@ export default function Financeiro() {
               </div>
             </ScrollArea>
 
-            <DialogFooter className="p-8 border-t border-secondary/10 flex gap-4 shrink-0 bg-card">
+            <div className="p-8 border-t border-secondary/10 flex gap-4 shrink-0 bg-card">
               <Button type="button" variant="outline" className="flex-1 h-12 rounded-xl font-semibold" onClick={() => setIsModalOpen(false)}>
                 Cancelar
               </Button>
@@ -869,19 +877,19 @@ export default function Financeiro() {
                 className={`flex-1 h-12 rounded-xl font-semibold gap-2 shadow-xl ${transactionType === "entrada" ? "bg-success hover:bg-success/90 shadow-success/20" : "bg-destructive hover:bg-destructive/90 shadow-destructive/20"}`}
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
-                {createMutation.isPending || updateMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                {createMutation.isPending || updateMutation.isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <SaveIcon className="h-5 w-5" />}
                 {editingId ? "Atualizar Lançamento" : "Efetivar Lançamento"}
               </Button>
-            </DialogFooter>
+            </div>
           </form>
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
 
     </MainLayout>
   );
 }
 
-function Save(props: any) {
+function SaveIcon(props: any) {
   return (
     <svg
       {...props}
