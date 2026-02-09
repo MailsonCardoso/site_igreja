@@ -12,6 +12,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\InventoryController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Ministries & Rosters
     Route::apiResource('ministries', MinistryController::class);
     Route::apiResource('cells', CellController::class);
+    Route::apiResource('inventory', InventoryController::class);
 
     // Courses & Lessons
     Route::apiResource('courses', CourseController::class);
