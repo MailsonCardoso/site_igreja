@@ -19,6 +19,7 @@ import Altar from "./pages/pastor/Altar";
 import Pulpito from "./pages/pastor/Pulpito";
 import Series from "./pages/pastor/Series";
 import Insights from "./pages/pastor/Insights";
+import AgendaPastoral from "./pages/pastor/AgendaPastoral";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -113,6 +114,11 @@ const App = () => (
           <Route path="/pastor/insights" element={
             <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
               <Insights />
+            </RoleRoute>
+          } />
+          <Route path="/pastor/agenda" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+              <AgendaPastoral />
             </RoleRoute>
           } />
 

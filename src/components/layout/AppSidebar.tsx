@@ -30,6 +30,7 @@ const navigationItems = [
   { name: "Pastoral", href: "/pastor", icon: BookOpen },
   { name: "Séries", href: "/pastor/series", icon: Library },
   { name: "Insights", href: "/pastor/insights", icon: Lightbulb },
+  { name: "Agenda Pastoral", href: "/pastor/agenda", icon: Calendar },
   { name: "Membros", href: "/secretaria", icon: Users },
   { name: "Inventário", href: "/inventario", icon: Package },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
@@ -70,8 +71,8 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
     }
 
     if (normalizedRole === "pastor") {
-      // Pastor vê apenas: Dashboard, Agenda, Pastoral, Séries, Insights, Células, Ensino
-      return ["Dashboard", "Agenda", "Pastoral", "Séries", "Insights", "Células", "Ensino", "Inventário"].includes(item.name);
+      // Pastor vê apenas: Dashboard, Agenda, Pastoral, Séries, Insights, Células, Ensino, Agenda Pastoral
+      return ["Dashboard", "Agenda", "Pastoral", "Séries", "Insights", "Células", "Ensino", "Inventário", "Agenda Pastoral"].includes(item.name);
     }
 
     if (normalizedRole === "secretaria" || normalizedRole === "secretária" || normalizedRole === "secretário") {

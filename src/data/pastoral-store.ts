@@ -37,10 +37,35 @@ export interface Insight {
     sermonId?: number;
 }
 
+export interface PastoralAppointment {
+    id: number;
+    type: "Gabinete" | "Visita";
+    title: string;
+    person: string;
+    memberId?: number;
+    date: string;
+    startTime: string;
+    endTime: string;
+    location: string;
+    notes: string;
+    status: "Confirmado" | "Cancelado" | "Realizado";
+}
+
+export interface AppointmentRequest {
+    id: number;
+    person: string;
+    memberId?: number;
+    type: "Gabinete" | "Visita";
+    reason: string;
+    requestedAt: string;
+}
+
 const STORAGE_KEYS = {
     SERMONS: "pastor_sermons",
     SERIES: "pastor_series",
-    INSIGHTS: "pastor_insights"
+    INSIGHTS: "pastor_insights",
+    APPOINTMENTS: "pastor_appointments",
+    REQUESTS: "pastor_requests"
 };
 
 // Dados Iniciais (Mock) caso o storage esteja vazio
@@ -125,5 +150,26 @@ export const PastoralStore = {
     },
     saveInsights: (insights: Insight[]) => {
         localStorage.setItem(STORAGE_KEYS.INSIGHTS, JSON.stringify(insights));
+    },
+
+    // Agendamentos
+    getAppointments: (): PastoralAppointment[] => {
+        const data = localStorage.getItem(STORAGE_KEYS.APPOINTMENTS);
+        return data ? JSON.parse(data) : [];
+    },
+    saveAppointments: (appointments: PastoralAppointment[]) => {
+        localStorage.setItem(STORAGE_KEYS.APPOINTMENTS, JSON.stringify(appointments));
+    },
+
+    // Solicitações
+    getRequests: (): AppointmentRequest[] => {
+        const data = localStorage.getItem(STORAGE_KEYS.REQUESTS);
+        return data ? JSON.parse(data) : [
+            { id: 1, person: "Maria Silva", memberId: 10, type: "Gabinete", reason: "Orientação pré-nupcial", requestedAt: "2024-02-08" },
+            { id: 2, person: "João Santos", memberId: 11, type: "Visita", reason: "Oração por enfermo na família", requestedAt: "2024-02-09" }
+        ];
+    },
+    saveRequests: (requests: AppointmentRequest[]) => {
+        localStorage.setItem(STORAGE_KEYS.REQUESTS, JSON.stringify(requests));
     }
 };
