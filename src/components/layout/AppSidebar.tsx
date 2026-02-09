@@ -137,10 +137,10 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
               key={item.name}
               to={item.href}
               className={cn(
-                "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200",
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-primary border-l-2 border-sidebar-primary"
-                  : "text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                  ? "bg-sidebar-accent text-sidebar-primary border-l-2 border-sidebar-primary shadow-sm"
+                  : "text-sidebar-muted/90 hover:bg-sidebar-accent hover:text-white"
               )}
             >
               <item.icon
