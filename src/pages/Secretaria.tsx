@@ -40,6 +40,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -318,7 +326,7 @@ export default function Secretaria() {
             <p className="text-sm text-muted-foreground">{filteredMembros.length} pessoas encontradas</p>
           </div>
 
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          <Sheet open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
             if (!open) {
               setIsEditMode(false);
@@ -326,7 +334,7 @@ export default function Secretaria() {
               reset();
             }
           }}>
-            <DialogTrigger asChild>
+            <SheetTrigger asChild>
               <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => {
                 setIsEditMode(false);
                 reset();
@@ -334,20 +342,20 @@ export default function Secretaria() {
                 <Plus className="h-4 w-4" />
                 Novo Membro
               </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-3xl max-h-[95vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl">
+            </SheetTrigger>
+            <SheetContent side="right" className="sm:max-w-3xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
               <div className="bg-primary/5 p-6 border-b">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
                     <User className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <DialogTitle className="text-xl font-semibold text-foreground">
+                    <SheetTitle className="text-xl font-semibold text-foreground">
                       {isEditMode ? "Editar Membro" : "Adicionar Novo Membro"}
-                    </DialogTitle>
-                    <DialogDescription className="text-muted-foreground text-sm">
+                    </SheetTitle>
+                    <SheetDescription className="text-muted-foreground text-sm">
                       {isEditMode ? "Atualize os dados do membro da igreja." : "Preencha os dados do novo membro da igreja em etapas."}
-                    </DialogDescription>
+                    </SheetDescription>
                   </div>
                 </div>
               </div>
@@ -591,8 +599,8 @@ export default function Secretaria() {
                   </Button>
                 </div>
               </form>
-            </DialogContent>
-          </Dialog>
+            </SheetContent>
+          </Sheet>
         </div>
 
         {/* Filters */}
