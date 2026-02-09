@@ -207,21 +207,21 @@ export default function Celulas() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.05 }}
-                className="group rounded-[2rem] bg-card p-6 shadow-xl hover:shadow-2xl transition-all duration-300 border border-border/50 hover:border-primary/30"
+                className="group rounded-[1.5rem] bg-card p-4 shadow-xl hover:shadow-2xl transition-all duration-300 border border-border/50 hover:border-primary/30"
               >
-                <div className="flex items-start justify-between mb-8">
+                <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors leading-none truncate pr-2">{celula.name}</h3>
+                    <h3 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors leading-none truncate pr-2">{celula.name}</h3>
                     <Badge variant="outline" className="mt-2 border-primary/20 text-primary uppercase text-[8px] font-semibold tracking-widest px-2 py-0">
                       {celula.meeting_day || "Não definido"}
                     </Badge>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1">
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={() => handleView(celula)}
-                      className="h-9 w-9 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
+                      className="h-7 w-7 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
@@ -231,53 +231,53 @@ export default function Celulas() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleEdit(celula)}
-                          className="h-9 w-9 rounded-xl hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
+                          className="h-7 w-7 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all duration-200"
                         >
-                          <Pencil className="h-4 w-4" />
+                          <Pencil className="h-3.5 w-3.5" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => handleDelete(celula)}
-                          className="h-9 w-9 rounded-xl hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-200"
+                          className="h-7 w-7 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-200"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </Button>
                       </>
                     )}
                   </div>
                 </div>
 
-                <div className="space-y-5 mb-10">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-500/10 transition-transform group-hover:rotate-6">
-                      <User className="h-6 w-6 text-orange-600" />
+                <div className="space-y-4 mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-500/10 transition-transform group-hover:rotate-6">
+                      <User className="h-4 w-4 text-orange-600" />
                     </div>
                     <div>
-                      <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-widest block">Líder do Grupo</span>
-                      <span className="text-md font-semibold text-foreground block">{celula.leader?.name || "Não atribuído"}</span>
+                      <span className="text-[9px] text-muted-foreground uppercase font-semibold tracking-widest block">Líder do Grupo</span>
+                      <span className="text-sm font-semibold text-foreground block truncate">{celula.leader?.name || "Não atribuído"}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-500/10 transition-transform group-hover:-rotate-6">
-                      <Clock className="h-6 w-6 text-blue-600" />
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 transition-transform group-hover:-rotate-6">
+                      <Clock className="h-4 w-4 text-blue-600" />
                     </div>
                     <div>
-                      <span className="text-[10px] text-muted-foreground uppercase font-semibold tracking-widest block">Dia e Horário</span>
-                      <span className="text-md font-semibold text-foreground block">{celula.meeting_day} às {celula.meeting_time || "19:30"}</span>
+                      <span className="text-[9px] text-muted-foreground uppercase font-semibold tracking-widest block">Dia e Horário</span>
+                      <span className="text-sm font-semibold text-foreground block">{celula.meeting_day} às {celula.meeting_time || "19:30"}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-border/50">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Ocupação Atual</span>
-                    <span className="text-sm font-semibold text-foreground">
-                      {numMembros}/{capacidade} <span className="text-primary ml-1">({Math.round(ocupacao)}%)</span>
+                <div className="pt-4 border-t border-border/50">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Ocupação Atual</span>
+                    <span className="text-xs font-semibold text-foreground">
+                      {numMembros}/{capacidade} <span className="text-primary ml-0.5">({Math.round(ocupacao)}%)</span>
                     </span>
                   </div>
-                  <div className="relative h-3 w-full bg-secondary/30 rounded-full overflow-hidden">
+                  <div className="relative h-2 w-full bg-secondary/30 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min(ocupacao, 100)}%` }}
