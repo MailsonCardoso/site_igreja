@@ -584,9 +584,9 @@ export default function Secretaria() {
                     </TabsContent>
                   </Tabs>
                 </ScrollArea>
-                <div className="flex justify-end gap-3 p-6 border-t mt-auto">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>Cancelar</Button>
-                  <Button type="submit" className="bg-primary text-primary-foreground min-w-[100px]" disabled={createMemberMutation.isPending || updateMemberMutation.isPending}>
+                <div className="flex justify-end gap-3 p-4 border-t mt-auto">
+                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="h-10">Cancelar</Button>
+                  <Button type="submit" className="h-10 bg-primary text-primary-foreground min-w-[100px]" disabled={createMemberMutation.isPending || updateMemberMutation.isPending}>
                     {createMemberMutation.isPending || updateMemberMutation.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Salvar"}
                   </Button>
                 </div>
