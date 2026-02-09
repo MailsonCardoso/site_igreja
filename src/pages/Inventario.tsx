@@ -352,7 +352,7 @@ export default function Inventario() {
                         </div>
                         <div className="text-right">
                             <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground opacity-60">Manutenção</p>
-                            <p className="text-xl font-bold">{items.filter((i: any) => i.condition === 'ruim' || i.condition === 'regular').length}</p>
+                            <p className="text-xl font-bold">{activeItems.filter((i: any) => i.condition === 'ruim').length}</p>
                         </div>
                     </div>
                 </div>
