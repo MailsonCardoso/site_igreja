@@ -13,6 +13,7 @@ import Celulas from "./pages/Celulas";
 import Agenda from "./pages/Agenda";
 import Ministerios from "./pages/Ministerios";
 import Ensino from "./pages/Ensino";
+import Inventario from "./pages/Inventario";
 import Configuracoes from "./pages/Configuracoes";
 import Altar from "./pages/pastor/Altar";
 import Pulpito from "./pages/pastor/Pulpito";
@@ -154,6 +155,11 @@ const App = () => (
           <Route path="/ensino" element={
             <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
               <Ensino />
+            </RoleRoute>
+          } />
+          <Route path="/inventario" element={
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+              <Inventario />
             </RoleRoute>
           } />
 

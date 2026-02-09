@@ -18,6 +18,7 @@ import {
   Library,
   Lightbulb,
   BarChart3,
+  Package,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -30,6 +31,7 @@ const navigationItems = [
   { name: "Séries", href: "/pastor/series", icon: Library },
   { name: "Insights", href: "/pastor/insights", icon: Lightbulb },
   { name: "Membros", href: "/secretaria", icon: Users },
+  { name: "Inventário", href: "/inventario", icon: Package },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
   { name: "Análise Financeira", href: "/financeiro/analise", icon: BarChart3 },
   { name: "Células", href: "/celulas", icon: CircleDot },
@@ -69,7 +71,7 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
 
     if (normalizedRole === "pastor") {
       // Pastor vê apenas: Dashboard, Agenda, Pastoral, Séries, Insights, Células, Ensino
-      return ["Dashboard", "Agenda", "Pastoral", "Séries", "Insights", "Células", "Ensino"].includes(item.name);
+      return ["Dashboard", "Agenda", "Pastoral", "Séries", "Insights", "Células", "Ensino", "Inventário"].includes(item.name);
     }
 
     if (normalizedRole === "secretaria" || normalizedRole === "secretária" || normalizedRole === "secretário") {
