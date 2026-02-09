@@ -117,7 +117,7 @@ const App = () => (
             </RoleRoute>
           } />
           <Route path="/pastor/agenda" element={
-            <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+            <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Secretário", "Secretária"]}>
               <AgendaPastoral />
             </RoleRoute>
           } />

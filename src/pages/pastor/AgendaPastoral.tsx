@@ -236,7 +236,7 @@ export default function AgendaPastoral() {
         .sort((a, b) => {
             const dateA = new Date(`${a.date}T${a.startTime}`);
             const dateB = new Date(`${b.date}T${b.startTime}`);
-            return dateA.getTime() - dateB.getTime();
+            return dateB.getTime() - dateA.getTime();
         });
 
     return (

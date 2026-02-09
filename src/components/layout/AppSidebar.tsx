@@ -71,13 +71,13 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
     }
 
     if (normalizedRole === "pastor") {
-      // Pastor vê apenas: Dashboard, Agenda, Pastoral, Séries, Insights, Células, Ensino, Agenda Pastoral
+      // Pastor vê apenas: Dashboard, Agenda, Pastoral, Séries, Insights, Células, Ensino, Inventário, Agenda Pastoral
       return ["Dashboard", "Agenda", "Pastoral", "Séries", "Insights", "Células", "Ensino", "Inventário", "Agenda Pastoral"].includes(item.name);
     }
 
     if (normalizedRole === "secretaria" || normalizedRole === "secretária" || normalizedRole === "secretário") {
-      // Secretaria não vê Financeiro nem Configurações
-      return !["Financeiro", "Análise Financeira", "Configurações"].includes(item.name);
+      // Secretaria vê: Dashboard, Membros, Inventário, Células, Agenda, Ministérios, Ensino, Agenda Pastoral
+      return ["Dashboard", "Membros", "Inventário", "Células", "Agenda", "Ministérios", "Ensino", "Agenda Pastoral"].includes(item.name);
     }
 
     if (normalizedRole === "financeiro") {

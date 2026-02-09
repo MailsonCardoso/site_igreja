@@ -22,6 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { format, isAfter, isBefore, addDays, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { PastoralStore } from "@/data/pastoral-store";
 
 interface PageHeaderProps {
   title: string;
@@ -67,14 +68,37 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
   });
 
   // Filtrar eventos nos próximos 3 dias
-  const urgentEvents = (eventos || []).filter((evento: any) => {
-    const eventDate = new Date(evento.start_date);
+  const urgentEvents = (() => {
     const today = startOfDay(new Date());
     const limitDate = addDays(today, 3);
 
-    // Evento é entre agora e 3 dias no futuro
-    return isAfter(eventDate, today) && isBefore(eventDate, limitDate);
-  }).sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+    // 1. Eventos da Igreja (da API)
+    const urgentChurchEvents = (eventos || []).filter((evento: any) => {
+      const eventDate = new Date(evento.start_date);
+      return isAfter(eventDate, today) && isBefore(eventDate, limitDate);
+    }).map((e: any) => ({
+      ...e,
+      type: "church",
+      sortDate: new Date(e.start_date),
+      displayDate: e.start_date
+    }));
+
+    // 2. Agendamentos Pastorais (do LocalStorage/PastoralStore)
+    const appointments = PastoralStore.getAppointments();
+    const urgentPastoralEvents = appointments.filter((app: any) => {
+      const eventDate = new Date(`${app.date}T${app.startTime}`);
+      return app.status === "Confirmado" && isAfter(eventDate, today) && isBefore(eventDate, limitDate);
+    }).map((a: any) => ({
+      ...a,
+      id: `pastoral-${a.id}`, // ID único para não colidir com eventos da API
+      type: "pastoral",
+      sortDate: new Date(`${a.date}T${a.startTime}`),
+      displayDate: `${a.date}T${a.startTime}`
+    }));
+
+    // Retorna a união ordenada por data
+    return [...urgentChurchEvents, ...urgentPastoralEvents].sort((a, b) => a.sortDate.getTime() - b.sortDate.getTime());
+  })();
 
   // Eventos não lidos (que aparecerão no badge)
   const unreadUrgentEvents = urgentEvents.filter((e: any) => !readEventIds.includes(e.id));
@@ -166,19 +190,35 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
                 ) : (
                   urgentEvents.map((evento: any) => (
                     <DropdownMenuItem key={evento.id} asChild>
-                      <Link to="/agenda" className="flex flex-col items-start gap-1 p-3 rounded-xl cursor-pointer hover:bg-primary/5 focus:bg-primary/5 transition-colors">
+                      <Link
+                        to={evento.type === "pastoral" ? "/pastor/agenda" : "/agenda"}
+                        className="flex flex-col items-start gap-1 p-3 rounded-xl cursor-pointer hover:bg-primary/5 focus:bg-primary/5 transition-colors"
+                      >
                         <div className="flex w-full items-center justify-between">
-                          <span className="text-xs font-bold text-foreground line-clamp-1">{evento.title}</span>
+                          <div className="flex items-center gap-2">
+                            {evento.type === "pastoral" ? (
+                              <div className="h-5 w-5 rounded-md bg-indigo-500/10 flex items-center justify-center">
+                                <Calendar className="h-3 w-3 text-indigo-600" />
+                              </div>
+                            ) : (
+                              <div className="h-5 w-5 rounded-md bg-amber-500/10 flex items-center justify-center">
+                                <Calendar className="h-3 w-3 text-amber-600" />
+                              </div>
+                            )}
+                            <span className="text-xs font-bold text-foreground line-clamp-1">{evento.title}</span>
+                          </div>
                           <span className="text-[9px] font-bold uppercase text-primary/60">
-                            {format(new Date(evento.start_date), "dd/MM")}
+                            {format(new Date(evento.displayDate), "dd/MM")}
                           </span>
                         </div>
-                        <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground">
-                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(evento.start_date), "HH:mm")}</span>
-                          <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {format(new Date(evento.start_date), "EEEE", { locale: ptBR })}</span>
+                        <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground ml-7">
+                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(evento.displayDate), "HH:mm")}</span>
+                          <span className="flex items-center gap-1">
+                            {evento.type === "pastoral" ? "Atendimento Pastoral" : format(new Date(evento.displayDate), "EEEE", { locale: ptBR })}
+                          </span>
                         </div>
-                        <div className="mt-1 flex items-center gap-1 text-[9px] font-bold text-primary uppercase tracking-wider">
-                          Ver na agenda <ArrowRight className="h-2 w-2" />
+                        <div className="mt-1 flex items-center gap-1 text-[9px] font-bold text-primary uppercase tracking-wider ml-7">
+                          {evento.type === "pastoral" ? "Ver Agenda Pastoral" : "Ver na agenda"} <ArrowRight className="h-2 w-2" />
                         </div>
                       </Link>
                     </DropdownMenuItem>
