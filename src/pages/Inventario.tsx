@@ -358,11 +358,17 @@ export default function Inventario() {
                 </div>
 
                 <Tabs defaultValue="active" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2 mb-8 bg-secondary/20 p-1 rounded-2xl">
-                        <TabsTrigger value="active" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-300">
+                    <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted p-1 rounded-xl h-auto">
+                        <TabsTrigger
+                            value="active"
+                            className="rounded-lg py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 font-medium"
+                        >
                             Em Estoque ({activeItems.length})
                         </TabsTrigger>
-                        <TabsTrigger value="disposed" className="rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all duration-300">
+                        <TabsTrigger
+                            value="disposed"
+                            className="rounded-lg py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-300 font-medium"
+                        >
                             Histórico / Baixados ({disposedItems.length})
                         </TabsTrigger>
                     </TabsList>
