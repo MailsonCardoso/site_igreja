@@ -603,21 +603,21 @@ export default function Ensino() {
         </SheetContent>
       </Sheet>
 
-      {/* Sheet de Gerenciamento */}
-      <Sheet open={isManageOpen} onOpenChange={setIsManageOpen}>
-        <SheetContent side="right" className="sm:max-w-[95vw] w-full h-full p-0 overflow-hidden border-none shadow-2xl flex flex-col">
+      {/* Modal de Gerenciamento - Revertido para Dialog como solicitado */}
+      <Dialog open={isManageOpen} onOpenChange={setIsManageOpen}>
+        <DialogContent className="sm:max-w-[85vw] w-full h-[90vh] p-0 overflow-hidden border-none shadow-2xl flex flex-col rounded-[2.5rem]">
           <div className="bg-primary/5 p-6 border-b shrink-0">
             <div className="flex items-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <ClipboardCheck className="h-7 w-7 text-primary" />
               </div>
               <div className="flex-1">
-                <SheetTitle className="text-xl font-semibold text-foreground">
+                <DialogTitle className="text-xl font-semibold text-foreground">
                   Gerenciar: {currentCourse?.name}
-                </SheetTitle>
-                <SheetDescription className="text-muted-foreground font-medium text-xs">
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground font-medium text-xs">
                   Gerencie aulas, alunos e frequência do curso.
-                </SheetDescription>
+                </DialogDescription>
               </div>
             </div>
           </div>
@@ -855,8 +855,8 @@ export default function Ensino() {
               </TabsContent>
             </ScrollArea>
           </Tabs>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
     </MainLayout>
   );
 }
