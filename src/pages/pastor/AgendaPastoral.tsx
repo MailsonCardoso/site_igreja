@@ -78,9 +78,11 @@ export default function AgendaPastoral() {
 
     // Estados do Modal
     const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [isViewSheetOpen, setIsViewSheetOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [appointmentToDelete, setAppointmentToDelete] = useState<number | null>(null);
     const [editingAppointment, setEditingAppointment] = useState<PastoralAppointment | null>(null);
+    const [viewingAppointment, setViewingAppointment] = useState<PastoralAppointment | null>(null);
     const [selectedRequest, setSelectedRequest] = useState<AppointmentRequest | null>(null);
 
     // Estado do Form
@@ -141,6 +143,7 @@ export default function AgendaPastoral() {
     const handleScheduleRequest = (request: AppointmentRequest) => {
         setSelectedRequest(request);
         setEditingAppointment(null);
+        setViewingAppointment(null);
         setFormData({
             type: request.type,
             title: `Atendimento: ${request.reason}`,
@@ -154,6 +157,23 @@ export default function AgendaPastoral() {
             status: "Confirmado"
         });
         setIsSheetOpen(true);
+    };
+
+    const handleView = (appointment: PastoralAppointment) => {
+        setViewingAppointment(appointment);
+        setIsViewSheetOpen(true);
+    };
+
+    const handleToggleStatus = (id: number) => {
+        const updated = appointments.map(a => {
+            if (a.id === id) {
+                const newStatus = a.status === "Realizado" ? "Confirmado" : "Realizado";
+                toast.success(newStatus === "Realizado" ? "Atendimento marcado como realizado!" : "Atendimento reaberto.");
+                return { ...a, status: newStatus as any };
+            }
+            return a;
+        });
+        setAppointments(updated);
     };
 
     const handleSave = (e: React.FormEvent) => {
@@ -319,8 +339,11 @@ export default function AgendaPastoral() {
                                 </div>
                             ) : (
                                 filteredAppointments.map((app) => (
-                                    <Card key={app.id} className="group overflow-hidden border-none shadow-md hover:shadow-lg transition-all rounded-[2rem] bg-card">
-                                        <CardContent className="p-0 flex flex-col md:flex-row">
+                                    <Card key={app.id} className={cn(
+                                        "group overflow-hidden border-none shadow-md hover:shadow-lg transition-all rounded-[2rem] bg-card",
+                                        app.status === "Realizado" && "opacity-60 grayscale-[0.3]"
+                                    )}>
+                                        <CardContent className="p-0 flex flex-col md:flex-row cursor-pointer" onClick={() => handleView(app)}>
                                             {/* Faixa lateral de horario */}
                                             <div className={cn(
                                                 "md:w-32 p-4 md:p-6 flex md:flex-col items-center justify-center gap-2 border-b md:border-b-0 md:border-r border-border/50",
@@ -362,15 +385,16 @@ export default function AgendaPastoral() {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        onClick={() => handleEdit(app)}
+                                                        onClick={(e) => { e.stopPropagation(); handleEdit(app); }}
                                                         className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                                                        disabled={app.status === "Realizado"}
                                                     >
                                                         <Edit2 className="h-5 w-5" />
                                                     </Button>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        onClick={() => handleDeleteClick(app.id)}
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(app.id); }}
                                                         className="h-10 w-10 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
                                                     >
                                                         <Trash2 className="h-5 w-5" />
@@ -379,7 +403,14 @@ export default function AgendaPastoral() {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-10 w-10 rounded-xl hover:bg-green-500/10 hover:text-green-600 transition-all"
+                                                        onClick={(e) => { e.stopPropagation(); handleToggleStatus(app.id); }}
+                                                        className={cn(
+                                                            "h-10 w-10 rounded-xl transition-all",
+                                                            app.status === "Realizado"
+                                                                ? "bg-green-500 text-white hover:bg-green-600"
+                                                                : "hover:bg-green-500/10 hover:text-green-600"
+                                                        )}
+                                                        title={app.status === "Realizado" ? "Reabrir Atendimento" : "Marcar como Realizado"}
                                                     >
                                                         <CheckCircle2 className="h-5 w-5" />
                                                     </Button>
@@ -569,6 +600,114 @@ export default function AgendaPastoral() {
                             </div>
                         </form>
                     </ScrollArea>
+                </SheetContent>
+            </Sheet>
+
+            {/* Sheet de Visualização */}
+            <Sheet open={isViewSheetOpen} onOpenChange={setIsViewSheetOpen}>
+                <SheetContent side="right" className="sm:max-w-[500px] w-full h-full p-0 overflow-hidden border-none shadow-2xl flex flex-col">
+                    {viewingAppointment && (
+                        <>
+                            <div className={cn(
+                                "p-8 flex flex-col gap-4 shrink-0",
+                                viewingAppointment.type === "Gabinete" ? "bg-indigo-500/10" : "bg-amber-500/10"
+                            )}>
+                                <div className="flex justify-between items-start">
+                                    <div className={cn(
+                                        "h-14 w-14 rounded-2xl flex items-center justify-center text-white",
+                                        viewingAppointment.type === "Gabinete" ? "bg-indigo-500" : "bg-amber-500"
+                                    )}>
+                                        <Calendar className="h-7 w-7" />
+                                    </div>
+                                    <Badge className={cn(
+                                        "rounded-full px-4 py-1 font-bold text-xs uppercase",
+                                        viewingAppointment.status === "Realizado" ? "bg-green-500 text-white" : "bg-primary text-white"
+                                    )}>
+                                        {viewingAppointment.status}
+                                    </Badge>
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-black text-foreground">{viewingAppointment.title}</h2>
+                                    <p className="font-bold text-primary flex items-center gap-2">
+                                        <User className="h-4 w-4" />
+                                        {viewingAppointment.person}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <ScrollArea className="flex-1">
+                                <div className="p-8 space-y-8">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] items-center gap-1 uppercase font-bold text-muted-foreground flex tracking-wider">
+                                                <Calendar className="h-3 w-3" /> Data
+                                            </p>
+                                            <p className="font-bold text-foreground">
+                                                {format(new Date(viewingAppointment.date), "dd 'de' MMMM, yyyy", { locale: ptBR })}
+                                            </p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] items-center gap-1 uppercase font-bold text-muted-foreground flex tracking-wider">
+                                                <Clock className="h-3 w-3" /> Horário
+                                            </p>
+                                            <p className="font-bold text-foreground">
+                                                {viewingAppointment.startTime} {viewingAppointment.endTime && `às ${viewingAppointment.endTime}`}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] items-center gap-1 uppercase font-bold text-muted-foreground flex tracking-wider">
+                                            <MapPin className="h-3 w-3" /> Localização
+                                        </p>
+                                        <p className="font-bold text-foreground">
+                                            {viewingAppointment.location}
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] items-center gap-1 uppercase font-bold text-muted-foreground flex tracking-wider">
+                                            <ClipboardList className="h-3 w-3" /> Tipo
+                                        </p>
+                                        <p className="font-bold text-foreground">
+                                            {viewingAppointment.type === "Gabinete" ? "Gabinete Pastoral" : "Visita Domiciliar / Hospitalar"}
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-muted/30 p-6 rounded-3xl space-y-3">
+                                        <p className="text-[10px] items-center gap-1 uppercase font-bold text-muted-foreground flex tracking-wider">
+                                            <MessageSquare className="h-3 w-3" /> Notas e Observações
+                                        </p>
+                                        <p className="text-sm font-medium leading-relaxed text-foreground/80 whitespace-pre-wrap">
+                                            {viewingAppointment.notes || "Nenhuma observação registrada."}
+                                        </p>
+                                    </div>
+
+                                    <div className="flex gap-4 pt-4">
+                                        <Button
+                                            variant="outline"
+                                            className="flex-1 h-12 rounded-2xl font-bold uppercase tracking-tight gap-2"
+                                            onClick={() => setIsViewSheetOpen(false)}
+                                        >
+                                            FECHAR
+                                        </Button>
+                                        {viewingAppointment.status !== "Realizado" && (
+                                            <Button
+                                                className="flex-1 h-12 rounded-2xl font-bold uppercase tracking-tight gap-2 bg-primary hover:bg-primary/90"
+                                                onClick={() => {
+                                                    setIsViewSheetOpen(false);
+                                                    handleEdit(viewingAppointment);
+                                                }}
+                                            >
+                                                <Edit2 className="h-4 w-4" />
+                                                EDITAR
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                            </ScrollArea>
+                        </>
+                    )}
                 </SheetContent>
             </Sheet>
 
