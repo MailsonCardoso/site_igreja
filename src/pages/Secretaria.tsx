@@ -335,7 +335,7 @@ export default function Secretaria() {
                 Novo Membro
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl">
+            <DialogContent className="sm:max-w-3xl max-h-[95vh] overflow-hidden flex flex-col p-0 rounded-[2rem] border-none shadow-2xl">
               <div className="bg-primary/5 p-6 border-b">
                 <div className="flex items-center gap-4">
                   <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
