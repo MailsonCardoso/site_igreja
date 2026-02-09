@@ -58,6 +58,16 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 export default function AgendaPastoral() {
@@ -68,6 +78,8 @@ export default function AgendaPastoral() {
 
     // Estados do Modal
     const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [appointmentToDelete, setAppointmentToDelete] = useState<number | null>(null);
     const [editingAppointment, setEditingAppointment] = useState<PastoralAppointment | null>(null);
     const [selectedRequest, setSelectedRequest] = useState<AppointmentRequest | null>(null);
 
@@ -180,10 +192,17 @@ export default function AgendaPastoral() {
         setIsSheetOpen(false);
     };
 
-    const handleDelete = (id: number) => {
-        if (confirm("Deseja realmente excluir este agendamento?")) {
-            setAppointments(appointments.filter(a => a.id !== id));
+    const handleDeleteClick = (id: number) => {
+        setAppointmentToDelete(id);
+        setIsDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (appointmentToDelete) {
+            setAppointments(appointments.filter(a => a.id !== appointmentToDelete));
             toast.success("Agendamento removido.");
+            setIsDeleteDialogOpen(false);
+            setAppointmentToDelete(null);
         }
     };
 
@@ -351,7 +370,7 @@ export default function AgendaPastoral() {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        onClick={() => handleDelete(app.id)}
+                                                        onClick={() => handleDeleteClick(app.id)}
                                                         className="h-10 w-10 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
                                                     >
                                                         <Trash2 className="h-5 w-5" />
@@ -552,6 +571,32 @@ export default function AgendaPastoral() {
                     </ScrollArea>
                 </SheetContent>
             </Sheet>
+
+            {/* Modal de Confirmação de Exclusão */}
+            <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialogContent className="rounded-[2rem] border-none shadow-2xl">
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="text-xl font-bold flex items-center gap-2">
+                            <AlertCircle className="h-5 w-5 text-destructive" />
+                            Confirmar Exclusão
+                        </AlertDialogTitle>
+                        <AlertDialogDescription className="font-medium text-muted-foreground">
+                            Tem certeza que deseja excluir este agendamento? Esta ação não poderá ser desfeita.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-3">
+                        <AlertDialogCancel className="rounded-xl font-bold h-11 border-secondary/20">
+                            CANCELAR
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmDelete}
+                            className="rounded-xl font-bold h-11 bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                            EXCLUIR AGENDAMENTO
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </MainLayout>
     );
 }
