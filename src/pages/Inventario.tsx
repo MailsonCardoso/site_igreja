@@ -390,16 +390,16 @@ export default function Inventario() {
                                             initial={{ opacity: 0, scale: 0.95 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             transition={{ duration: 0.3, delay: index * 0.05 }}
-                                            className="group bg-card hover:bg-secondary/5 rounded-[2rem] border border-border/40 p-6 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col"
+                                            className="group bg-card hover:bg-secondary/5 rounded-[1.5rem] border border-border/40 p-4 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col"
                                         >
-                                            <div className="flex justify-between items-start mb-6">
-                                                <div className="h-14 w-14 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                                                    <Icon className="h-7 w-7 text-muted-foreground group-hover:text-primary transition-colors" />
+                                            <div className="flex justify-between items-start mb-4">
+                                                <div className="h-10 w-10 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                                    <Icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                                                 </div>
 
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-secondary">
+                                                        <Button variant="ghost" size="icon" className="h-7 w-7 rounded-full hover:bg-secondary -mr-2 -mt-2">
                                                             <MoreHorizontal className="h-4 w-4" />
                                                         </Button>
                                                     </DropdownMenuTrigger>
@@ -418,24 +418,24 @@ export default function Inventario() {
                                                 </DropdownMenu>
                                             </div>
 
-                                            <div className="space-y-3 flex-1">
+                                            <div className="space-y-2 flex-1">
                                                 <div className="flex items-center justify-between">
-                                                    <Badge variant="outline" className={`rounded-full px-3 py-0 border-0 ${conditions[item.condition].class}`}>
+                                                    <Badge variant="outline" className={`rounded-full px-2 py-0 border-0 text-[10px] h-5 ${conditions[item.condition].class}`}>
                                                         {conditions[item.condition].label}
                                                     </Badge>
-                                                    <span className="text-xs font-bold text-muted-foreground opacity-50 uppercase tracking-widest">{item.category}</span>
+                                                    <span className="text-[10px] font-bold text-muted-foreground opacity-50 uppercase tracking-widest">{item.category}</span>
                                                 </div>
 
-                                                <h3 className="text-lg font-bold text-foreground leading-tight">{item.name}</h3>
-                                                <p className="text-sm text-muted-foreground line-clamp-2 min-h-[40px]">{item.description || "Sem descrição adicional."}</p>
+                                                <h3 className="text-base font-bold text-foreground leading-tight">{item.name}</h3>
+                                                <p className="text-xs text-muted-foreground line-clamp-2 min-h-[32px]">{item.description || "Sem descrição adicional."}</p>
 
-                                                <div className="pt-4 border-t border-border/40 flex items-center justify-between">
-                                                    <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                                                        <MapPin className="h-3.5 w-3.5" />
+                                                <div className="pt-3 border-t border-border/40 flex items-center justify-between">
+                                                    <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
+                                                        <MapPin className="h-3 w-3" />
                                                         {item.location || "Indefinido"}
                                                     </div>
-                                                    <div className="bg-primary/5 px-3 py-1 rounded-full border border-primary/10">
-                                                        <span className="text-xs font-bold text-primary">Qtd: {item.quantity}</span>
+                                                    <div className="bg-primary/5 px-2 py-0.5 rounded-full border border-primary/10">
+                                                        <span className="text-[10px] font-bold text-primary">Qtd: {item.quantity}</span>
                                                     </div>
                                                 </div>
                                             </div>
