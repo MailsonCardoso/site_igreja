@@ -234,7 +234,7 @@ export default function AgendaPastoral() {
             startTime: "",
             endTime: "",
             location: request.type === "Gabinete" ? "Gabinete Pastoral" : "Residência do Membro",
-            notes: `Solicitado em: ${request.requestedAt}. Motivo: ${request.reason}`,
+            notes: `Solicitado em: ${format(new Date(request.requestedAt), "dd/MM/yyyy HH:mm")}. Motivo: ${request.reason}`,
             status: "Confirmado"
         });
         setIsSheetOpen(true);
