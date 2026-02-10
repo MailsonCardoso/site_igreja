@@ -67,6 +67,8 @@ export default function Financeiro() {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState<number | null>(null);
   const [transactionType, setTransactionType] = useState<"entrada" | "saida">("entrada");
 
   const [selectedMonth, setSelectedMonth] = useState((new Date().getMonth() + 1).toString());
@@ -161,6 +163,8 @@ export default function Financeiro() {
         title: "Sucesso!",
         description: "Transação excluída com sucesso.",
       });
+      setIsDeleteDialogOpen(false);
+      setTransactionToDelete(null);
     },
     onError: (error: any) => {
       toast({
@@ -218,8 +222,13 @@ export default function Financeiro() {
   };
 
   const handleDelete = (id: number) => {
-    if (confirm("Deseja realmente excluir esta transação?")) {
-      deleteMutation.mutate(id);
+    setTransactionToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (transactionToDelete) {
+      deleteMutation.mutate(transactionToDelete);
     }
   };
 
@@ -919,6 +928,38 @@ export default function Financeiro() {
           </form>
         </SheetContent>
       </Sheet>
+
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px] border-none shadow-2xl bg-card rounded-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-destructive">
+              <Trash2 className="h-6 w-6" />
+              Confirmar Exclusão
+            </DialogTitle>
+            <DialogDescription className="text-base font-medium text-muted-foreground pt-2">
+              Tem certeza que deseja excluir esta transação? Essa ação não pode ser desfeita e afetará o saldo atual.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 mt-4">
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+              className="h-11 rounded-xl font-semibold border-secondary/50"
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+              className="h-11 rounded-xl font-semibold gap-2 shadow-lg shadow-destructive/20"
+            >
+              {deleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+              Excluir Permanentemente
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </MainLayout>
   );
