@@ -88,7 +88,8 @@ export default function Configuracoes() {
     name: "",
     email: "",
     role: "",
-    status: ""
+    status: "",
+    password: ""
   });
 
   // User Tab State
@@ -255,7 +256,8 @@ export default function Configuracoes() {
       name: user.name,
       email: user.email,
       role: user.role || "Administrador",
-      status: user.status || "Ativo"
+      status: user.status || "Ativo",
+      password: ""
     });
     setIsEditModalOpen(true);
   };
@@ -833,7 +835,21 @@ export default function Configuracoes() {
                 </div>
               </div>
 
-              <p className="text-[10px] text-muted-foreground italic font-medium">* A senha não pode ser alterada por este painel por motivos de segurança.</p>
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Senha (Deixe em branco para não alterar)</Label>
+                <div className="relative">
+                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    value={editFormData.password}
+                    onChange={(e) => setEditFormData({ ...editFormData, password: e.target.value })}
+                    placeholder="Nova senha ou CPF"
+                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
+                  />
+                </div>
+              </div>
+
+              <p className="text-[10px] text-muted-foreground italic font-medium">* Preencha apenas se desejar resetar a senha do usuário.</p>
             </div>
 
             <div className="p-6 pt-4 gap-3 border-t flex shrink-0">
