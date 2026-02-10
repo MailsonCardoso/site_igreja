@@ -616,129 +616,131 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          <form onSubmit={onUserSubmit} className="p-6 space-y-4 bg-card">
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={onUserSubmit} className="flex-1 flex flex-col overflow-hidden">
+            <ScrollArea className="flex-1">
+              <div className="p-6 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Papel / Função</Label>
+                    <Select
+                      onValueChange={(v) => {
+                        setUserFormData({ ...userFormData, role: v, memberId: "", name: "", email: "", password: "" });
+                        fetchMembersByRole(v);
+                      }}
+                      value={userFormData.role}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="Administrador" className="font-semibold">Administrador</SelectItem>
+                        <SelectItem value="Pastor" className="font-semibold">Pastor</SelectItem>
+                        <SelectItem value="Financeiro" className="font-semibold">Financeiro</SelectItem>
+                        <SelectItem value="Secretaria" className="font-semibold">Secretaria</SelectItem>
+                        <SelectItem value="Lider de pequeno grupo" className="font-semibold">Líder de Pequeno Grupo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Status</Label>
+                    <Select
+                      onValueChange={(v) => setUserFormData({ ...userFormData, status: v })}
+                      value={userFormData.status}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="Ativo" className="font-semibold text-success">Ativo</SelectItem>
+                        <SelectItem value="Inativo" className="font-semibold text-destructive">Inativo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {availableMembers.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="space-y-2"
+                  >
+                    <Label className="text-[10px] uppercase font-semibold tracking-wider text-primary ml-1">Selecionar Membro ({userFormData.role})</Label>
+                    <Select
+                      onValueChange={handleMemberSelect}
+                      value={userFormData.memberId}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl bg-primary/5 border-primary/30 font-semibold text-primary">
+                        {isLoadingMembers ? <Loader2 className="h-4 w-4 animate-spin" /> : <SelectValue placeholder="Escolha um membro da lista" />}
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        {availableMembers.map((member) => (
+                          <SelectItem key={member.id} value={member.id.toString()} className="font-medium">
+                            {member.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-[9px] text-muted-foreground ml-1 font-semibold italic">* Exibindo apenas membros com cargo '{userFormData.role}' e CPF cadastrado.</p>
+                  </motion.div>
+                )}
+
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Papel / Função</Label>
-                  <Select
-                    onValueChange={(v) => {
-                      setUserFormData({ ...userFormData, role: v, memberId: "", name: "", email: "", password: "" });
-                      fetchMembersByRole(v);
-                    }}
-                    value={userFormData.role}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="Administrador" className="font-semibold">Administrador</SelectItem>
-                      <SelectItem value="Pastor" className="font-semibold">Pastor</SelectItem>
-                      <SelectItem value="Financeiro" className="font-semibold">Financeiro</SelectItem>
-                      <SelectItem value="Secretaria" className="font-semibold">Secretaria</SelectItem>
-                      <SelectItem value="Lider de pequeno grupo" className="font-semibold">Líder de Pequeno Grupo</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
+                    Nome Completo
+                    {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-primary/10 text-primary border-none">VINCULADO</Badge>}
+                  </Label>
+                  <div className="relative">
+                    <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      value={userFormData.name}
+                      onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
+                      placeholder="Ex: João da Silva"
+                      className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10' : ''}`}
+                      required
+                      readOnly={!!userFormData.memberId}
+                    />
+                  </div>
                 </div>
+
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Status</Label>
-                  <Select
-                    onValueChange={(v) => setUserFormData({ ...userFormData, status: v })}
-                    value={userFormData.status}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="Ativo" className="font-semibold text-success">Ativo</SelectItem>
-                      <SelectItem value="Inativo" className="font-semibold text-destructive">Inativo</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
+                    E-mail de Login
+                    {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-semibold">AUTOMÁTICO</Badge>}
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      value={userFormData.email}
+                      onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
+                      placeholder="joao@igreja.com"
+                      className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
+                      required
+                      readOnly={!!userFormData.memberId}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
+                    Senha Provisória (CPF)
+                    {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-semibold">GERADA PELO CPF</Badge>}
+                  </Label>
+                  <div className="relative">
+                    <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      value={userFormData.password}
+                      onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
+                      placeholder="Senha ou CPF sem pontos"
+                      className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
+                      required
+                      readOnly={!!userFormData.memberId}
+                    />
+                  </div>
                 </div>
               </div>
-
-              {availableMembers.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-2"
-                >
-                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-primary ml-1">Selecionar Membro ({userFormData.role})</Label>
-                  <Select
-                    onValueChange={handleMemberSelect}
-                    value={userFormData.memberId}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-primary/5 border-primary/30 font-semibold text-primary">
-                      {isLoadingMembers ? <Loader2 className="h-4 w-4 animate-spin" /> : <SelectValue placeholder="Escolha um membro da lista" />}
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      {availableMembers.map((member) => (
-                        <SelectItem key={member.id} value={member.id.toString()} className="font-medium">
-                          {member.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-[9px] text-muted-foreground ml-1 font-semibold italic">* Exibindo apenas membros com cargo '{userFormData.role}' e CPF cadastrado.</p>
-                </motion.div>
-              )}
-
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
-                  Nome Completo
-                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-primary/10 text-primary border-none">VINCULADO</Badge>}
-                </Label>
-                <div className="relative">
-                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    value={userFormData.name}
-                    onChange={(e) => setUserFormData({ ...userFormData, name: e.target.value })}
-                    placeholder="Ex: João da Silva"
-                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10' : ''}`}
-                    required
-                    readOnly={!!userFormData.memberId}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
-                  E-mail de Login
-                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-semibold">AUTOMÁTICO</Badge>}
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    value={userFormData.email}
-                    onChange={(e) => setUserFormData({ ...userFormData, email: e.target.value })}
-                    placeholder="joao@igreja.com"
-                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
-                    required
-                    readOnly={!!userFormData.memberId}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">
-                  Senha Provisória (CPF)
-                  {userFormData.memberId && <Badge variant="secondary" className="ml-2 text-[8px] h-4 bg-success/10 text-success border-none font-semibold">GERADA PELO CPF</Badge>}
-                </Label>
-                <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    value={userFormData.password}
-                    onChange={(e) => setUserFormData({ ...userFormData, password: e.target.value })}
-                    placeholder="Senha ou CPF sem pontos"
-                    className={`h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30 transition-all ${userFormData.memberId ? 'bg-secondary/10 opacity-70' : ''}`}
-                    required
-                    readOnly={!!userFormData.memberId}
-                  />
-                </div>
-              </div>
-            </div>
+            </ScrollArea>
 
             <div className="p-6 pt-4 gap-3 border-t flex shrink-0">
               <Button type="button" variant="ghost" onClick={() => setIsUserModalOpen(false)} className="flex-1 font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
@@ -755,7 +757,6 @@ export default function Configuracoes() {
           </form>
         </SheetContent>
       </Sheet >
-      {/* Sheet Editar Usuário */}
       <Sheet open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
         <SheetContent side="right" className="sm:max-w-[500px] w-full h-full p-0 overflow-hidden border-none shadow-2xl flex flex-col">
           <div className="p-6 bg-primary/5 flex items-center gap-4 border-b shrink-0">
@@ -770,89 +771,91 @@ export default function Configuracoes() {
             </div>
           </div>
 
-          <form onSubmit={onEditSubmit} className="p-6 space-y-4 bg-card">
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={onEditSubmit} className="flex-1 flex flex-col overflow-hidden">
+            <ScrollArea className="flex-1">
+              <div className="p-6 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Papel / Função</Label>
+                    <Select
+                      onValueChange={(v) => setEditFormData({ ...editFormData, role: v })}
+                      value={editFormData.role}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="Administrador" className="font-semibold">Administrador</SelectItem>
+                        <SelectItem value="Pastor" className="font-semibold">Pastor</SelectItem>
+                        <SelectItem value="Financeiro" className="font-semibold">Financeiro</SelectItem>
+                        <SelectItem value="Secretaria" className="font-semibold">Secretaria</SelectItem>
+                        <SelectItem value="Lider de pequeno grupo" className="font-semibold">Líder de Pequeno Grupo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Status</Label>
+                    <Select
+                      onValueChange={(v) => setEditFormData({ ...editFormData, status: v })}
+                      value={editFormData.status}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl">
+                        <SelectItem value="Ativo" className="font-semibold text-success">Ativo</SelectItem>
+                        <SelectItem value="Inativo" className="font-semibold text-destructive">Inativo</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Papel / Função</Label>
-                  <Select
-                    onValueChange={(v) => setEditFormData({ ...editFormData, role: v })}
-                    value={editFormData.role}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="Administrador" className="font-semibold">Administrador</SelectItem>
-                      <SelectItem value="Pastor" className="font-semibold">Pastor</SelectItem>
-                      <SelectItem value="Financeiro" className="font-semibold">Financeiro</SelectItem>
-                      <SelectItem value="Secretaria" className="font-semibold">Secretaria</SelectItem>
-                      <SelectItem value="Lider de pequeno grupo" className="font-semibold">Líder de Pequeno Grupo</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Nome Completo</Label>
+                  <div className="relative">
+                    <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      value={editFormData.name}
+                      onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                      className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
+                      required
+                    />
+                  </div>
                 </div>
+
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Status</Label>
-                  <Select
-                    onValueChange={(v) => setEditFormData({ ...editFormData, status: v })}
-                    value={editFormData.status}
-                  >
-                    <SelectTrigger className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30">
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="Ativo" className="font-semibold text-success">Ativo</SelectItem>
-                      <SelectItem value="Inativo" className="font-semibold text-destructive">Inativo</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">E-mail de Login</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      value={editFormData.email}
+                      onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                      className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Nome Completo</Label>
-                <div className="relative">
-                  <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    value={editFormData.name}
-                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
-                    required
-                  />
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Senha (Deixe em branco para não alterar)</Label>
+                  <div className="relative">
+                    <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="text"
+                      value={editFormData.password}
+                      onChange={(e) => setEditFormData({ ...editFormData, password: e.target.value })}
+                      placeholder="Nova senha ou CPF"
+                      className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
+                    />
+                  </div>
                 </div>
+
+                <p className="text-[10px] text-muted-foreground italic font-medium">* Preencha apenas se desejar resetar a senha do usuário.</p>
               </div>
+            </ScrollArea>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">E-mail de Login</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    value={editFormData.email}
-                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase font-semibold tracking-wider text-muted-foreground ml-1">Senha (Deixe em branco para não alterar)</Label>
-                <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="text"
-                    value={editFormData.password}
-                    onChange={(e) => setEditFormData({ ...editFormData, password: e.target.value })}
-                    placeholder="Nova senha ou CPF"
-                    className="h-12 pl-10 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
-                  />
-                </div>
-              </div>
-
-              <p className="text-[10px] text-muted-foreground italic font-medium">* Preencha apenas se desejar resetar a senha do usuário.</p>
-            </div>
-
-            <div className="p-6 pt-4 gap-3 border-t flex shrink-0">
+            <div className="p-6 pt-4 gap-3 border-t flex shrink-0 bg-card">
               <Button type="button" variant="ghost" onClick={() => setIsEditModalOpen(false)} className="flex-1 font-semibold h-12 rounded-xl border-secondary/20 hover:bg-secondary/10">
                 CANCELAR
               </Button>
@@ -866,7 +869,7 @@ export default function Configuracoes() {
             </div>
           </form>
         </SheetContent>
-      </Sheet >
+      </Sheet>
 
       {/* Sheet Confirmar Exclusão */}
       <Sheet open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
