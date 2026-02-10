@@ -90,9 +90,12 @@ export default function Financeiro() {
     queryFn: () => api.get(`/transactions?month=${selectedMonth}&year=${selectedYear}`),
   });
 
-  // Extrair transações e saldo anterior de forma segura
-  const transacoes = Array.isArray(financeData) ? financeData : (financeData?.transactions || []);
-  const saldoAnterior = financeData?.previous_balance || 0;
+  // Extrair transações e saldo anterior de forma segura e blindada contra erros
+  const rawTransactions = Array.isArray(financeData) ? financeData : (financeData?.transactions || []);
+  const transacoes = Array.isArray(rawTransactions) ? rawTransactions : [];
+
+  // Converte explicitamente para número para evitar erros de renderização (Objects as children)
+  const saldoAnterior = Number(financeData?.previous_balance || 0);
 
   const { data: reportData, isLoading: isLoadingReport } = useQuery({
     queryKey: ["report", selectedMonth, selectedYear],
@@ -242,11 +245,11 @@ export default function Financeiro() {
   });
 
   const totalEntradas = transacoes
-    .filter((t: any) => t.type === "entrada" || t.tipo === "entrada")
+    .filter((t: any) => t && (t.type === "entrada" || t.tipo === "entrada"))
     .reduce((acc: number, t: any) => acc + Number(t.amount || t.valor || 0), 0);
 
   const totalSaidas = transacoes
-    .filter((t: any) => t.type === "saida" || t.tipo === "saida")
+    .filter((t: any) => t && (t.type === "saida" || t.tipo === "saida"))
     .reduce((acc: number, t: any) => acc + Number(t.amount || t.valor || 0), 0);
 
   const saldoMensal = totalEntradas - totalSaidas;
