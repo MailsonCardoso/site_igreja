@@ -253,28 +253,35 @@ export default function AgendaPastoral() {
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!formData.title || !formData.person || !formData.date || !formData.startTime) {
-            toast.error("Por favor, preencha os campos obrigatórios.");
-            return;
-        }
+        if (isSecretary) {
+            if (!formData.title || !formData.person) {
+                toast.error("Por favor, preencha os campos obrigatórios.");
+                return;
+            }
+        } else {
+            if (!formData.title || !formData.person || !formData.date || !formData.startTime) {
+                toast.error("Por favor, preencha os campos obrigatórios.");
+                return;
+            }
 
-        // Validação de conflito de horário (mesma data e mesmo horário de início)
-        const hasConflict = appointments.some(app => {
-            // Se estiver editando, ignora o próprio agendamento na verificação
-            if (editingAppointment && app.id === editingAppointment.id) return false;
+            // Validação de conflito de horário (mesma data e mesmo horário de início)
+            const hasConflict = appointments.some(app => {
+                // Se estiver editando, ignora o próprio agendamento na verificação
+                if (editingAppointment && app.id === editingAppointment.id) return false;
 
-            // Normalizando horários para comparar apenas HH:mm
-            const appTime = app.startTime.substring(0, 5);
-            const formTime = (formData.startTime || "").substring(0, 5);
+                // Normalizando horários para comparar apenas HH:mm
+                const appTime = app.startTime.substring(0, 5);
+                const formTime = (formData.startTime || "").substring(0, 5);
 
-            return app.date === formData.date && appTime === formTime;
-        });
-
-        if (hasConflict) {
-            toast.error("Horário Indisponível", {
-                description: `Já existe um compromisso agendado para o dia ${format(new Date(formData.date + 'T00:00:00'), "dd/MM/yyyy")} às ${formData.startTime}.`
+                return app.date === formData.date && appTime === formTime;
             });
-            return;
+
+            if (hasConflict) {
+                toast.error("Horário Indisponível", {
+                    description: `Já existe um compromisso agendado para o dia ${format(new Date(formData.date + 'T00:00:00'), "dd/MM/yyyy")} às ${formData.startTime}.`
+                });
+                return;
+            }
         }
 
         if (editingAppointment) {
@@ -618,39 +625,41 @@ export default function AgendaPastoral() {
                                     </Popover>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">Data</Label>
-                                        <Input
-                                            type="date"
-                                            value={formData.date}
-                                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                            className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-2">
+                                {!isSecretary && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">Início</Label>
+                                            <Label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">Data</Label>
                                             <Input
-                                                type="time"
-                                                value={formData.startTime}
-                                                onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                                                type="date"
+                                                value={formData.date}
+                                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                                                 className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
                                                 required
                                             />
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">Fim</Label>
-                                            <Input
-                                                type="time"
-                                                value={formData.endTime}
-                                                onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                                                className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
-                                            />
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div className="space-y-2">
+                                                <Label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">Início</Label>
+                                                <Input
+                                                    type="time"
+                                                    value={formData.startTime}
+                                                    onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                                                    className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
+                                                    required
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">Fim</Label>
+                                                <Input
+                                                    type="time"
+                                                    value={formData.endTime}
+                                                    onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                                                    className="h-12 rounded-xl bg-secondary/5 font-semibold border-secondary/30"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                )}
 
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground ml-1">Localização</Label>
