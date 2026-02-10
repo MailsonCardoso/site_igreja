@@ -184,6 +184,21 @@ export default function AgendaPastoral() {
             return;
         }
 
+        // Validação de conflito de horário (mesma data e mesmo horário de início)
+        const hasConflict = appointments.some(app => {
+            // Se estiver editando, ignora o próprio agendamento na verificação
+            if (editingAppointment && app.id === editingAppointment.id) return false;
+
+            return app.date === formData.date && app.startTime === formData.startTime;
+        });
+
+        if (hasConflict) {
+            toast.error("Horário Indisponível", {
+                description: `Já existe um compromisso agendado para o dia ${format(new Date(formData.date + 'T00:00:00'), "dd/MM/yyyy")} às ${formData.startTime}.`
+            });
+            return;
+        }
+
         if (editingAppointment) {
             // Update
             const updated = appointments.map(a =>
