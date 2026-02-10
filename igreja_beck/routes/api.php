@@ -13,6 +13,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\InventoryController;
+use App\Http\Controllers\PastoralController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -39,7 +40,16 @@ Route::middleware('auth:sanctum')->group(function () {
     // Ministries & Rosters
     Route::apiResource('ministries', MinistryController::class);
     Route::apiResource('cells', CellController::class);
+    Route::apiResource('cells', CellController::class);
     Route::apiResource('inventory', InventoryController::class);
+
+    // Pastoral Agenda
+    Route::get('pastoral', [PastoralController::class, 'index']);
+    Route::post('pastoral/appointments', [PastoralController::class, 'storeAppointment']);
+    Route::put('pastoral/appointments/{id}', [PastoralController::class, 'updateAppointment']);
+    Route::delete('pastoral/appointments/{id}', [PastoralController::class, 'destroyAppointment']);
+    Route::post('pastoral/requests', [PastoralController::class, 'storeRequest']);
+    Route::delete('pastoral/requests/{id}', [PastoralController::class, 'destroyRequest']);
 
     // Courses & Lessons
     Route::apiResource('courses', CourseController::class);

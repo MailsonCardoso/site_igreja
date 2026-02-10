@@ -71,10 +71,24 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react";
 
 export default function AgendaPastoral() {
-    // Estados de Dados
-    const [appointments, setAppointments] = useState<PastoralAppointment[]>(PastoralStore.getAppointments());
-    const [requests, setRequests] = useState<AppointmentRequest[]>(PastoralStore.getRequests());
+    // Estados de Dados (Via API agora)
+    // const [appointments, setAppointments] = useState<PastoralAppointment[]>([]); // Removido local state inicial
+    // const [requests, setRequests] = useState<AppointmentRequest[]>([]); // Removido local state inicial
     const [searchTerm, setSearchTerm] = useState("");
+
+    const queryClient = useQueryClient();
+
+    // Fetch Data do Backend
+    const { data: pastoralData, isLoading } = useQuery({
+        queryKey: ["pastoral-data"],
+        queryFn: async () => {
+            const response = await api.get("/pastoral");
+            return response; // O interceptor do axios já deve tratar o .data, se não, ajustar
+        }
+    });
+
+    const appointments = (pastoralData?.appointments || []) as PastoralAppointment[];
+    const requests = (pastoralData?.requests || []) as AppointmentRequest[];
 
     // Estados do Modal
     const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -112,14 +126,50 @@ export default function AgendaPastoral() {
         queryFn: () => api.get("/members"),
     });
 
-    // Salvar no Store sempre que mudar localmente
-    useEffect(() => {
-        PastoralStore.saveAppointments(appointments);
-    }, [appointments]);
+    // Mutations
+    const createAppointmentMutation = useMutation({
+        mutationFn: (data: any) => api.post("/pastoral/appointments", data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
+            toast.success("Agendamento criado com sucesso!");
+            setIsSheetOpen(false);
+        },
+        onError: () => toast.error("Erro ao criar agendamento.")
+    });
 
-    useEffect(() => {
-        PastoralStore.saveRequests(requests);
-    }, [requests]);
+    const updateAppointmentMutation = useMutation({
+        mutationFn: (data: any) => api.put(`/pastoral/appointments/${data.id}`, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
+            toast.success("Agendamento atualizado!");
+            setIsSheetOpen(false);
+        }
+    });
+
+    const deleteAppointmentMutation = useMutation({
+        mutationFn: (id: number) => api.delete(`/pastoral/appointments/${id}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
+            toast.success("Agendamento removido.");
+            setIsDeleteDialogOpen(false);
+        }
+    });
+
+    const createRequestMutation = useMutation({
+        mutationFn: (data: any) => api.post("/pastoral/requests", data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
+            toast.success("Solicitação enviada para o Pastor!");
+            setIsSheetOpen(false);
+        }
+    });
+
+    const deleteRequestMutation = useMutation({
+        mutationFn: (id: number) => api.delete(`/pastoral/requests/${id}`),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
+        }
+    });
 
     const handleOpenCreate = () => {
         setEditingAppointment(null);
@@ -169,16 +219,9 @@ export default function AgendaPastoral() {
         setIsViewSheetOpen(true);
     };
 
-    const handleToggleStatus = (id: number) => {
-        const updated = appointments.map(a => {
-            if (a.id === id) {
-                const newStatus = a.status === "Realizado" ? "Confirmado" : "Realizado";
-                toast.success(newStatus === "Realizado" ? "Atendimento marcado como realizado!" : "Atendimento reaberto.");
-                return { ...a, status: newStatus as any };
-            }
-            return a;
-        });
-        setAppointments(updated);
+    const handleToggleStatus = (appointment: PastoralAppointment) => {
+        const newStatus = appointment.status === "Realizado" ? "Confirmado" : "Realizado";
+        updateAppointmentMutation.mutate({ ...appointment, status: newStatus });
     };
 
     const handleSave = (e: React.FormEvent) => {
@@ -206,45 +249,26 @@ export default function AgendaPastoral() {
 
         if (editingAppointment) {
             // Update
-            const updated = appointments.map(a =>
-                a.id === editingAppointment.id ? { ...a, ...formData } as PastoralAppointment : a
-            );
-            setAppointments(updated);
-            toast.success("Agendamento atualizado!");
+            updateAppointmentMutation.mutate({ ...formData, id: editingAppointment.id });
         } else {
-            // Se for secretaria, cria uma SOLICITAÇÃO (Request), não um agendamento direto
+            // Se for secretaria, cria uma SOLICITAÇÃO (Request)
             if (isSecretary) {
-                const newRequest: AppointmentRequest = {
-                    id: Date.now(),
+                createRequestMutation.mutate({
                     person: formData.person || "Anônimo",
-                    type: formData.type as "Gabinete" | "Visita",
+                    type: formData.type,
                     reason: formData.title || "Sem motivo especifico",
-                    requestedAt: new Date().toISOString(),
-                    status: "Pendente",
                     memberId: formData.memberId
-                };
-                setRequests([...requests, newRequest]);
-                toast.success("Solicitação enviada para o Pastor!");
+                });
             } else {
                 // Pastor cria agendamento direto
-                const newAppointment: PastoralAppointment = {
-                    id: Date.now(),
-                    ...formData as PastoralAppointment,
-                    status: "Confirmado"
-                };
-                setAppointments([...appointments, newAppointment]);
+                createAppointmentMutation.mutate(formData);
 
-                // Se veio de uma solicitação, removemos a solicitação
+                // Se veio de uma solicitação, removemos a solicitação do backend também
                 if (selectedRequest) {
-                    setRequests(requests.filter(r => r.id !== selectedRequest.id));
-                    toast.success("Solicitação agendada com sucesso!");
-                } else {
-                    toast.success("Novo agendamento criado!");
+                    deleteRequestMutation.mutate(selectedRequest.id);
                 }
             }
         }
-
-        setIsSheetOpen(false);
     };
 
     const handleDeleteClick = (id: number) => {
@@ -254,10 +278,7 @@ export default function AgendaPastoral() {
 
     const confirmDelete = () => {
         if (appointmentToDelete) {
-            setAppointments(appointments.filter(a => a.id !== appointmentToDelete));
-            toast.success("Agendamento removido.");
-            setIsDeleteDialogOpen(false);
-            setAppointmentToDelete(null);
+            deleteAppointmentMutation.mutate(appointmentToDelete);
         }
     };
 
@@ -440,7 +461,7 @@ export default function AgendaPastoral() {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            onClick={(e) => { e.stopPropagation(); handleToggleStatus(app.id); }}
+                                                            onClick={(e) => { e.stopPropagation(); handleToggleStatus(app); }}
                                                             className={cn(
                                                                 "h-10 w-10 rounded-xl transition-all",
                                                                 app.status === "Realizado"
