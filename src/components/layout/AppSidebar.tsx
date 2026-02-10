@@ -30,15 +30,15 @@ const navigationItems = [
   { name: "Pastoral", href: "/pastor", icon: BookOpen },
   { name: "Séries", href: "/pastor/series", icon: Library },
   { name: "Insights", href: "/pastor/insights", icon: Lightbulb },
+  { name: "Agenda", href: "/agenda", icon: Calendar },
   { name: "Agenda Pastoral", href: "/pastor/agenda", icon: Calendar },
+  { name: "Ensino", href: "/ensino", icon: GraduationCap },
+  { name: "Células", href: "/celulas", icon: CircleDot },
   { name: "Membros", href: "/secretaria", icon: Users },
   { name: "Inventário", href: "/inventario", icon: Package },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
   { name: "Análise Financeira", href: "/financeiro/analise", icon: BarChart3 },
-  { name: "Células", href: "/celulas", icon: CircleDot },
-  { name: "Agenda", href: "/agenda", icon: Calendar },
   { name: "Ministérios", href: "/ministerios", icon: Music },
-  { name: "Ensino", href: "/ensino", icon: GraduationCap },
   { name: "Configurações", href: "/configuracoes", icon: Settings },
 ];
 
@@ -71,8 +71,8 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
     }
 
     if (normalizedRole === "pastor") {
-      // Pastor vê apenas: Dashboard, Agenda, Pastoral, Séries, Insights, Células, Ensino, Agenda Pastoral
-      return ["Dashboard", "Agenda", "Pastoral", "Séries", "Insights", "Células", "Ensino", "Agenda Pastoral"].includes(item.name);
+      // Pastor vê apenas: Dashboard, Pastoral, Séries, Insights, Agenda, Agenda Pastoral, Ensino, Células
+      return ["Dashboard", "Pastoral", "Séries", "Insights", "Agenda", "Agenda Pastoral", "Ensino", "Células"].includes(item.name);
     }
 
     if (normalizedRole === "secretaria" || normalizedRole === "secretária" || normalizedRole === "secretário") {
