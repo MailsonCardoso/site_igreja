@@ -13,9 +13,22 @@ class PastoralController extends Controller
      */
     public function index()
     {
+        // Fetch appointments with member phone
+        $appointments = PastoralAppointment::leftJoin('members', 'pastoral_appointments.member_id', '=', 'members.id')
+            ->select('pastoral_appointments.*', 'members.phone as member_phone')
+            ->orderBy('pastoral_appointments.date', 'desc')
+            ->get();
+
+        // Fetch requests with member phone
+        $requests = PastoralRequest::leftJoin('members', 'pastoral_requests.member_id', '=', 'members.id')
+            ->select('pastoral_requests.*', 'members.phone as member_phone')
+            ->where('pastoral_requests.status', '!=', 'Agendado')
+            ->orderBy('pastoral_requests.created_at', 'desc')
+            ->get();
+
         return response()->json([
-            'appointments' => PastoralAppointment::orderBy('date', 'desc')->get(),
-            'requests' => PastoralRequest::orderBy('created_at', 'desc')->where('status', '!=', 'Agendado')->get()
+            'appointments' => $appointments,
+            'requests' => $requests
         ]);
     }
 

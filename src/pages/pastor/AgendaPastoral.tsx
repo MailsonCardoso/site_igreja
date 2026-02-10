@@ -11,6 +11,7 @@ import {
     Trash2,
     CheckCircle2,
     MessageSquare,
+    MessageCircle,
     Search,
     ChevronRight,
     ClipboardList,
@@ -68,6 +69,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 export default function AgendaPastoral() {
@@ -89,12 +96,14 @@ export default function AgendaPastoral() {
                     ...a,
                     memberId: a.member_id,
                     startTime: a.start_time,
-                    endTime: a.end_time
+                    endTime: a.end_time,
+                    member_phone: a.member_phone
                 })),
                 requests: response.requests.map((r: any) => ({
                     ...r,
                     memberId: r.member_id,
-                    requestedAt: r.requested_at
+                    requestedAt: r.requested_at,
+                    member_phone: r.member_phone
                 }))
             };
         }
@@ -181,7 +190,8 @@ export default function AgendaPastoral() {
     const createRequestMutation = useMutation({
         mutationFn: (data: any) => api.post("/pastoral/requests", {
             ...data,
-            member_id: data.memberId
+            member_id: data.memberId,
+            notes: data.notes // Include notes field
         }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
@@ -196,6 +206,18 @@ export default function AgendaPastoral() {
             queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
         }
     });
+
+    // WhatsApp Helper Function
+    const openWhatsApp = (phone?: string) => {
+        if (!phone) {
+            toast.error("Telefone não cadastrado");
+            return;
+        }
+        // Remove non-numeric characters
+        const cleanPhone = phone.replace(/\D/g, '');
+        // Open WhatsApp without pre-defined message
+        window.open(`https://wa.me/${cleanPhone}`, '_blank');
+    };
 
     const handleOpenCreate = () => {
         setEditingAppointment(null);
@@ -294,7 +316,8 @@ export default function AgendaPastoral() {
                     person: formData.person || "Anônimo",
                     type: formData.type,
                     reason: formData.title || "Sem motivo especifico",
-                    memberId: formData.memberId
+                    memberId: formData.memberId,
+                    notes: formData.notes // Include notes field
                 });
             } else {
                 // Pastor cria agendamento direto
@@ -396,13 +419,35 @@ export default function AgendaPastoral() {
                                                 <p className="text-xs text-muted-foreground line-clamp-2 mb-4 italic">
                                                     "{request.reason}"
                                                 </p>
-                                                <Button
-                                                    onClick={() => handleScheduleRequest(request)}
-                                                    disabled={isSecretary} // Secretaria não pode agendar, só o pastor
-                                                    className="w-full h-9 rounded-xl bg-primary/5 hover:bg-primary text-primary hover:text-white font-bold text-xs uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                                >
-                                                    {isSecretary ? "Aguardando Pastor" : "Agendar no Calendário"}
-                                                </Button>
+                                                <div className="flex gap-2">
+                                                    <TooltipProvider>
+                                                        <Tooltip>
+                                                            <TooltipTrigger asChild>
+                                                                <Button
+                                                                    onClick={() => openWhatsApp(request.member_phone)}
+                                                                    disabled={!request.member_phone}
+                                                                    variant="outline"
+                                                                    size="icon"
+                                                                    className="h-9 w-9 rounded-xl shrink-0 border-green-500/30 hover:bg-green-500 hover:text-white disabled:opacity-30"
+                                                                >
+                                                                    <MessageCircle className="h-4 w-4" />
+                                                                </Button>
+                                                            </TooltipTrigger>
+                                                            {!request.member_phone && (
+                                                                <TooltipContent>
+                                                                    <p>Telefone não cadastrado</p>
+                                                                </TooltipContent>
+                                                            )}
+                                                        </Tooltip>
+                                                    </TooltipProvider>
+                                                    <Button
+                                                        onClick={() => handleScheduleRequest(request)}
+                                                        disabled={isSecretary} // Secretaria não pode agendar, só o pastor
+                                                        className="flex-1 h-9 rounded-xl bg-primary/5 hover:bg-primary text-primary hover:text-white font-bold text-xs uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                                    >
+                                                        {isSecretary ? "Aguardando Pastor" : "Agendar no Calendário"}
+                                                    </Button>
+                                                </div>
                                             </CardContent>
                                         </Card>
                                     ))
@@ -501,6 +546,26 @@ export default function AgendaPastoral() {
                                                         >
                                                             <Trash2 className="h-5 w-5" />
                                                         </Button>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        onClick={(e) => { e.stopPropagation(); openWhatsApp(app.member_phone); }}
+                                                                        disabled={!app.member_phone}
+                                                                        className="h-10 w-10 rounded-xl hover:bg-green-500/10 hover:text-green-600 transition-all disabled:opacity-30"
+                                                                    >
+                                                                        <MessageCircle className="h-5 w-5" />
+                                                                    </Button>
+                                                                </TooltipTrigger>
+                                                                {!app.member_phone && (
+                                                                    <TooltipContent>
+                                                                        <p>Telefone não cadastrado</p>
+                                                                    </TooltipContent>
+                                                                )}
+                                                            </Tooltip>
+                                                        </TooltipProvider>
                                                         <div className="h-8 w-[1px] bg-border/50 mx-2 hidden sm:block" />
                                                         <Button
                                                             variant="ghost"

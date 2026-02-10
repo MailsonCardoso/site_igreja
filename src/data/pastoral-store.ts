@@ -43,6 +43,7 @@ export interface PastoralAppointment {
     title: string;
     person: string;
     memberId?: number;
+    member_phone?: string; // Phone from members table
     date: string;
     startTime: string;
     endTime: string;
@@ -55,9 +56,12 @@ export interface AppointmentRequest {
     id: number;
     person: string;
     memberId?: number;
+    member_phone?: string; // Phone from members table
     type: "Gabinete" | "Visita";
     reason: string;
+    notes?: string; // Notes from secretary
     requestedAt: string;
+    status?: string;
 }
 
 const STORAGE_KEYS = {
