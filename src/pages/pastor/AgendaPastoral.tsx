@@ -249,7 +249,7 @@ export default function AgendaPastoral() {
         setViewingAppointment(null);
         setFormData({
             type: request.type,
-            title: `Atendimento: ${request.reason}`,
+            title: request.reason,
             person: request.person,
             memberId: request.memberId,
             date: format(new Date(), "yyyy-MM-dd"),
