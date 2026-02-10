@@ -256,7 +256,7 @@ export default function AgendaPastoral() {
             startTime: "",
             endTime: "",
             location: request.type === "Gabinete" ? "Gabinete Pastoral" : "Residência do Membro",
-            notes: "",
+            notes: request.notes || "",
             status: "Confirmado"
         });
         setIsSheetOpen(true);

@@ -14,6 +14,7 @@ class PastoralRequest extends Model
         'member_id',
         'type',
         'reason',
+        'notes',
         'requested_at',
         'status'
     ];
