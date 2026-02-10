@@ -10,10 +10,27 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $query = Transaction::query();
+        $month = $request->query('month');
+        $year = $request->query('year');
 
-        if ($request->has('month') && $request->has('year')) {
-            $query->whereMonth('date', $request->month)
-                  ->whereYear('date', $request->year);
+        if ($month && $year) {
+            $query->whereMonth('date', $month)
+                  ->whereYear('date', $year);
+
+            // Cálculo do saldo anterior para o período selecionado
+            $previousBalance = Transaction::where(function ($q) use ($month, $year) {
+                $q->whereYear('date', '<', $year)
+                  ->orWhere(function ($sq) use ($month, $year) {
+                      $sq->whereYear('date', $year)
+                         ->whereMonth('date', '<', $month);
+                  });
+            })->selectRaw("SUM(CASE WHEN type = 'entrada' THEN amount ELSE -amount END) as balance")
+              ->value('balance') ?? 0;
+
+            return response()->json([
+                'transactions' => $query->orderBy('date', 'desc')->get(),
+                'previous_balance' => (float)$previousBalance
+            ]);
         }
 
         return response()->json($query->orderBy('date', 'desc')->get());

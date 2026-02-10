@@ -85,10 +85,14 @@ export default function Financeiro() {
     date: format(new Date(), "yyyy-MM-dd"),
   });
 
-  const { data: transacoes = [], isLoading } = useQuery({
+  const { data: financeData, isLoading } = useQuery({
     queryKey: ["transactions", selectedMonth, selectedYear],
     queryFn: () => api.get(`/transactions?month=${selectedMonth}&year=${selectedYear}`),
   });
+
+  // Extrair transações e saldo anterior de forma segura
+  const transacoes = Array.isArray(financeData) ? financeData : (financeData?.transactions || []);
+  const saldoAnterior = financeData?.previous_balance || 0;
 
   const { data: reportData, isLoading: isLoadingReport } = useQuery({
     queryKey: ["report", selectedMonth, selectedYear],
@@ -246,6 +250,7 @@ export default function Financeiro() {
     .reduce((acc: number, t: any) => acc + Number(t.amount || t.valor || 0), 0);
 
   const saldoMensal = totalEntradas - totalSaidas;
+  const saldoAcumulado = saldoAnterior + saldoMensal;
 
   const handlePrint = () => {
     const printContent = document.getElementById("printable-report");
@@ -286,6 +291,7 @@ export default function Financeiro() {
             /* Grids */
             .grid { display: grid; }
             .grid-cols-2 { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .grid-cols-4 { grid-template-columns: repeat(4, 1fr); gap: 24px; }
             .gap-8 { gap: 32px; }
             .gap-10 { gap: 40px; }
             .gap-20 { gap: 80px; }
@@ -416,11 +422,31 @@ export default function Financeiro() {
       ) : (
         <>
           {/* Summary Cards */}
-          <div className="grid gap-6 sm:grid-cols-3 mb-8">
+          <div className="grid gap-6 sm:grid-cols-4 mb-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
+              className="rounded-[2rem] bg-card p-6 shadow-xl border-l-8 border-slate-400 relative overflow-hidden group"
+            >
+              <div className="absolute right-0 top-0 opacity-5 group-hover:scale-110 transition-transform">
+                <ArrowUpDown className="h-32 w-32 -mr-8 -mt-8" />
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10 text-slate-500 shadow-inner">
+                  <ArrowUpDown className="h-7 w-7" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Saldo Inicial</p>
+                  <p className="text-xl font-bold text-slate-600 tabular-nums">{formatCurrency(saldoAnterior)}</p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: 0.05 }}
               className="rounded-[2rem] bg-card p-6 shadow-xl border-l-8 border-success relative overflow-hidden group"
             >
               <div className="absolute right-0 top-0 opacity-5 group-hover:scale-110 transition-transform">
@@ -432,7 +458,7 @@ export default function Financeiro() {
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Total Entradas</p>
-                  <p className="text-2xl font-bold text-success tabular-nums">{formatCurrency(totalEntradas)}</p>
+                  <p className="text-xl font-bold text-success tabular-nums">{formatCurrency(totalEntradas)}</p>
                 </div>
               </div>
             </motion.div>
@@ -440,7 +466,7 @@ export default function Financeiro() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.05 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
               className="rounded-[2rem] bg-card p-6 shadow-xl border-l-8 border-destructive relative overflow-hidden group"
             >
               <div className="absolute right-0 top-0 opacity-5 group-hover:scale-110 transition-transform">
@@ -452,7 +478,7 @@ export default function Financeiro() {
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Total Saídas</p>
-                  <p className="text-2xl font-bold text-destructive tabular-nums">{formatCurrency(totalSaidas)}</p>
+                  <p className="text-xl font-bold text-destructive tabular-nums">{formatCurrency(totalSaidas)}</p>
                 </div>
               </div>
             </motion.div>
@@ -460,7 +486,7 @@ export default function Financeiro() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
+              transition={{ duration: 0.3, delay: 0.15 }}
               className="rounded-[2rem] bg-card p-6 shadow-xl border-l-8 border-primary relative overflow-hidden group"
             >
               <div className="absolute right-0 top-0 opacity-5 group-hover:scale-110 transition-transform">
@@ -471,14 +497,16 @@ export default function Financeiro() {
                   <span className="text-xl font-semibold">R$</span>
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Saldo do Período</p>
-                  <p className={`text-2xl font-bold tabular-nums ${saldoMensal >= 0 ? 'text-foreground' : 'text-destructive'}`}>
-                    {formatCurrency(saldoMensal)}
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">Saldo Acumulado</p>
+                  <p className={`text-xl font-bold tabular-nums ${saldoAcumulado >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                    {formatCurrency(saldoAcumulado)}
                   </p>
                 </div>
               </div>
             </motion.div>
           </div>
+
+          {/* Transactions Table */}
 
           {/* Transactions Table */}
           <motion.div
