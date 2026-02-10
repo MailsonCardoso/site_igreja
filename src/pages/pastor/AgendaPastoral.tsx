@@ -320,16 +320,23 @@ export default function AgendaPastoral() {
     };
 
     // Filtragem de agendamentos por hoje/futuro e busca
+    const now = new Date();
     const filteredAppointments = appointments
         .filter(a => {
             const matchesSearch = a.person.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 a.title.toLowerCase().includes(searchTerm.toLowerCase());
-            return matchesSearch;
+
+            // Filtrar apenas compromissos futuros ou de hoje
+            const appointmentDateTime = new Date(`${a.date}T${a.startTime || '00:00'}`);
+            const isFutureOrToday = appointmentDateTime >= new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+            return matchesSearch && isFutureOrToday;
         })
         .sort((a, b) => {
-            const dateA = new Date(`${a.date}T${a.startTime}`);
-            const dateB = new Date(`${b.date}T${b.startTime}`);
-            return dateB.getTime() - dateA.getTime();
+            // Ordenar por proximidade (mais próximo primeiro)
+            const dateA = new Date(`${a.date}T${a.startTime || '00:00'}`);
+            const dateB = new Date(`${b.date}T${b.startTime || '00:00'}`);
+            return dateA.getTime() - dateB.getTime(); // Ordem CRESCENTE (mais próximo primeiro)
         });
 
     return (
