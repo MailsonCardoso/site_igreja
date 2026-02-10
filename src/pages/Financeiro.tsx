@@ -90,6 +90,9 @@ export default function Financeiro() {
     queryFn: () => api.get(`/transactions?month=${selectedMonth}&year=${selectedYear}`),
   });
 
+  // Debug para identificar estrutura do retorno
+  // console.log("Finance Data Debug:", financeData);
+
   // Extrair transações e saldo anterior de forma segura e blindada contra erros
   const rawTransactions = Array.isArray(financeData) ? financeData : (financeData?.transactions || []);
   const transacoes = Array.isArray(rawTransactions) ? rawTransactions : [];
@@ -227,7 +230,8 @@ export default function Financeiro() {
     }));
   };
 
-  const sortedTransactions = [...transacoes].sort((a, b) => {
+  // Uso de slice() em vez de spread [...] para evitar erro 'not iterable' se o objeto não for iterável
+  const sortedTransactions = transacoes.slice().sort((a, b) => {
     if (!sortConfig) return 0;
     const { key, direction } = sortConfig;
 
