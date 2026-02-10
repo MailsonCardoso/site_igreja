@@ -11,13 +11,13 @@ import {
     Trash2,
     CheckCircle2,
     MessageSquare,
-    MessageCircle,
     Search,
     ChevronRight,
     ClipboardList,
     AlertCircle,
     UserPlus
 } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -430,7 +430,7 @@ export default function AgendaPastoral() {
                                                                     size="icon"
                                                                     className="h-9 w-9 rounded-xl shrink-0 border-green-500/30 hover:bg-green-500 hover:text-white disabled:opacity-30"
                                                                 >
-                                                                    <MessageCircle className="h-4 w-4" />
+                                                                    <FaWhatsapp className="h-4 w-4" />
                                                                 </Button>
                                                             </TooltipTrigger>
                                                             {!request.member_phone && (
@@ -556,7 +556,7 @@ export default function AgendaPastoral() {
                                                                         disabled={!app.member_phone}
                                                                         className="h-10 w-10 rounded-xl hover:bg-green-500/10 hover:text-green-600 transition-all disabled:opacity-30"
                                                                     >
-                                                                        <MessageCircle className="h-5 w-5" />
+                                                                        <FaWhatsapp className="h-5 w-5" />
                                                                     </Button>
                                                                 </TooltipTrigger>
                                                                 {!app.member_phone && (
