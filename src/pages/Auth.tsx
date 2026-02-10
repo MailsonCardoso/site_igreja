@@ -93,9 +93,10 @@ export default function Auth() {
 
       navigate("/");
     } catch (error: any) {
+      console.error("Login Error:", error);
       toast({
         title: "Erro na autenticação",
-        description: error.message || "Verifique suas credenciais e tente novamente.",
+        description: error.message || "E-mail ou senha incorretos. Por favor, tente novamente.",
         variant: "destructive",
       });
     } finally {
