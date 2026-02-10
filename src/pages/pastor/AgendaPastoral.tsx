@@ -83,7 +83,20 @@ export default function AgendaPastoral() {
         queryKey: ["pastoral-data"],
         queryFn: async () => {
             const response = await api.get("/pastoral");
-            return response; // O interceptor do axios já deve tratar o .data, se não, ajustar
+            // Mapping Snake Case (Backend) -> Camel Case (Frontend)
+            return {
+                appointments: response.appointments.map((a: any) => ({
+                    ...a,
+                    memberId: a.member_id,
+                    startTime: a.start_time,
+                    endTime: a.end_time
+                })),
+                requests: response.requests.map((r: any) => ({
+                    ...r,
+                    memberId: r.member_id,
+                    requestedAt: r.requested_at
+                }))
+            };
         }
     });
 
@@ -128,7 +141,12 @@ export default function AgendaPastoral() {
 
     // Mutations
     const createAppointmentMutation = useMutation({
-        mutationFn: (data: any) => api.post("/pastoral/appointments", data),
+        mutationFn: (data: any) => api.post("/pastoral/appointments", {
+            ...data,
+            member_id: data.memberId,
+            start_time: data.startTime,
+            end_time: data.endTime
+        }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
             toast.success("Agendamento criado com sucesso!");
@@ -138,7 +156,12 @@ export default function AgendaPastoral() {
     });
 
     const updateAppointmentMutation = useMutation({
-        mutationFn: (data: any) => api.put(`/pastoral/appointments/${data.id}`, data),
+        mutationFn: (data: any) => api.put(`/pastoral/appointments/${data.id}`, {
+            ...data,
+            member_id: data.memberId,
+            start_time: data.startTime,
+            end_time: data.endTime
+        }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
             toast.success("Agendamento atualizado!");
@@ -156,7 +179,10 @@ export default function AgendaPastoral() {
     });
 
     const createRequestMutation = useMutation({
-        mutationFn: (data: any) => api.post("/pastoral/requests", data),
+        mutationFn: (data: any) => api.post("/pastoral/requests", {
+            ...data,
+            member_id: data.memberId
+        }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["pastoral-data"] });
             toast.success("Solicitação enviada para o Pastor!");
