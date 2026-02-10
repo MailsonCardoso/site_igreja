@@ -85,6 +85,11 @@ export default function AgendaPastoral() {
     const [viewingAppointment, setViewingAppointment] = useState<PastoralAppointment | null>(null);
     const [selectedRequest, setSelectedRequest] = useState<AppointmentRequest | null>(null);
 
+    // Role Check
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const isSecretary = ["secretaria", "secretária", "secretário"].includes(user.role?.toLowerCase());
+
+
     // Estado do Form
     const [formData, setFormData] = useState<Partial<PastoralAppointment>>({
         type: "Gabinete",
@@ -207,20 +212,35 @@ export default function AgendaPastoral() {
             setAppointments(updated);
             toast.success("Agendamento atualizado!");
         } else {
-            // Create
-            const newAppointment: PastoralAppointment = {
-                id: Date.now(),
-                ...formData as PastoralAppointment,
-                status: "Confirmado"
-            };
-            setAppointments([...appointments, newAppointment]);
-
-            // Se veio de uma solicitação, removemos a solicitação
-            if (selectedRequest) {
-                setRequests(requests.filter(r => r.id !== selectedRequest.id));
-                toast.success("Solicitação agendada com sucesso!");
+            // Se for secretaria, cria uma SOLICITAÇÃO (Request), não um agendamento direto
+            if (isSecretary) {
+                const newRequest: AppointmentRequest = {
+                    id: Date.now(),
+                    person: formData.person || "Anônimo",
+                    type: formData.type as "Gabinete" | "Visita",
+                    reason: formData.title || "Sem motivo especifico",
+                    requestedAt: new Date().toISOString(),
+                    status: "Pendente",
+                    memberId: formData.memberId
+                };
+                setRequests([...requests, newRequest]);
+                toast.success("Solicitação enviada para o Pastor!");
             } else {
-                toast.success("Novo agendamento criado!");
+                // Pastor cria agendamento direto
+                const newAppointment: PastoralAppointment = {
+                    id: Date.now(),
+                    ...formData as PastoralAppointment,
+                    status: "Confirmado"
+                };
+                setAppointments([...appointments, newAppointment]);
+
+                // Se veio de uma solicitação, removemos a solicitação
+                if (selectedRequest) {
+                    setRequests(requests.filter(r => r.id !== selectedRequest.id));
+                    toast.success("Solicitação agendada com sucesso!");
+                } else {
+                    toast.success("Novo agendamento criado!");
+                }
             }
         }
 
@@ -265,7 +285,7 @@ export default function AgendaPastoral() {
                     </div>
                     <Button onClick={handleOpenCreate} className="h-12 px-6 rounded-2xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 gap-2 transition-all active:scale-95">
                         <Plus className="h-5 w-5" />
-                        <span className="font-bold uppercase tracking-tight">Novo Agendamento</span>
+                        <span className="font-bold uppercase tracking-tight">{isSecretary ? "Nova Solicitação" : "Novo Agendamento"}</span>
                     </Button>
                 </div>
 
@@ -313,9 +333,10 @@ export default function AgendaPastoral() {
                                                 </p>
                                                 <Button
                                                     onClick={() => handleScheduleRequest(request)}
-                                                    className="w-full h-9 rounded-xl bg-primary/5 hover:bg-primary text-primary hover:text-white font-bold text-xs uppercase transition-all"
+                                                    disabled={isSecretary} // Secretaria não pode agendar, só o pastor
+                                                    className="w-full h-9 rounded-xl bg-primary/5 hover:bg-primary text-primary hover:text-white font-bold text-xs uppercase transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                                 >
-                                                    Agendar no Calendário
+                                                    {isSecretary ? "Aguardando Pastor" : "Agendar no Calendário"}
                                                 </Button>
                                             </CardContent>
                                         </Card>
@@ -396,40 +417,42 @@ export default function AgendaPastoral() {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex items-center gap-2 shrink-0">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={(e) => { e.stopPropagation(); handleEdit(app); }}
-                                                        className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
-                                                        disabled={app.status === "Realizado"}
-                                                    >
-                                                        <Edit2 className="h-5 w-5" />
-                                                    </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(app.id); }}
-                                                        className="h-10 w-10 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
-                                                    >
-                                                        <Trash2 className="h-5 w-5" />
-                                                    </Button>
-                                                    <div className="h-8 w-[1px] bg-border/50 mx-2 hidden sm:block" />
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        onClick={(e) => { e.stopPropagation(); handleToggleStatus(app.id); }}
-                                                        className={cn(
-                                                            "h-10 w-10 rounded-xl transition-all",
-                                                            app.status === "Realizado"
-                                                                ? "bg-green-500 text-white hover:bg-green-600"
-                                                                : "hover:bg-green-500/10 hover:text-green-600"
-                                                        )}
-                                                        title={app.status === "Realizado" ? "Reabrir Atendimento" : "Marcar como Realizado"}
-                                                    >
-                                                        <CheckCircle2 className="h-5 w-5" />
-                                                    </Button>
-                                                </div>
+                                                {!isSecretary && (
+                                                    <div className="flex items-center gap-2 shrink-0">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={(e) => { e.stopPropagation(); handleEdit(app); }}
+                                                            className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                                                            disabled={app.status === "Realizado"}
+                                                        >
+                                                            <Edit2 className="h-5 w-5" />
+                                                        </Button>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={(e) => { e.stopPropagation(); handleDeleteClick(app.id); }}
+                                                            className="h-10 w-10 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all"
+                                                        >
+                                                            <Trash2 className="h-5 w-5" />
+                                                        </Button>
+                                                        <div className="h-8 w-[1px] bg-border/50 mx-2 hidden sm:block" />
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            onClick={(e) => { e.stopPropagation(); handleToggleStatus(app.id); }}
+                                                            className={cn(
+                                                                "h-10 w-10 rounded-xl transition-all",
+                                                                app.status === "Realizado"
+                                                                    ? "bg-green-500 text-white hover:bg-green-600"
+                                                                    : "hover:bg-green-500/10 hover:text-green-600"
+                                                            )}
+                                                            title={app.status === "Realizado" ? "Reabrir Atendimento" : "Marcar como Realizado"}
+                                                        >
+                                                            <CheckCircle2 className="h-5 w-5" />
+                                                        </Button>
+                                                    </div>
+                                                )}
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -449,7 +472,7 @@ export default function AgendaPastoral() {
                         </div>
                         <div>
                             <SheetTitle className="text-xl font-bold text-foreground">
-                                {editingAppointment ? "Editar Agendamento" : "Novo Agendamento"}
+                                {editingAppointment ? "Editar Agendamento" : (isSecretary ? "Nova Solicitação de Atendimento" : "Novo Agendamento")}
                             </SheetTitle>
                             <SheetDescription className="text-xs font-bold text-primary">
                                 {selectedRequest ? `Finalizando solicitação de ${selectedRequest.person}` : "Preencha os dados do compromisso."}
@@ -610,7 +633,7 @@ export default function AgendaPastoral() {
                                     type="submit"
                                     className="flex-[2] font-bold h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-xl shadow-primary/20"
                                 >
-                                    {editingAppointment ? "SALVAR ALTERAÇÕES" : "CONFIRMAR AGENDAMENTO"}
+                                    {editingAppointment ? "SALVAR ALTERAÇÕES" : (isSecretary ? "ENVIAR SOLICITAÇÃO" : "CONFIRMAR AGENDAMENTO")}
                                 </Button>
                             </div>
                         </form>
