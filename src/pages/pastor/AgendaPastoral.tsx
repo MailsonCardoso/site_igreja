@@ -234,7 +234,7 @@ export default function AgendaPastoral() {
             startTime: "",
             endTime: "",
             location: request.type === "Gabinete" ? "Gabinete Pastoral" : "Residência do Membro",
-            notes: `Solicitado em: ${format(new Date(request.requestedAt), "dd/MM/yyyy HH:mm")}. Motivo: ${request.reason}`,
+            notes: "",
             status: "Confirmado"
         });
         setIsSheetOpen(true);
@@ -263,7 +263,11 @@ export default function AgendaPastoral() {
             // Se estiver editando, ignora o próprio agendamento na verificação
             if (editingAppointment && app.id === editingAppointment.id) return false;
 
-            return app.date === formData.date && app.startTime === formData.startTime;
+            // Normalizando horários para comparar apenas HH:mm
+            const appTime = app.startTime.substring(0, 5);
+            const formTime = (formData.startTime || "").substring(0, 5);
+
+            return app.date === formData.date && appTime === formTime;
         });
 
         if (hasConflict) {
