@@ -23,7 +23,6 @@ class UserController extends Controller
             'status' => 'nullable|string',
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
         $validated['role'] = $validated['role'] ?? 'Administrador';
         $validated['status'] = $validated['status'] ?? 'Ativo';
 
@@ -47,7 +46,7 @@ class UserController extends Controller
         ]);
 
         if (isset($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
+            // No manual hash needed because of 'hashed' cast in User model
         }
 
         $user->update($validated);
