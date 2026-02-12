@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useSidebar } from "@/contexts/SidebarContext";
 import {
   LayoutDashboard,
   Users,
@@ -193,7 +194,7 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ currentPath }: AppSidebarProps) {
-  const [collapsed, setCollapsed] = useState(false);
+  const { collapsed, toggleCollapsed } = useSidebar();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -222,7 +223,7 @@ export function AppSidebar({ currentPath }: AppSidebarProps) {
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className="fixed inset-y-0 left-0 z-40 hidden border-r border-sidebar-border lg:block"
       >
-        <SidebarContent collapsed={collapsed} onCollapse={() => setCollapsed(!collapsed)} currentPath={currentPath} />
+        <SidebarContent collapsed={collapsed} onCollapse={toggleCollapsed} currentPath={currentPath} />
       </motion.aside>
 
       {/* Collapsed expand button */}
@@ -230,7 +231,7 @@ export function AppSidebar({ currentPath }: AppSidebarProps) {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setCollapsed(false)}
+          onClick={toggleCollapsed}
           className="fixed left-[80px] top-4 z-50 hidden h-8 w-8 bg-sidebar text-sidebar-muted hover:bg-sidebar-accent hover:text-sidebar-foreground lg:flex"
         >
           <Menu className="h-4 w-4" />
