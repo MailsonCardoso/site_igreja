@@ -606,11 +606,11 @@ export default function Inventario() {
                     {/* ... (existing content) ... */}
                 </AlertDialog>
 
-                {/* Details Dialog */}
-                <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
-                    <DialogContent className="sm:max-w-2xl p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+                {/* Details Sheet */}
+                <Sheet open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+                    <SheetContent side="right" className="sm:max-w-xl w-full h-full p-0 flex flex-col border-none shadow-2xl overflow-hidden">
                         {selectedItem && (
-                            <div className="flex flex-col">
+                            <div className="flex flex-col h-full bg-card">
                                 <div className={`p-8 ${selectedItem.status === 'disposed' ? 'bg-muted/50' : 'bg-primary/5'} border-b flex items-center justify-between`}>
                                     <div className="flex items-center gap-5">
                                         <div className={`h-16 w-16 rounded-2xl ${selectedItem.status === 'disposed' ? 'bg-muted' : 'bg-primary/10'} flex items-center justify-center border border-primary/10 shadow-inner`}>
@@ -626,7 +626,7 @@ export default function Inventario() {
                                                     <Badge variant="destructive" className="text-[10px] uppercase font-bold tracking-widest">Baixado</Badge>
                                                 )}
                                             </div>
-                                            <DialogTitle className="text-2xl font-black text-foreground">{selectedItem.name}</DialogTitle>
+                                            <SheetTitle className="text-2xl font-black text-foreground">{selectedItem.name}</SheetTitle>
                                         </div>
                                     </div>
                                     <Button variant="ghost" size="icon" onClick={() => setIsViewDialogOpen(false)} className="rounded-full h-10 w-10">
@@ -634,26 +634,26 @@ export default function Inventario() {
                                     </Button>
                                 </div>
 
-                                <ScrollArea className="max-h-[70vh]">
+                                <ScrollArea className="flex-1">
                                     <div className="p-8 space-y-8">
                                         {/* Main Specs Grid */}
-                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-2 gap-4">
                                             <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
                                                 <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Quantidade</p>
                                                 <p className="text-xl font-black text-foreground">{selectedItem.quantity}</p>
-                                            </div>
-                                            <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
-                                                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Localização</p>
-                                                <div className="flex items-center gap-1.5 font-bold text-foreground overflow-hidden text-ellipsis whitespace-nowrap">
-                                                    <MapPin className="h-3.5 w-3.5 text-primary" />
-                                                    {selectedItem.location || "---"}
-                                                </div>
                                             </div>
                                             <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
                                                 <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Condição</p>
                                                 <Badge variant="outline" className={`rounded-lg border-0 px-2 py-0.5 h-6 font-bold ${conditions[selectedItem.condition].class}`}>
                                                     {conditions[selectedItem.condition].label}
                                                 </Badge>
+                                            </div>
+                                            <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
+                                                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Localização</p>
+                                                <div className="flex items-center gap-1.5 font-bold text-foreground">
+                                                    <MapPin className="h-3.5 w-3.5 text-primary" />
+                                                    {selectedItem.location || "---"}
+                                                </div>
                                             </div>
                                             <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
                                                 <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">ID Item</p>
@@ -668,7 +668,7 @@ export default function Inventario() {
                                                     <Info className="h-5 w-5" />
                                                     Detalhamento da Baixa
                                                 </div>
-                                                <div className="grid sm:grid-cols-2 gap-6">
+                                                <div className="grid grid-cols-1 gap-4">
                                                     <div>
                                                         <Label className="text-[10px] uppercase font-bold text-muted-foreground">Motivo</Label>
                                                         <p className="text-lg font-bold text-amber-700">{selectedItem.disposal_reason}</p>
@@ -685,19 +685,19 @@ export default function Inventario() {
                                         )}
 
                                         {/* Observations Section */}
-                                        <div className="space-y-3">
+                                        <div className="space-y-3 pb-8">
                                             <div className="flex items-center gap-2 font-bold text-foreground pb-2 border-b border-border/40">
                                                 <ClipboardList className="h-5 w-5 text-primary" />
                                                 Observações e Notas
                                             </div>
-                                            <div className="bg-muted/30 p-6 rounded-2xl border border-dashed border-border/60 min-h-[120px]">
+                                            <div className="bg-muted/30 p-6 rounded-2xl border border-dashed border-border/60 min-h-[140px]">
                                                 {selectedItem.description ? (
                                                     <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
                                                         {selectedItem.description}
                                                     </p>
                                                 ) : (
                                                     <div className="flex flex-col items-center justify-center py-4 text-muted-foreground italic">
-                                                        <p>Nenhuma observação cadastrada para este item.</p>
+                                                        <p>Nenhuma observação cadastrada.</p>
                                                     </div>
                                                 )}
                                             </div>
@@ -705,15 +705,18 @@ export default function Inventario() {
                                     </div>
                                 </ScrollArea>
 
-                                <div className="p-8 bg-muted/20 border-t flex justify-end">
-                                    <Button onClick={() => setIsViewDialogOpen(false)} className="px-8 h-12 rounded-xl bg-foreground text-background hover:bg-foreground/90 font-bold">
-                                        Fechar Visualização
+                                <div className="p-8 bg-card border-t flex gap-3 mt-auto">
+                                    <Button variant="outline" onClick={() => setIsViewDialogOpen(false)} className="flex-1 h-12 rounded-xl font-bold">
+                                        Fechar
+                                    </Button>
+                                    <Button onClick={() => { setIsViewDialogOpen(false); handleEdit(selectedItem); }} className="flex-1 h-12 rounded-xl bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20">
+                                        <Pencil className="mr-2 h-4 w-4" /> Editar Item
                                     </Button>
                                 </div>
                             </div>
                         )}
-                    </DialogContent>
-                </Dialog>
+                    </SheetContent>
+                </Sheet>
             </motion.div>
         </MainLayout >
     );
