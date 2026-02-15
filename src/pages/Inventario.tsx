@@ -601,9 +601,21 @@ export default function Inventario() {
                     </SheetContent>
                 </Sheet>
 
-                {/* Delete Dialog */}
                 <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                    {/* ... (existing content) ... */}
+                    <AlertDialogContent className="rounded-[2rem]">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Remover do Inventário?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Esta ação removerá permanentemente o item <strong>{selectedItem?.name}</strong>. Deseja continuar?
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => deleteMutation.mutate(selectedItem.id)} className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                Remover
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
                 </AlertDialog>
 
                 {/* Details Sheet */}
@@ -654,10 +666,6 @@ export default function Inventario() {
                                                     <MapPin className="h-3.5 w-3.5 text-primary" />
                                                     {selectedItem.location || "---"}
                                                 </div>
-                                            </div>
-                                            <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
-                                                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">ID Item</p>
-                                                <p className="text-sm font-bold text-foreground">#{selectedItem.id}</p>
                                             </div>
                                         </div>
 
