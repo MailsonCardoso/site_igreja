@@ -16,7 +16,8 @@ import {
     MapPin,
     AlertCircle,
     Loader2,
-    Filter
+    Filter,
+    RefreshCcw
 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -165,6 +166,15 @@ export default function Inventario() {
             status: 'disposed',
             disposal_reason: disposeReason,
             disposal_date: new Date().toISOString().split('T')[0]
+        });
+    };
+
+    const handleReactivate = (item: any) => {
+        updateMutation.mutate({
+            ...item,
+            status: 'active',
+            disposal_reason: null,
+            disposal_date: null
         });
     };
 
@@ -477,10 +487,32 @@ export default function Inventario() {
                                         className="group bg-muted/30 rounded-[2rem] border border-border/40 p-6 opacity-80 hover:opacity-100 transition-all flex flex-col"
                                     >
                                         <div className="flex justify-between items-start mb-6">
-                                            <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center">
-                                                <Icon className="h-7 w-7 text-muted-foreground" />
+                                            <div className="flex gap-4 items-start">
+                                                <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center">
+                                                    <Icon className="h-7 w-7 text-muted-foreground" />
+                                                </div>
+                                                <Badge variant="secondary" className="bg-muted text-muted-foreground mt-1">Baixado</Badge>
                                             </div>
-                                            <Badge variant="secondary" className="bg-muted text-muted-foreground">Baixado</Badge>
+
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-muted -mr-2">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-48 rounded-xl p-1 bg-popover/95 backdrop-blur-sm shadow-xl">
+                                                    <DropdownMenuItem onClick={() => handleReactivate(item)} className="cursor-pointer rounded-lg font-medium text-primary">
+                                                        <RefreshCcw className="mr-2 h-4 w-4" /> Reativar Item
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => handleEdit(item)} className="cursor-pointer rounded-lg font-medium">
+                                                        <Pencil className="mr-2 h-4 w-4" /> Editar
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator className="bg-border/50" />
+                                                    <DropdownMenuItem onClick={() => handleDeleteClick(item)} className="cursor-pointer rounded-lg font-medium text-destructive focus:text-destructive focus:bg-destructive/10">
+                                                        <Trash2 className="mr-2 h-4 w-4" /> Excluir permanentemente
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </div>
 
                                         <div className="space-y-3 flex-1">
