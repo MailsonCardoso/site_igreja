@@ -17,7 +17,11 @@ import {
     AlertCircle,
     Loader2,
     Filter,
-    RefreshCcw
+    RefreshCcw,
+    Eye,
+    Info,
+    Calendar,
+    ClipboardList
 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -94,6 +98,7 @@ export default function Inventario() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isDisposeDialogOpen, setIsDisposeDialogOpen] = useState(false);
+    const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<any>(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [disposeReason, setDisposeReason] = useState("");
@@ -213,6 +218,11 @@ export default function Inventario() {
         setSelectedItem(item);
         setDisposeReason("");
         setIsDisposeDialogOpen(true);
+    };
+
+    const handleViewClick = (item: any) => {
+        setSelectedItem(item);
+        setIsViewDialogOpen(true);
     };
 
     const filteredItems = items.filter((item: any) => {
@@ -410,9 +420,10 @@ export default function Inventario() {
                                             initial={{ opacity: 0, scale: 0.95 }}
                                             animate={{ opacity: 1, scale: 1 }}
                                             transition={{ duration: 0.3, delay: index * 0.05 }}
-                                            className="group bg-card hover:bg-secondary/5 rounded-[1.5rem] border border-border/40 p-4 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col"
+                                            onClick={() => handleViewClick(item)}
+                                            className="group bg-card hover:bg-secondary/5 rounded-[1.5rem] border border-border/40 p-4 shadow-sm hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col cursor-pointer"
                                         >
-                                            <div className="flex justify-between items-start mb-4">
+                                            <div className="flex justify-between items-start mb-4" onClick={(e) => e.stopPropagation()}>
                                                 <div className="h-10 w-10 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                                                     <Icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                                                 </div>
@@ -424,6 +435,9 @@ export default function Inventario() {
                                                         </Button>
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent align="end" className="w-48 rounded-xl p-1 bg-popover/95 backdrop-blur-sm shadow-xl">
+                                                        <DropdownMenuItem onClick={() => handleViewClick(item)} className="cursor-pointer rounded-lg font-medium">
+                                                            <Eye className="mr-2 h-4 w-4" /> Visualizar
+                                                        </DropdownMenuItem>
                                                         <DropdownMenuItem onClick={() => handleEdit(item)} className="cursor-pointer rounded-lg font-medium">
                                                             <Pencil className="mr-2 h-4 w-4" /> Editar
                                                         </DropdownMenuItem>
@@ -484,9 +498,10 @@ export default function Inventario() {
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         transition={{ duration: 0.3, delay: index * 0.05 }}
-                                        className="group bg-muted/30 rounded-[2rem] border border-border/40 p-6 opacity-80 hover:opacity-100 transition-all flex flex-col"
+                                        onClick={() => handleViewClick(item)}
+                                        className="group bg-muted/30 rounded-[2rem] border border-border/40 p-6 opacity-80 hover:opacity-100 transition-all flex flex-col cursor-pointer"
                                     >
-                                        <div className="flex justify-between items-start mb-6">
+                                        <div className="flex justify-between items-start mb-6" onClick={(e) => e.stopPropagation()}>
                                             <div className="flex gap-4 items-start">
                                                 <div className="h-14 w-14 rounded-2xl bg-muted flex items-center justify-center">
                                                     <Icon className="h-7 w-7 text-muted-foreground" />
@@ -501,6 +516,9 @@ export default function Inventario() {
                                                     </Button>
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end" className="w-48 rounded-xl p-1 bg-popover/95 backdrop-blur-sm shadow-xl">
+                                                    <DropdownMenuItem onClick={() => handleViewClick(item)} className="cursor-pointer rounded-lg font-medium">
+                                                        <Eye className="mr-2 h-4 w-4" /> Visualizar
+                                                    </DropdownMenuItem>
                                                     <DropdownMenuItem onClick={() => handleReactivate(item)} className="cursor-pointer rounded-lg font-medium text-primary">
                                                         <RefreshCcw className="mr-2 h-4 w-4" /> Reativar Item
                                                     </DropdownMenuItem>
@@ -585,21 +603,117 @@ export default function Inventario() {
 
                 {/* Delete Dialog */}
                 <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                    <AlertDialogContent className="rounded-[2rem]">
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Remover do Inventário?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                                Esta ação removerá permanentemente o item <strong>{selectedItem?.name}</strong>. Deseja continuar?
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel className="rounded-xl">Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteMutation.mutate(selectedItem.id)} className="rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                Remover
-                            </AlertDialogAction>
-                        </AlertDialogFooter>
-                    </AlertDialogContent>
+                    {/* ... (existing content) ... */}
                 </AlertDialog>
+
+                {/* Details Dialog */}
+                <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+                    <DialogContent className="sm:max-w-2xl p-0 overflow-hidden rounded-[2rem] border-none shadow-2xl">
+                        {selectedItem && (
+                            <div className="flex flex-col">
+                                <div className={`p-8 ${selectedItem.status === 'disposed' ? 'bg-muted/50' : 'bg-primary/5'} border-b flex items-center justify-between`}>
+                                    <div className="flex items-center gap-5">
+                                        <div className={`h-16 w-16 rounded-2xl ${selectedItem.status === 'disposed' ? 'bg-muted' : 'bg-primary/10'} flex items-center justify-center border border-primary/10 shadow-inner`}>
+                                            {(() => {
+                                                const Icon = getCategoryIcon(selectedItem.category);
+                                                return <Icon className={`h-8 w-8 ${selectedItem.status === 'disposed' ? 'text-muted-foreground' : 'text-primary'}`} />;
+                                            })()}
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <Badge className="bg-primary/10 text-primary border-none text-[10px] uppercase font-bold tracking-widest">{selectedItem.category}</Badge>
+                                                {selectedItem.status === 'disposed' && (
+                                                    <Badge variant="destructive" className="text-[10px] uppercase font-bold tracking-widest">Baixado</Badge>
+                                                )}
+                                            </div>
+                                            <DialogTitle className="text-2xl font-black text-foreground">{selectedItem.name}</DialogTitle>
+                                        </div>
+                                    </div>
+                                    <Button variant="ghost" size="icon" onClick={() => setIsViewDialogOpen(false)} className="rounded-full h-10 w-10">
+                                        <Plus className="h-6 w-6 rotate-45" />
+                                    </Button>
+                                </div>
+
+                                <ScrollArea className="max-h-[70vh]">
+                                    <div className="p-8 space-y-8">
+                                        {/* Main Specs Grid */}
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                            <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
+                                                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Quantidade</p>
+                                                <p className="text-xl font-black text-foreground">{selectedItem.quantity}</p>
+                                            </div>
+                                            <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
+                                                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Localização</p>
+                                                <div className="flex items-center gap-1.5 font-bold text-foreground overflow-hidden text-ellipsis whitespace-nowrap">
+                                                    <MapPin className="h-3.5 w-3.5 text-primary" />
+                                                    {selectedItem.location || "---"}
+                                                </div>
+                                            </div>
+                                            <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
+                                                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">Condição</p>
+                                                <Badge variant="outline" className={`rounded-lg border-0 px-2 py-0.5 h-6 font-bold ${conditions[selectedItem.condition].class}`}>
+                                                    {conditions[selectedItem.condition].label}
+                                                </Badge>
+                                            </div>
+                                            <div className="bg-secondary/5 p-4 rounded-2xl border border-border/40">
+                                                <p className="text-[10px] uppercase font-bold text-muted-foreground mb-1">ID Item</p>
+                                                <p className="text-sm font-bold text-foreground">#{selectedItem.id}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Disposal Info if applicable */}
+                                        {selectedItem.status === 'disposed' && (
+                                            <div className="bg-amber-500/5 border border-amber-500/20 p-6 rounded-[1.5rem] space-y-4">
+                                                <div className="flex items-center gap-2 text-amber-600 font-bold">
+                                                    <Info className="h-5 w-5" />
+                                                    Detalhamento da Baixa
+                                                </div>
+                                                <div className="grid sm:grid-cols-2 gap-6">
+                                                    <div>
+                                                        <Label className="text-[10px] uppercase font-bold text-muted-foreground">Motivo</Label>
+                                                        <p className="text-lg font-bold text-amber-700">{selectedItem.disposal_reason}</p>
+                                                    </div>
+                                                    <div>
+                                                        <Label className="text-[10px] uppercase font-bold text-muted-foreground">Data da Baixa</Label>
+                                                        <div className="flex items-center gap-2 text-lg font-bold text-foreground">
+                                                            <Calendar className="h-5 w-5 text-muted-foreground" />
+                                                            {new Date(selectedItem.disposal_date + 'T00:00:00').toLocaleDateString('pt-BR')}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Observations Section */}
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-2 font-bold text-foreground pb-2 border-b border-border/40">
+                                                <ClipboardList className="h-5 w-5 text-primary" />
+                                                Observações e Notas
+                                            </div>
+                                            <div className="bg-muted/30 p-6 rounded-2xl border border-dashed border-border/60 min-h-[120px]">
+                                                {selectedItem.description ? (
+                                                    <p className="text-base text-foreground leading-relaxed whitespace-pre-wrap">
+                                                        {selectedItem.description}
+                                                    </p>
+                                                ) : (
+                                                    <div className="flex flex-col items-center justify-center py-4 text-muted-foreground italic">
+                                                        <p>Nenhuma observação cadastrada para este item.</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ScrollArea>
+
+                                <div className="p-8 bg-muted/20 border-t flex justify-end">
+                                    <Button onClick={() => setIsViewDialogOpen(false)} className="px-8 h-12 rounded-xl bg-foreground text-background hover:bg-foreground/90 font-bold">
+                                        Fechar Visualização
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </DialogContent>
+                </Dialog>
             </motion.div>
         </MainLayout >
     );
