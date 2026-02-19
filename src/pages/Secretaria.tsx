@@ -102,6 +102,18 @@ const maskCEP = (value: string) => {
     .slice(0, 9);
 };
 
+// Helper to display date avoiding timezone issues
+const displayDate = (dateString: string) => {
+  if (!dateString) return "Não informada";
+  try {
+    const [year, month, day] = dateString.split('T')[0].split('-');
+    if (!year || !month || !day) return "Data inválida";
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    return "Data inválida";
+  }
+};
+
 export default function Secretaria() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
@@ -774,7 +786,7 @@ export default function Secretaria() {
                   <div className="space-y-1">
                     <p className="text-[9px] text-muted-foreground uppercase font-semibold tracking-wider">Nascimento</p>
                     <p className="text-base font-semibold text-foreground">
-                      {selectedMember?.birth_date ? new Date(selectedMember.birth_date).toLocaleDateString('pt-BR') : "Não informada"}
+                      {displayDate(selectedMember?.birth_date)}
                     </p>
                   </div>
                   <div className="space-y-1">
