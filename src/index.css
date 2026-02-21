@@ -42,19 +42,16 @@
 
     --radius: 0.75rem;
 
-    /* Sidebar - Purple Lavender */
-    --sidebar-background: 269 100% 95%;
-    /* #F3E8FF Lavanda Pálido */
-    --sidebar-foreground: 274 66% 32%;
-    /* #581C87 Roxo Profundo */
-    --sidebar-primary: 271 91% 65%;
-    /* #A855F7 Roxo Vibrante */
+    /* Sidebar - Dark Slate */
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 20% 90%;
+    --sidebar-primary: 199 89% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 271 90% 90%;
-    --sidebar-accent-foreground: 274 66% 32%;
-    --sidebar-border: 269 50% 85%;
-    --sidebar-ring: 271 91% 65%;
-    --sidebar-muted: 271 40% 60%;
+    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent-foreground: 210 20% 90%;
+    --sidebar-border: 222 30% 16%;
+    --sidebar-ring: 199 89% 48%;
+    --sidebar-muted: 210 20% 75%;
 
     /* Chart Colors */
     --chart-amber: 199 89% 48%;
