@@ -54,7 +54,6 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
     const exportPDF = async () => {
         if (!reportRef.current) return;
         setIsExporting(true);
-
         try {
             const canvas = await html2canvas(reportRef.current, {
                 scale: 2,
@@ -66,19 +65,28 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                 unit: 'mm',
                 format: 'a4',
             });
-
             const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-            // Add a header
+            const pdfHeight = pdf.internal.pageSize.getHeight();
+            // Calculate image height to maintain aspect ratio
+            const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+            // Header
             pdf.setFontSize(20);
             pdf.setTextColor(40, 40, 40);
             pdf.text("Relatório de Membros", 14, 20);
             pdf.setFontSize(12);
             pdf.setTextColor(100, 100, 100);
             pdf.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 14, 28);
-
-            pdf.addImage(imgData, 'PNG', 0, 40, pdfWidth, pdfHeight);
+            // Add image with pagination
+            let heightLeft = imgHeight;
+            let position = 40; // start after header
+            while (heightLeft > 0) {
+                pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+                heightLeft -= (pdfHeight - position);
+                if (heightLeft > 0) {
+                    pdf.addPage();
+                    position = 0;
+                }
+            }
             pdf.save('relatorio-membros.pdf');
         } catch (error) {
             console.error("Erro ao gerar PDF:", error);
