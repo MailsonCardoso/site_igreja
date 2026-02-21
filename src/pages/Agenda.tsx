@@ -40,6 +40,23 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
+const parseLocalDate = (dateStr: string) => {
+  if (!dateStr) return new Date();
+  try {
+    let cleanStr = dateStr;
+    if (cleanStr.includes('Z')) {
+      cleanStr = cleanStr.replace('Z', '');
+    }
+    if (!cleanStr.includes('T') && cleanStr.includes(' ')) {
+      cleanStr = cleanStr.replace(' ', 'T');
+    }
+    // Take exactly the first 19 chars: YYYY-MM-DDTHH:mm:ss
+    return new Date(cleanStr.substring(0, 19));
+  } catch (e) {
+    return new Date();
+  }
+};
+
 export default function Agenda() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -118,7 +135,7 @@ export default function Agenda() {
   const handleEdit = (evento: any) => {
     setSelectedEvent(evento);
     setIsEditMode(true);
-    const eventDate = new Date(evento.start_date);
+    const eventDate = parseLocalDate(evento.start_date);
     reset({
       title: evento.title || "",
       description: evento.description || "",
@@ -141,24 +158,24 @@ export default function Agenda() {
   };
 
   // Get dates that have events for the calendar indicators
-  const eventDates = eventos.map((e: any) => new Date(e.start_date));
+  const eventDates = eventos.map((e: any) => parseLocalDate(e.start_date));
 
   // Filter events for the selected day
   const dayEvents = eventos.filter((e: any) => {
     if (!date) return false;
-    const ed = new Date(e.start_date);
+    const ed = parseLocalDate(e.start_date);
     return ed.toDateString() === date.toDateString();
   });
 
   // Remaining events (upcoming)
   const upcomingEvents = eventos
-    .filter((e: any) => new Date(e.start_date) >= new Date())
-    .sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+    .filter((e: any) => parseLocalDate(e.start_date) >= new Date())
+    .sort((a: any, b: any) => parseLocalDate(a.start_date).getTime() - parseLocalDate(b.start_date).getTime());
 
   // Past events (history)
   const pastEvents = eventos
-    .filter((e: any) => new Date(e.start_date) < new Date())
-    .sort((a: any, b: any) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+    .filter((e: any) => parseLocalDate(e.start_date) < new Date())
+    .sort((a: any, b: any) => parseLocalDate(b.start_date).getTime() - parseLocalDate(a.start_date).getTime());
 
   return (
     <MainLayout title="Agenda" breadcrumbs={[{ label: "Eventos" }]}>
@@ -264,13 +281,13 @@ export default function Agenda() {
                   <div key={evento.id} className="group relative flex items-center justify-between p-5 rounded-3xl bg-card border border-border/50 hover:border-primary/30 hover:shadow-lg transition-all duration-300">
                     <div className="flex items-center gap-5">
                       <div className="h-14 w-14 rounded-2xl flex flex-col items-center justify-center text-white shadow-lg shadow-primary/10" style={{ backgroundColor: evento.color || '#ecb318' }}>
-                        <span className="text-[10px] font-bold uppercase opacity-80">{format(new Date(evento.start_date), "MMM", { locale: ptBR })}</span>
-                        <span className="text-lg font-bold leading-none">{format(new Date(evento.start_date), "dd")}</span>
+                        <span className="text-[10px] font-bold uppercase opacity-80">{format(parseLocalDate(evento.start_date), "MMM", { locale: ptBR })}</span>
+                        <span className="text-lg font-bold leading-none">{format(parseLocalDate(evento.start_date), "dd")}</span>
                       </div>
                       <div>
                         <h4 className="text-lg font-semibold text-foreground leading-tight mb-1">{evento.title}</h4>
                         <div className="flex items-center gap-3 text-sm text-muted-foreground font-medium">
-                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(evento.start_date), "HH:mm")}h</span>
+                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(parseLocalDate(evento.start_date), "HH:mm")}h</span>
                           {evento.location && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {evento.location}</span>}
                         </div>
                       </div>
@@ -316,8 +333,8 @@ export default function Agenda() {
                 upcomingEvents.slice(0, 3).map((evento: any) => (
                   <div key={evento.id} className="bg-background/40 backdrop-blur-sm p-5 rounded-3xl border border-white/10 hover:border-primary/20 transition-all cursor-pointer group" onClick={() => handleView(evento)}>
                     <div className="flex items-center justify-between mb-3">
-                      <Badge className="bg-primary/20 text-primary border-none text-[9px] font-bold uppercase tracking-widest">{format(new Date(evento.start_date), "EEEE", { locale: ptBR })}</Badge>
-                      <span className="text-[10px] font-semibold text-sidebar-foreground/50">{format(new Date(evento.start_date), "dd 'de' MMM", { locale: ptBR })}</span>
+                      <Badge className="bg-primary/20 text-primary border-none text-[9px] font-bold uppercase tracking-widest">{format(parseLocalDate(evento.start_date), "EEEE", { locale: ptBR })}</Badge>
+                      <span className="text-[10px] font-semibold text-sidebar-foreground/50">{format(parseLocalDate(evento.start_date), "dd 'de' MMM", { locale: ptBR })}</span>
                     </div>
                     <h4 className="font-bold text-sidebar-foreground group-hover:text-primary transition-colors">{evento.title}</h4>
                     <p className="text-xs text-sidebar-foreground/60 mt-1 line-clamp-1">{evento.location || "Local não informado"}</p>
@@ -341,7 +358,7 @@ export default function Agenda() {
                     >
                       <div className="h-10 w-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 group-hover:border-primary/20 transition-all">
                         <span className="text-[10px] font-bold text-sidebar-foreground/40 group-hover:text-primary transition-all">
-                          {format(new Date(evento.start_date), "dd")}
+                          {format(parseLocalDate(evento.start_date), "dd")}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -349,7 +366,7 @@ export default function Agenda() {
                           {evento.title}
                         </h4>
                         <p className="text-[10px] text-sidebar-foreground/30 font-medium">
-                          {format(new Date(evento.start_date), "MMM yyyy", { locale: ptBR })}
+                          {format(parseLocalDate(evento.start_date), "MMM yyyy", { locale: ptBR })}
                         </p>
                       </div>
                     </div>
@@ -511,10 +528,10 @@ export default function Agenda() {
                 <h2 className="text-2xl font-bold text-foreground leading-tight">{selectedEvent?.title}</h2>
                 <div className="flex flex-wrap items-center gap-4 mt-4">
                   <Badge variant="outline" className="rounded-lg border-primary/20 text-primary font-semibold py-1 px-3">
-                    {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "dd 'de' MMMM, yyyy", { locale: ptBR })}
+                    {selectedEvent?.start_date && format(parseLocalDate(selectedEvent.start_date), "dd 'de' MMMM, yyyy", { locale: ptBR })}
                   </Badge>
                   <span className="flex items-center gap-1.5 text-muted-foreground font-semibold text-sm">
-                    <Clock className="h-4 w-4 text-primary" /> {selectedEvent?.start_date && format(new Date(selectedEvent.start_date), "HH:mm")}h
+                    <Clock className="h-4 w-4 text-primary" /> {selectedEvent?.start_date && format(parseLocalDate(selectedEvent.start_date), "HH:mm")}h
                   </span>
                   {selectedEvent?.location && (
                     <span className="flex items-center gap-1.5 text-muted-foreground font-semibold text-sm">
