@@ -137,8 +137,8 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                                             data={ageDistribution}
                                             cx="50%"
                                             cy="50%"
-                                            innerRadius={70}
-                                            outerRadius={100}
+                                            innerRadius={60}
+                                            outerRadius={90}
                                             paddingAngle={4}
                                             dataKey="quantidade"
                                             nameKey="faixa"
@@ -155,12 +155,31 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                                             align="right"
                                             verticalAlign="middle"
                                             iconType="circle"
-                                            formatter={(value) => <span className="text-sm font-medium text-slate-700 ml-1">{value}</span>}
+                                            formatter={(value, entry: any) => (
+                                                <span className="text-sm font-medium text-slate-700 ml-1">
+                                                    {value} <span className="text-muted-foreground ml-2 font-bold">({entry.payload.quantidade})</span>
+                                                </span>
+                                            )}
                                         />
                                     </PieChart>
                                 </ResponsiveContainer>
                             )}
                         </div>
+
+                        {/* List format */}
+                        {hasData && (
+                            <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4 border-t pt-6">
+                                {ageDistribution.map((item, index) => (
+                                    <div key={index} className="flex items-center gap-3 bg-secondary/10 p-3 rounded-xl border border-secondary/20">
+                                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.fill }} />
+                                        <div>
+                                            <p className="text-xs font-bold text-muted-foreground uppercase">{item.faixa}</p>
+                                            <p className="text-lg font-black">{item.quantidade} <span className="text-xs font-medium text-muted-foreground normal-case">pessoas</span></p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
