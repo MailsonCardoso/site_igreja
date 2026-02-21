@@ -24,6 +24,22 @@ import { format, isAfter, isBefore, addDays, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { PastoralStore } from "@/data/pastoral-store";
 
+const parseLocalDate = (dateStr: string) => {
+  if (!dateStr) return new Date();
+  try {
+    let cleanStr = dateStr;
+    if (cleanStr.includes('Z')) {
+      cleanStr = cleanStr.replace('Z', '');
+    }
+    if (!cleanStr.includes('T') && cleanStr.includes(' ')) {
+      cleanStr = cleanStr.replace(' ', 'T');
+    }
+    return new Date(cleanStr.substring(0, 19));
+  } catch (e) {
+    return new Date();
+  }
+};
+
 interface PageHeaderProps {
   title: string;
   breadcrumbs?: { label: string; href?: string }[];
@@ -74,12 +90,12 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
 
     // 1. Eventos da Igreja (da API)
     const urgentChurchEvents = (eventos || []).filter((evento: any) => {
-      const eventDate = new Date(evento.start_date);
+      const eventDate = parseLocalDate(evento.start_date);
       return isAfter(eventDate, today) && isBefore(eventDate, limitDate);
     }).map((e: any) => ({
       ...e,
       type: "church",
-      sortDate: new Date(e.start_date),
+      sortDate: parseLocalDate(e.start_date),
       displayDate: e.start_date
     }));
 
@@ -208,13 +224,13 @@ export function PageHeader({ title, breadcrumbs, actions }: PageHeaderProps) {
                             <span className="text-xs font-bold text-foreground line-clamp-1">{evento.title}</span>
                           </div>
                           <span className="text-[9px] font-bold uppercase text-primary/60">
-                            {format(new Date(evento.displayDate), "dd/MM")}
+                            {format(parseLocalDate(evento.displayDate), "dd/MM")}
                           </span>
                         </div>
                         <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground ml-7">
-                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(new Date(evento.displayDate), "HH:mm")}</span>
+                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(parseLocalDate(evento.displayDate), "HH:mm")}</span>
                           <span className="flex items-center gap-1">
-                            {evento.type === "pastoral" ? "Atendimento Pastoral" : format(new Date(evento.displayDate), "EEEE", { locale: ptBR })}
+                            {evento.type === "pastoral" ? "Atendimento Pastoral" : format(parseLocalDate(evento.displayDate), "EEEE", { locale: ptBR })}
                           </span>
                         </div>
                         <div className="mt-1 flex items-center gap-1 text-[9px] font-bold text-primary uppercase tracking-wider ml-7">
