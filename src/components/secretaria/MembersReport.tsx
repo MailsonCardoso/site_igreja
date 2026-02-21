@@ -171,9 +171,9 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                                             align="right"
                                             verticalAlign="middle"
                                             iconType="circle"
-                                            formatter={(value, entry: any) => (
+                                            formatter={(value) => (
                                                 <span className="text-sm font-medium text-slate-700 ml-1">
-                                                    {value} <span className="text-muted-foreground ml-2 font-bold">({entry.payload.quantidade})</span>
+                                                    {value}
                                                 </span>
                                             )}
                                         />
