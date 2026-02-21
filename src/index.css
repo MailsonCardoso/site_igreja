@@ -4,7 +4,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-/* Church Dashboard Design System - Sky Blue & Minimal */
+/* Church Dashboard Design System - Burgundy & Minimal */
 
 @layer base {
   :root {
@@ -17,8 +17,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 199 89% 48%;
-    /* Azul Celeste Vibrante */
+    --primary: 349 60% 35%;
+    /* Vermelho Bordô / Vinho */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 210 40% 96.1%;
@@ -38,24 +38,24 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 199 89% 48%;
+    --ring: 349 60% 35%;
 
     --radius: 0.75rem;
 
     /* Sidebar - Dark Slate */
     --sidebar-background: 222 47% 8%;
     --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 199 89% 48%;
+    --sidebar-primary: 349 60% 35%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 222 30% 14%;
     --sidebar-accent-foreground: 210 20% 90%;
     --sidebar-border: 222 30% 16%;
-    --sidebar-ring: 199 89% 48%;
+    --sidebar-ring: 349 60% 35%;
     --sidebar-muted: 210 20% 75%;
 
     /* Chart Colors */
-    --chart-amber: 199 89% 48%;
-    /* Adjusted for blue base */
+    --chart-amber: 349 60% 35%;
+    /* Adjusted for burgundy base */
     --chart-green: 142 76% 36%;
     --chart-red: 0 84% 60%;
     --chart-blue: 217 91% 60%;
@@ -77,7 +77,7 @@
 @layer utilities {
   .gradient-amber {
     /* Renamed in CSS but keeping the class for backward compatibility */
-    background: linear-gradient(135deg, hsl(199 89% 48%) 0%, hsl(199 89% 38%) 100%);
+    background: linear-gradient(135deg, hsl(349 60% 35%) 0%, hsl(349 60% 25%) 100%);
   }
 
   .gradient-card {
@@ -86,7 +86,7 @@
 
   .text-gradient-amber {
     /* Kept class name to prevent breaking changes in old files if any */
-    background: linear-gradient(135deg, hsl(199 89% 48%) 0%, hsl(199 89% 38%) 100%);
+    background: linear-gradient(135deg, hsl(349 60% 35%) 0%, hsl(349 60% 25%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
