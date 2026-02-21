@@ -27,10 +27,14 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
     ];
 
     let totalMembers = 0;
+    let totalVisitors = 0;
 
     members.forEach((member) => {
-        // We only count members and congregados for this report
-        if (member.status === 'afastado' || member.status === 'visitante') return;
+        if (member.status === 'visitante') {
+            totalVisitors++;
+            return;
+        }
+        if (member.status === 'afastado') return;
 
         totalMembers++;
 
@@ -84,8 +88,8 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
     };
 
     return (
-        <div className="flex flex-col h-full bg-card">
-            <div className="p-8 pb-4">
+        <div className="flex flex-col h-full bg-card overflow-y-auto">
+            <div className="p-8 pb-10">
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h2 className="text-2xl font-bold">Resumo Demográfico</h2>
@@ -103,13 +107,25 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
 
                 {/* The content to be exported */}
                 <div ref={reportRef} className="p-6 bg-card border rounded-2xl shadow-sm mb-4">
-                    <div className="mb-8 p-6 bg-primary/5 rounded-2xl border border-primary/10 flex items-center justify-between">
-                        <div>
-                            <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Total de Pessoas</p>
-                            <h3 className="text-4xl font-black text-foreground mt-1">{totalMembers}</h3>
+                    <div className="grid grid-cols-2 gap-4 mb-8">
+                        <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Membros Ativos</p>
+                                <h3 className="text-4xl font-black text-foreground mt-1">{totalMembers}</h3>
+                            </div>
+                            <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center">
+                                <span className="text-3xl font-black text-primary">M</span>
+                            </div>
                         </div>
-                        <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center">
-                            <span className="text-3xl font-black text-primary">I</span>
+
+                        <div className="p-6 bg-amber-500/5 rounded-2xl border border-amber-500/10 flex items-center justify-between">
+                            <div>
+                                <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Visitantes</p>
+                                <h3 className="text-4xl font-black text-foreground mt-1">{totalVisitors}</h3>
+                            </div>
+                            <div className="h-16 w-16 bg-amber-500/10 rounded-2xl flex items-center justify-center">
+                                <span className="text-3xl font-black text-amber-500">V</span>
+                            </div>
                         </div>
                     </div>
 
