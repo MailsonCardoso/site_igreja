@@ -331,7 +331,7 @@ export default function Agenda() {
                 <p className="text-center text-sidebar-foreground/60 italic text-sm">Sem eventos futuros.</p>
               ) : (
                 upcomingEvents.slice(0, 3).map((evento: any) => (
-                  <div key={evento.id} className="bg-background/40 backdrop-blur-sm p-5 rounded-3xl border border-white/10 hover:border-primary/20 transition-all cursor-pointer group" onClick={() => handleView(evento)}>
+                  <div key={evento.id} className="bg-white/5 backdrop-blur-md p-5 rounded-3xl border border-white/10 hover:border-primary/30 transition-all cursor-pointer group" onClick={() => handleView(evento)}>
                     <div className="flex items-center justify-between mb-3">
                       <Badge className="bg-primary/20 text-primary border-none text-[9px] font-bold uppercase tracking-widest">{format(parseLocalDate(evento.start_date), "EEEE", { locale: ptBR })}</Badge>
                       <span className="text-[10px] font-semibold text-sidebar-foreground/50">{format(parseLocalDate(evento.start_date), "dd 'de' MMM", { locale: ptBR })}</span>
