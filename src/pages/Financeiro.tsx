@@ -175,18 +175,32 @@ export default function Financeiro() {
     },
   });
 
+  const getDefaultDateForSelectedPeriod = () => {
+    const today = new Date();
+    const currentMonth = (today.getMonth() + 1).toString();
+    const currentYear = today.getFullYear().toString();
+
+    if (selectedMonth === currentMonth && selectedYear === currentYear) {
+      return format(today, "yyyy-MM-dd");
+    } else {
+      const date = new Date(Number(selectedYear), Number(selectedMonth) - 1, 1);
+      return format(date, "yyyy-MM-dd");
+    }
+  };
+
   const resetForm = () => {
     setEditingId(null);
     setFormData({
       description: "",
       amount: "",
       category_name: "",
-      date: format(new Date(), "yyyy-MM-dd"),
+      date: getDefaultDateForSelectedPeriod(),
     });
   };
 
   const openModal = (type: "entrada" | "saida") => {
     setTransactionType(type);
+    setFormData(prev => ({ ...prev, date: getDefaultDateForSelectedPeriod() }));
     setIsModalOpen(true);
   };
 
