@@ -38,6 +38,8 @@ import {
 } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Palette, Check } from "lucide-react";
 
 // Helper mask functions
 const maskCNPJ = (value: string) => {
@@ -62,6 +64,7 @@ const maskPhone = (value: string) => {
 
 export default function Configuracoes() {
   const { toast } = useToast();
+  const { currentTheme, setTheme, themes } = useTheme();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("geral");
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
@@ -333,6 +336,9 @@ export default function Configuracoes() {
               <TabsTrigger value="integracoes" className="h-11 rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-semibold transition-all">
                 Integrações
               </TabsTrigger>
+              <TabsTrigger value="aparencia" className="h-11 rounded-xl px-8 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-lg font-semibold transition-all">
+                Aparência
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -589,6 +595,62 @@ export default function Configuracoes() {
                       className="data-[state=checked]:bg-primary scale-125"
                     />
                   </div>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="aparencia" className="mt-0 space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex flex-col gap-6 mb-8">
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">Identidade Visual</h3>
+                  <p className="text-muted-foreground font-medium">
+                    Escolha a paleta de cores que melhor representa sua igreja.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Object.entries(themes).map(([key, theme]) => (
+                  <motion.div
+                    key={key}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => {
+                      setTheme(key);
+                      toast({
+                        title: "Tema Alterado",
+                        description: `O tema ${theme.name} foi aplicado com sucesso.`,
+                      });
+                    }}
+                    className={`relative cursor-pointer rounded-[2rem] border-2 p-6 transition-all duration-300 ${currentTheme === key
+                        ? "border-primary bg-primary/5 shadow-xl shadow-primary/10"
+                        : "border-secondary/20 bg-card hover:border-primary/30"
+                      }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="h-10 w-10 rounded-xl shadow-lg flex items-center justify-center"
+                          style={{ backgroundColor: `hsl(${theme.primary})` }}
+                        >
+                          <Palette className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="font-bold text-lg">{theme.name}</span>
+                      </div>
+                      {currentTheme === key && (
+                        <div className="h-6 w-6 rounded-full bg-primary flex items-center justify-center">
+                          <Check className="h-4 w-4 text-primary-foreground" />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-4 gap-2">
+                      <div className="h-2 rounded-full w-full" style={{ backgroundColor: `hsl(${theme.primary})` }} />
+                      <div className="h-2 rounded-full w-full opacity-60" style={{ backgroundColor: `hsl(${theme.primary})` }} />
+                      <div className="h-2 rounded-full w-full opacity-30" style={{ backgroundColor: `hsl(${theme.primary})` }} />
+                      <div className="h-2 rounded-full w-full opacity-10" style={{ backgroundColor: `hsl(${theme.primary})` }} />
+                    </div>
+                  </motion.div>
                 ))}
               </div>
             </TabsContent>

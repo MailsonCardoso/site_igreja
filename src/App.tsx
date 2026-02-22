@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SidebarProvider } from "@/contexts/SidebarContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import Dashboard from "./pages/Dashboard";
 import Secretaria from "./pages/Secretaria";
 import Financeiro from "./pages/Financeiro";
@@ -80,108 +81,111 @@ const RoleRoute = ({ children, allowedRoles }: { children: React.ReactNode, allo
 const App = () => (
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
-      <SidebarProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <Routes>
-            <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
+      <ThemeProvider>
+        <SidebarProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <Routes>
+              {/* ... (existing routes) ... */}
+              <Route path="/auth" element={<AuthRoute><Auth /></AuthRoute>} />
 
-            {/* Telas que todos (exceto Financeiro puro) podem ver ou que têm filtro interno */}
-            <Route path="/" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
-                <Dashboard />
-              </RoleRoute>
-            } />
+              {/* Telas que todos (exceto Financeiro puro) podem ver ou que têm filtro interno */}
+              <Route path="/" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
+                  <Dashboard />
+                </RoleRoute>
+              } />
 
-            {/* Módulo Pastoral */}
-            <Route path="/pastor" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
-                <Altar />
-              </RoleRoute>
-            } />
+              {/* Módulo Pastoral */}
+              <Route path="/pastor" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+                  <Altar />
+                </RoleRoute>
+              } />
 
-            <Route path="/pastor/pulpito/:id" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
-                <Pulpito />
-              </RoleRoute>
-            } />
+              <Route path="/pastor/pulpito/:id" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+                  <Pulpito />
+                </RoleRoute>
+              } />
 
-            <Route path="/pastor/series" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
-                <Series />
-              </RoleRoute>
-            } />
+              <Route path="/pastor/series" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+                  <Series />
+                </RoleRoute>
+              } />
 
-            <Route path="/pastor/insights" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
-                <Insights />
-              </RoleRoute>
-            } />
-            <Route path="/pastor/agenda" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Secretário", "Secretária"]}>
-                <AgendaPastoral />
-              </RoleRoute>
-            } />
+              <Route path="/pastor/insights" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+                  <Insights />
+                </RoleRoute>
+              } />
+              <Route path="/pastor/agenda" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Secretário", "Secretária"]}>
+                  <AgendaPastoral />
+                </RoleRoute>
+              } />
 
-            {/* Secretaria e Admins */}
-            <Route path="/secretaria" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
-                <Secretaria />
-              </RoleRoute>
-            } />
+              {/* Secretaria e Admins */}
+              <Route path="/secretaria" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+                  <Secretaria />
+                </RoleRoute>
+              } />
 
-            {/* Financeiro e Admins */}
-            <Route path="/financeiro" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Financeiro"]}>
-                <Financeiro />
-              </RoleRoute>
-            } />
+              {/* Financeiro e Admins */}
+              <Route path="/financeiro" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Financeiro"]}>
+                  <Financeiro />
+                </RoleRoute>
+              } />
 
-            <Route path="/financeiro/analise" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Financeiro"]}>
-                <AnaliseFinanceira />
-              </RoleRoute>
-            } />
+              <Route path="/financeiro/analise" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Financeiro"]}>
+                  <AnaliseFinanceira />
+                </RoleRoute>
+              } />
 
-            {/* Outras telas operacionais */}
-            <Route path="/celulas" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
-                <Celulas />
-              </RoleRoute>
-            } />
-            <Route path="/agenda" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
-                <Agenda />
-              </RoleRoute>
-            } />
-            <Route path="/ministerios" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
-                <Ministerios />
-              </RoleRoute>
-            } />
-            <Route path="/ensino" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
-                <Ensino />
-              </RoleRoute>
-            } />
-            <Route path="/inventario" element={
-              <RoleRoute allowedRoles={["Administrador", "Secretaria"]}>
-                <Inventario />
-              </RoleRoute>
-            } />
+              {/* Outras telas operacionais */}
+              <Route path="/celulas" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
+                  <Celulas />
+                </RoleRoute>
+              } />
+              <Route path="/agenda" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria", "Lider de pequeno grupo"]}>
+                  <Agenda />
+                </RoleRoute>
+              } />
+              <Route path="/ministerios" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+                  <Ministerios />
+                </RoleRoute>
+              } />
+              <Route path="/ensino" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+                  <Ensino />
+                </RoleRoute>
+              } />
+              <Route path="/inventario" element={
+                <RoleRoute allowedRoles={["Administrador", "Secretaria"]}>
+                  <Inventario />
+                </RoleRoute>
+              } />
 
-            {/* Somente Admin e Pastor */}
-            <Route path="/configuracoes" element={
-              <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
-                <Configuracoes />
-              </RoleRoute>
-            } />
+              {/* Somente Admin e Pastor */}
+              <Route path="/configuracoes" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor"]}>
+                  <Configuracoes />
+                </RoleRoute>
+              } />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </TooltipProvider>
-      </SidebarProvider>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </TooltipProvider>
+        </SidebarProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </BrowserRouter>
 );
