@@ -125,20 +125,32 @@ export default function AnaliseFinanceira() {
         <head>
           <title>Análise Financeira - ${churchSettings?.nome || 'Igreja'}</title>
           <style>
-             @page { margin: 1cm; size: A4 landscape; }
-             body { font-family: sans-serif; padding: 20px; color: #333; }
-             .header { text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 20px; margin-bottom: 30px; }
-             .title { font-size: 24px; font-weight: bold; text-transform: uppercase; }
-             .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-             .section-title { font-size: 18px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px; }
-             .item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; }
-             .dre-table { width: 100%; border-collapse: collapse; margin-top: 40px; }
-             .dre-table th, .dre-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-             .dre-table th { background: #f8f9fa; }
-             .total-row { font-weight: bold; background: #f1f5f9; }
+             @media print {
+               @page { margin: 0.5cm; size: landscape; }
+               body { padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+               .no-print { display: none !important; }
+               
+               /* Ajustes para economizar espaço na impressão */
+               #analytics-page { space-y: 4px !important; }
+               .rounded-\[2\.5rem\] { border-radius: 1rem !important; padding: 1.5rem !important; margin-bottom: 1rem !important; }
+               .h-\[350px\] { height: 250px !important; }
+               .mb-8 { margin-bottom: 1rem !important; }
+               .space-y-8 { margin-top: 0 !important; }
+               .p-8, .p-10 { padding: 1rem !important; }
+               .grid { gap: 15px !important; }
+               .max-w-3xl { max-width: 100% !important; }
+               
+               /* Evitar quebras de página no meio dos cards */
+               .rounded-\[2\.5rem\], .bg-card { page-break-inside: avoid; break-inside: avoid; }
+             }
+             body { font-family: sans-serif; padding: 20px; color: #333; line-height: 1.2; }
+             .header { text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 15px; }
+             .title { font-size: 20px; font-weight: bold; text-transform: uppercase; }
+             .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+             .section-title { font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
+             .item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #eee; }
              .text-success { color: #16a34a; }
              .text-destructive { color: #dc2626; }
-             .no-print { display: none !important; }
           </style>
         </head>
         <body>
