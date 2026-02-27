@@ -64,6 +64,8 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
             const dateStr = new Date().toLocaleDateString('pt-BR');
+            const margin = 14;
+            const contentWidth = pdfWidth - (2 * margin);
 
             // --- PAGE 1: Summary ---
             const canvasSummary = await html2canvas(summaryRef.current, { scale: 2, backgroundColor: '#ffffff' });
@@ -71,34 +73,64 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
 
             pdf.setFontSize(18);
             pdf.setTextColor(40, 40, 40);
-            pdf.text("Relatório de Membros", 14, 20);
+            pdf.text("Relatório de Membros", margin, 20);
             pdf.setFontSize(10);
             pdf.setTextColor(100, 100, 100);
-            pdf.text(`Resumo Demográfico - Gerado em: ${dateStr}`, 14, 28);
+            pdf.text(`Resumo Demográfico - Gerado em: ${dateStr}`, margin, 28);
 
-            const imgWidth = pdfWidth - 28;
-            const imgHeight = (canvasSummary.height * imgWidth) / canvasSummary.width;
-            pdf.addImage(imgDataSummary, 'PNG', 14, 35, imgWidth, imgHeight);
+            const imgHeight = (canvasSummary.height * contentWidth) / canvasSummary.width;
+            pdf.addImage(imgDataSummary, 'PNG', margin, 35, contentWidth, imgHeight);
 
-            // --- PAGE 2+: Lists ---
-            pdf.addPage();
-            const canvasLists = await html2canvas(listsRef.current, { scale: 2, backgroundColor: '#ffffff' });
-            const imgDataLists = canvasLists.toDataURL('image/png');
+            // --- PAGE 2+: Nominal Lists (Multi-page) ---
+            const canvasLists = await html2canvas(listsRef.current, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                useCORS: true
+            });
 
-            pdf.setFontSize(18);
-            pdf.setTextColor(40, 40, 40);
-            pdf.text("Lista Nominal", 14, 20);
-            pdf.setFontSize(10);
-            pdf.setTextColor(100, 100, 100);
-            pdf.text(`Membros e Visitantes - Gerado em: ${dateStr}`, 14, 28);
+            const imgWidthLists = canvasLists.width;
+            const imgHeightLists = canvasLists.height;
+            const pxToMm = contentWidth / imgWidthLists;
 
-            const listImgWidth = pdfWidth - 28;
-            const listImgHeight = (canvasLists.height * listImgWidth) / canvasLists.width;
+            // Limit per page (mm)
+            const headerHeight = 35;
+            const pageHeightLimit = pdfHeight - headerHeight - 20; // Some margin at bottom
+            const sliceHeightPx = pageHeightLimit / pxToMm;
 
-            // Check if lists fit in one page, if not, jsPDF might need multiple calls or we trust html2canvas size for now
-            // For very long lists, this scaling will shrink it. In a real production app, we'd loop through lines.
-            // But for now, we'll keep it simple as requested.
-            pdf.addImage(imgDataLists, 'PNG', 14, 35, listImgWidth, listImgHeight);
+            let currentPathY = 0;
+            let pageNum = 1;
+
+            while (currentPathY < imgHeightLists) {
+                pdf.addPage();
+
+                // Redraw header on each list page
+                pdf.setFontSize(18);
+                pdf.setTextColor(40, 40, 40);
+                pdf.text("Lista Nominal", margin, 20);
+                pdf.setFontSize(10);
+                pdf.setTextColor(100, 100, 100);
+                pdf.text(`Membros e Visitantes - Página ${pageNum} - Gerado em: ${dateStr}`, margin, 28);
+
+                const canvasSlice = document.createElement('canvas');
+                canvasSlice.width = imgWidthLists;
+                // Height is the slice limit or whatever remains
+                const currentSliceHeightPx = Math.min(sliceHeightPx, imgHeightLists - currentPathY);
+                canvasSlice.height = currentSliceHeightPx;
+
+                const ctx = canvasSlice.getContext('2d');
+                if (ctx) {
+                    ctx.drawImage(
+                        canvasLists,
+                        0, currentPathY, imgWidthLists, currentSliceHeightPx, // Source
+                        0, 0, imgWidthLists, currentSliceHeightPx // Destination
+                    );
+                    const sliceData = canvasSlice.toDataURL('image/png');
+                    pdf.addImage(sliceData, 'PNG', margin, headerHeight, contentWidth, currentSliceHeightPx * pxToMm);
+                }
+
+                currentPathY += sliceHeightPx;
+                pageNum++;
+            }
 
             pdf.save(`relatorio-igreja-${new Date().getTime()}.pdf`);
         } catch (error) {

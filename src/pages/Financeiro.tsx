@@ -306,7 +306,9 @@ export default function Financeiro() {
         <head>
           <title>Balancete Mensal</title>
           <style>
-            @page { margin: 1.0cm; size: landscape; }
+            @media print {
+              @page { margin: 1.0cm; size: landscape; }
+            }
             body { font-family: sans-serif; padding: 0; margin: 0; background: white; color: black; line-height: 1.5; }
             .p-10 { padding: 40px; }
             .text-center { text-align: center; }
