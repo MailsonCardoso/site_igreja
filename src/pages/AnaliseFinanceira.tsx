@@ -153,15 +153,16 @@ export default function AnaliseFinanceira() {
             .print-page {
               break-after: page;
               page-break-after: always;
-              min-height: 190mm; /* Força altura mínima próxima ao A4 paisagem */
-              padding: 1.5cm;
+              height: 200mm; /* A4 Landscape height is ~210mm. 200mm is safer. */
+              padding: 1cm 1.5cm;
               box-sizing: border-box;
-              display: block; /* Voltar para block para evitar bugs de flex em quebras de página */
+              display: block;
               position: relative;
               overflow: hidden;
             }
             
             .print-page:last-child {
+              break-after: auto;
               page-break-after: auto;
             }
 
@@ -180,7 +181,10 @@ export default function AnaliseFinanceira() {
 
             .section-content {
               width: 100%;
-              margin-top: 20px;
+              height: calc(100% - 120px); /* Reserva espaço para header e footer */
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
             }
 
             .footer {
@@ -221,8 +225,9 @@ export default function AnaliseFinanceira() {
             .tracking-widest { letter-spacing: 0.1em !important; }
             .leading-none { line-height: 1 !important; }
             
-            /* Component Fixes */
-            .rounded-\[2\.5rem\] { border-radius: 2rem !important; border: 1px solid #e2e8f0 !important; background: white !important; overflow: hidden; page-break-inside: avoid; }
+            /* Ajuste para seções específicas */
+            .print-section { width: 100% !important; margin: 0 !important; }
+            .rounded-\[2\.5rem\] { border-radius: 2rem !important; border: 1px solid #e2e8f0 !important; background: white !important; overflow: hidden; page-break-inside: avoid; width: 100%; }
             .bg-card { background: white !important; }
             .p-8 { padding: 2rem !important; }
             .p-10 { padding: 2.5rem !important; }
@@ -302,7 +307,7 @@ export default function AnaliseFinanceira() {
               </div>
               
               <div class="section-content">
-                ${section.innerHTML}
+                ${section.outerHTML}
               </div>
 
               <div class="footer">
@@ -318,7 +323,7 @@ export default function AnaliseFinanceira() {
                 window.onafterprint = () => {
                   window.parent.document.body.removeChild(window.frameElement);
                 };
-              }, 800);
+              }, 1000);
             };
           </script>
         </body>
