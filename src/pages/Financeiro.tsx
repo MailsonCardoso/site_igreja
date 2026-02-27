@@ -695,6 +695,9 @@ export default function Financeiro() {
               </div>
             </div>
             <div className="flex gap-2">
+              <Button onClick={handlePrint} className="bg-primary hover:bg-primary/90 rounded-xl font-semibold gap-2">
+                <Printer className="h-4 w-4" /> Imprimir / PDF
+              </Button>
             </div>
           </SheetHeader>
 
@@ -811,7 +814,10 @@ export default function Financeiro() {
           </ScrollArea>
 
           <div className="p-6 border-t bg-card no-print flex gap-4 justify-end">
-            <Button variant="outline" className="h-12 rounded-xl font-semibold px-8 w-full" onClick={() => setIsReportOpen(false)}>Fechar Fechamento</Button>
+            <Button variant="outline" className="h-12 rounded-xl font-semibold px-8" onClick={() => setIsReportOpen(false)}>Fechar Fechamento</Button>
+            <Button onClick={handlePrint} className="h-12 rounded-xl bg-primary hover:bg-primary/90 font-semibold px-10 gap-2 shadow-xl shadow-primary/20">
+              <Printer className="h-5 w-5" /> Imprimir Balancete
+            </Button>
           </div>
         </SheetContent>
       </Sheet>
