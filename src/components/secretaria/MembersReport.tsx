@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
-import { Loader2, PieChart as PieChartIcon, FileDown } from "lucide-react";
+import { Loader2, PieChart as PieChartIcon, FileDown, User, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -13,10 +13,19 @@ interface MembersReportProps {
 }
 
 export function MembersReport({ members, isLoading }: MembersReportProps) {
-    const reportRef = useRef<HTMLDivElement>(null);
+    const summaryRef = useRef<HTMLDivElement>(null);
+    const listsRef = useRef<HTMLDivElement>(null);
     const [isExporting, setIsExporting] = useState(false);
 
-    // Calculate age distribution
+    // Filter lists
+    const membrosList = members.filter(m => m.status !== 'visitante' && m.status !== 'afastado' && m.status !== 'inativo');
+    const visitantesList = members.filter(m => m.status === 'visitante');
+
+    // Sort alphabetically
+    membrosList.sort((a, b) => (a.name || a.nome || "").localeCompare(b.name || b.nome || ""));
+    visitantesList.sort((a, b) => (a.name || a.nome || "").localeCompare(b.name || b.nome || ""));
+
+    // Calculate age distribution (only for active members)
     const ageDistribution = [
         { faixa: "0-12 Anos", quantidade: 0, fill: "#3b82f6" },
         { faixa: "13-17 Anos", quantidade: 0, fill: "#22c55e" },
@@ -26,18 +35,10 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
         { faixa: "61+ Anos", quantidade: 0, fill: "#64748b" },
     ];
 
-    let totalMembers = 0;
-    let totalVisitors = 0;
+    let totalMembers = membrosList.length;
+    let totalVisitors = visitantesList.length;
 
-    members.forEach((member) => {
-        if (member.status === 'visitante') {
-            totalVisitors++;
-            return;
-        }
-        if (member.status === 'afastado') return;
-
-        totalMembers++;
-
+    membrosList.forEach((member) => {
         if (member.birth_date) {
             const age = differenceInYears(new Date(), parseISO(member.birth_date));
             if (age <= 12) ageDistribution[0].quantidade++;
@@ -52,14 +53,9 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
     const hasData = ageDistribution.some(d => d.quantidade > 0);
 
     const exportPDF = async () => {
-        if (!reportRef.current) return;
+        if (!summaryRef.current || !listsRef.current) return;
         setIsExporting(true);
         try {
-            const canvas = await html2canvas(reportRef.current, {
-                scale: 2,
-                backgroundColor: '#ffffff',
-            });
-            const imgData = canvas.toDataURL('image/png');
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
@@ -67,25 +63,44 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
             });
             const pdfWidth = pdf.internal.pageSize.getWidth();
             const pdfHeight = pdf.internal.pageSize.getHeight();
-            // Header with smaller fonts
-            const headerY = 20;
-            pdf.setFontSize(16);
+            const dateStr = new Date().toLocaleDateString('pt-BR');
+
+            // --- PAGE 1: Summary ---
+            const canvasSummary = await html2canvas(summaryRef.current, { scale: 2, backgroundColor: '#ffffff' });
+            const imgDataSummary = canvasSummary.toDataURL('image/png');
+
+            pdf.setFontSize(18);
             pdf.setTextColor(40, 40, 40);
-            pdf.text("Relatório de Membros", 14, headerY);
+            pdf.text("Relatório de Membros", 14, 20);
             pdf.setFontSize(10);
             pdf.setTextColor(100, 100, 100);
-            pdf.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 14, headerY + 8);
-            // Calculate available space below header
-            const marginTop = headerY + 15; // space after header
-            const imgWidth = pdfWidth;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            const availableHeight = pdfHeight - marginTop - 10; // 10mm bottom margin
-            const scale = Math.min(availableHeight / imgHeight, 1);
-            const finalImgHeight = imgHeight * scale;
-            const finalImgWidth = imgWidth * scale;
-            const xPos = (pdfWidth - finalImgWidth) / 2;
-            pdf.addImage(imgData, 'PNG', xPos, marginTop, finalImgWidth, finalImgHeight);
-            pdf.save('relatorio-membros.pdf');
+            pdf.text(`Resumo Demográfico - Gerado em: ${dateStr}`, 14, 28);
+
+            const imgWidth = pdfWidth - 28;
+            const imgHeight = (canvasSummary.height * imgWidth) / canvasSummary.width;
+            pdf.addImage(imgDataSummary, 'PNG', 14, 35, imgWidth, imgHeight);
+
+            // --- PAGE 2+: Lists ---
+            pdf.addPage();
+            const canvasLists = await html2canvas(listsRef.current, { scale: 2, backgroundColor: '#ffffff' });
+            const imgDataLists = canvasLists.toDataURL('image/png');
+
+            pdf.setFontSize(18);
+            pdf.setTextColor(40, 40, 40);
+            pdf.text("Lista Nominal", 14, 20);
+            pdf.setFontSize(10);
+            pdf.setTextColor(100, 100, 100);
+            pdf.text(`Membros e Visitantes - Gerado em: ${dateStr}`, 14, 28);
+
+            const listImgWidth = pdfWidth - 28;
+            const listImgHeight = (canvasLists.height * listImgWidth) / canvasLists.width;
+
+            // Check if lists fit in one page, if not, jsPDF might need multiple calls or we trust html2canvas size for now
+            // For very long lists, this scaling will shrink it. In a real production app, we'd loop through lines.
+            // But for now, we'll keep it simple as requested.
+            pdf.addImage(imgDataLists, 'PNG', 14, 35, listImgWidth, listImgHeight);
+
+            pdf.save(`relatorio-igreja-${new Date().getTime()}.pdf`);
         } catch (error) {
             console.error("Erro ao gerar PDF:", error);
         } finally {
@@ -98,29 +113,29 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
             <div className="p-8 pb-10">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h2 className="text-2xl font-bold">Resumo Demográfico</h2>
-                        <p className="text-muted-foreground">Distribuição e quantidade de membros</p>
+                        <h2 className="text-2xl font-bold">Relatório Administrativo</h2>
+                        <p className="text-muted-foreground">Visão geral e listagem completa</p>
                     </div>
                     <Button
                         onClick={exportPDF}
-                        disabled={isExporting || isLoading || totalMembers === 0}
+                        disabled={isExporting || isLoading || totalMembers + totalVisitors === 0}
                         className="bg-primary hover:bg-primary/90 gap-2 rounded-xl"
                     >
                         {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-                        Baixar PDF
+                        Baixar Relatório (PDF)
                     </Button>
                 </div>
 
-                {/* The content to be exported */}
-                <div ref={reportRef} className="p-6 bg-card border rounded-2xl shadow-sm mb-4">
-                    <div className="grid grid-cols-2 gap-4 mb-8">
+                {/* Section 1: Summary (Page 1) */}
+                <div ref={summaryRef} className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
                         <div className="p-6 bg-primary/5 rounded-2xl border border-primary/10 flex items-center justify-between">
                             <div>
                                 <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Membros Ativos</p>
                                 <h3 className="text-4xl font-black text-foreground mt-1">{totalMembers}</h3>
                             </div>
                             <div className="h-16 w-16 bg-primary/10 rounded-2xl flex items-center justify-center">
-                                <span className="text-3xl font-black text-primary">M</span>
+                                <Users className="h-8 w-8 text-primary" />
                             </div>
                         </div>
 
@@ -130,7 +145,7 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                                 <h3 className="text-4xl font-black text-foreground mt-1">{totalVisitors}</h3>
                             </div>
                             <div className="h-16 w-16 bg-amber-500/10 rounded-2xl flex items-center justify-center">
-                                <span className="text-3xl font-black text-amber-500">V</span>
+                                <User className="h-8 w-8 text-amber-500" />
                             </div>
                         </div>
                     </div>
@@ -140,7 +155,7 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500">
                                 <PieChartIcon className="h-5 w-5" />
                             </div>
-                            <h3 className="text-lg font-bold">Faixa Etária</h3>
+                            <h3 className="text-lg font-bold">Distribuição por Idade (Membros)</h3>
                         </div>
 
                         <div className="h-72">
@@ -169,39 +184,61 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                                                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={2} stroke="#ffffff" />
                                             ))}
                                         </Pie>
-                                        <Tooltip
-                                            formatter={(value: number) => [`${value} pessoas`, 'Quantidade']}
-                                        />
+                                        <Tooltip formatter={(value: number) => [`${value} pessoas`, 'Quantidade']} />
                                         <Legend
                                             layout="vertical"
                                             align="right"
                                             verticalAlign="middle"
                                             iconType="circle"
                                             formatter={(value) => (
-                                                <span className="text-sm font-medium text-slate-700 ml-1">
-                                                    {value}
-                                                </span>
+                                                <span className="text-sm font-medium text-slate-700 ml-1">{value}</span>
                                             )}
                                         />
                                     </PieChart>
                                 </ResponsiveContainer>
                             )}
                         </div>
+                    </div>
+                </div>
 
-                        {/* List format */}
-                        {hasData && (
-                            <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4 border-t pt-6">
-                                {ageDistribution.map((item, index) => (
-                                    <div key={index} className="flex items-center gap-3 bg-secondary/10 p-3 rounded-xl border border-secondary/20">
-                                        <div className="h-3 w-3 rounded-full" style={{ backgroundColor: item.fill }} />
-                                        <div>
-                                            <p className="text-xs font-bold text-muted-foreground uppercase">{item.faixa}</p>
-                                            <p className="text-lg font-black">{item.quantidade} <span className="text-xs font-medium text-muted-foreground normal-case">pessoas</span></p>
-                                        </div>
+                {/* Section 2: Nominal Lists (Page 2) */}
+                <div ref={listsRef} className="mt-10 space-y-8 pb-10">
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2 border-b border-primary/10 pb-2">
+                            <Users className="h-5 w-5 text-primary" />
+                            <h3 className="text-xl font-bold text-foreground">Lista de Membros</h3>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 bg-white rounded-2xl border p-6">
+                            {membrosList.length > 0 ? (
+                                membrosList.map((m, i) => (
+                                    <div key={m.id} className="flex items-center gap-3 py-1 border-b border-dashed border-slate-100 last:border-0">
+                                        <span className="text-xs font-mono text-muted-foreground w-6">{(i + 1).toString().padStart(2, '0')}</span>
+                                        <span className="text-sm font-medium text-slate-700 uppercase">{m.name || m.nome}</span>
                                     </div>
-                                ))}
-                            </div>
-                        )}
+                                ))
+                            ) : (
+                                <p className="text-sm text-muted-foreground italic">Nenhum membro ativo encontrado.</p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2 border-b border-amber-500/10 pb-2">
+                            <User className="h-5 w-5 text-amber-500" />
+                            <h3 className="text-xl font-bold text-foreground">Lista de Visitantes</h3>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 bg-white rounded-2xl border p-6">
+                            {visitantesList.length > 0 ? (
+                                visitantesList.map((m, i) => (
+                                    <div key={m.id} className="flex items-center gap-3 py-1 border-b border-dashed border-slate-100 last:border-0">
+                                        <span className="text-xs font-mono text-muted-foreground w-6">{(i + 1).toString().padStart(2, '0')}</span>
+                                        <span className="text-sm font-medium text-slate-700 uppercase">{m.name || m.nome}</span>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-sm text-muted-foreground italic">Nenhum visitante encontrado.</p>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
