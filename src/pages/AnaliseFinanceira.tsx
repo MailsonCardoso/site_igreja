@@ -161,9 +161,9 @@ export default function AnaliseFinanceira() {
             .print-page {
               break-after: page;
               page-break-after: always;
-              width: 297mm; /* Full A4 Landscape */
-              min-height: 170mm; 
-              padding: 1.2cm 1.5cm;
+              width: 100%;
+              min-height: 160mm; /* Altura segura para caber em A4 Paisagem com folga */
+              padding: 1cm 1.5cm;
               box-sizing: border-box;
               display: block;
               position: relative;
@@ -180,8 +180,8 @@ export default function AnaliseFinanceira() {
               justify-content: space-between;
               align-items: flex-end;
               border-bottom: 3px solid #3b82f6;
-              padding-bottom: 15px;
-              margin-bottom: 30px;
+              padding-bottom: 10px;
+              margin-bottom: 20px;
             }
 
             .header .title { font-size: 24px; font-weight: 900; color: #0f172a; text-transform: uppercase; margin: 0; }
