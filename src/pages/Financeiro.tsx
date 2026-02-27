@@ -306,7 +306,7 @@ export default function Financeiro() {
         <head>
           <title>Balancete Mensal</title>
           <style>
-            @page { margin: 1.5cm; size: A4; }
+            @page { margin: 1.0cm; size: landscape; }
             body { font-family: sans-serif; padding: 0; margin: 0; background: white; color: black; line-height: 1.5; }
             .p-10 { padding: 40px; }
             .text-center { text-align: center; }
@@ -398,6 +398,7 @@ export default function Financeiro() {
 
   return (
     <MainLayout title="Financeiro" breadcrumbs={[{ label: "Transações" }]}>
+      <style dangerouslySetInnerHTML={{ __html: "@media print { @page { size: landscape; } }" }} />
       {/* Header com Filtros */}
       <div className="flex flex-col gap-6 mb-8 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
@@ -694,9 +695,6 @@ export default function Financeiro() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button onClick={handlePrint} className="bg-primary hover:bg-primary/90 rounded-xl font-semibold gap-2">
-                <Printer className="h-4 w-4" /> Imprimir / PDF
-              </Button>
             </div>
           </SheetHeader>
 
@@ -813,10 +811,7 @@ export default function Financeiro() {
           </ScrollArea>
 
           <div className="p-6 border-t bg-card no-print flex gap-4 justify-end">
-            <Button variant="outline" className="h-12 rounded-xl font-semibold px-8" onClick={() => setIsReportOpen(false)}>Fechar Fechamento</Button>
-            <Button onClick={handlePrint} className="h-12 rounded-xl bg-primary hover:bg-primary/90 font-semibold px-10 gap-2 shadow-xl shadow-primary/20">
-              <Printer className="h-5 w-5" /> Imprimir Balancete
-            </Button>
+            <Button variant="outline" className="h-12 rounded-xl font-semibold px-8 w-full" onClick={() => setIsReportOpen(false)}>Fechar Fechamento</Button>
           </div>
         </SheetContent>
       </Sheet>
