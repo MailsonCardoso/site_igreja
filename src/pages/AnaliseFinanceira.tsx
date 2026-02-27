@@ -162,8 +162,8 @@ export default function AnaliseFinanceira() {
               break-after: page;
               page-break-after: always;
               width: 100%;
-              min-height: 160mm; /* Altura segura para caber em A4 Paisagem com folga */
-              padding: 1cm 1.5cm;
+              height: 180mm; /* Altura fixa segura para A4 Paisagem */
+              padding: 0.8cm 1.5cm;
               box-sizing: border-box;
               display: block;
               position: relative;
@@ -269,7 +269,7 @@ export default function AnaliseFinanceira() {
               z-index: 50;
             }
 
-            .h-\[350px\] { height: 380px !important; width: 100% !important; margin-top: 20px; }
+            .h-\[350px\] { height: 300px !important; width: 100% !important; margin-top: 10px; }
             
             .text-emerald-600 { color: #059669 !important; }
             .text-rose-600 { color: #dc2626 !important; }
