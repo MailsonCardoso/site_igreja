@@ -307,10 +307,13 @@ export default function Financeiro() {
           <title>Balancete Mensal</title>
           <style>
             @media print {
-              @page { margin: 1.0cm; size: landscape; }
+              @page { margin: 0.5cm; size: landscape; }
+              body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              .no-print { display: none !important; }
             }
-            body { font-family: sans-serif; padding: 0; margin: 0; background: white; color: black; line-height: 1.5; }
-            .p-10 { padding: 40px; }
+            body { font-family: sans-serif; padding: 0; margin: 0; background: white; color: black; line-height: 1.2; }
+            .p-10 { padding: 20px; }
+            .report-container { max-height: 100vh; overflow: hidden; page-break-inside: avoid; }
             .text-center { text-align: center; }
             .uppercase { text-transform: uppercase; }
             .font-bold { font-weight: bold; }
@@ -710,7 +713,7 @@ export default function Financeiro() {
                 <p className="font-semibold text-muted-foreground">Gerando relatório...</p>
               </div>
             ) : reportData ? (
-              <div id="printable-report" className="p-10 space-y-12 bg-white text-black min-h-full">
+              <div id="printable-report" className="p-8 space-y-8 bg-white text-black min-h-0 report-container">
                 <div className="text-center space-y-2 pb-8 border-b-4 border-primary">
                   <h1 className="text-3xl font-bold uppercase tracking-tight">{churchSettings?.nome || 'IPR JAGUAREMA'}</h1>
                   <p className="text-sm font-semibold opacity-60">Relatório Consolidado de Transações Financeiras</p>
@@ -808,7 +811,7 @@ export default function Financeiro() {
                   </div>
                 </div>
 
-                <div className="text-center text-[9px] opacity-30 pt-10 border-t">
+                <div className="text-center text-[9px] opacity-30 pt-4 border-t">
                   Gerado automaticamente pelo Sistema de Gestão Eclesiástica - {format(new Date(), "PPpp", { locale: ptBR })}
                 </div>
               </div>

@@ -78,32 +78,36 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
             pdf.setTextColor(100, 100, 100);
             pdf.text(`Resumo Demográfico - Gerado em: ${dateStr}`, margin, 28);
 
-            const imgHeight = (canvasSummary.height * contentWidth) / canvasSummary.width;
-            pdf.addImage(imgDataSummary, 'PNG', margin, 35, contentWidth, imgHeight);
+            const imgHeightCap = (canvasSummary.height * contentWidth) / canvasSummary.width;
+            pdf.addImage(imgDataSummary, 'PNG', margin, 35, contentWidth, imgHeightCap);
 
-            // --- PAGE 2+: Nominal Lists (Multi-page) ---
+            // --- PAGE 2+: Nominal Lists (Improved Multi-page) ---
             const canvasLists = await html2canvas(listsRef.current, {
                 scale: 2,
                 backgroundColor: '#ffffff',
                 useCORS: true
             });
 
+            const imgDataLists = canvasLists.toDataURL('image/png');
             const imgWidthLists = canvasLists.width;
             const imgHeightLists = canvasLists.height;
             const pxToMm = contentWidth / imgWidthLists;
 
-            // Limit per page (mm)
-            const headerHeight = 35;
-            const pageHeightLimit = pdfHeight - headerHeight - 20; // Some margin at bottom
-            const sliceHeightPx = pageHeightLimit / pxToMm;
+            // Height of the header we add on each page
+            const headerHeightMm = 35;
+            // Available vertical space for the list image on each page (mm)
+            const availableSpaceMm = pdfHeight - headerHeightMm - 20; // 20mm total top/bottom extra margin
 
-            let currentPathY = 0;
+            // Total height of the list image in mm
+            const totalListHeightMm = imgHeightLists * pxToMm;
+
+            let currentYMm = 0;
             let pageNum = 1;
 
-            while (currentPathY < imgHeightLists) {
+            while (currentYMm < totalListHeightMm) {
                 pdf.addPage();
 
-                // Redraw header on each list page
+                // Header
                 pdf.setFontSize(18);
                 pdf.setTextColor(40, 40, 40);
                 pdf.text("Lista Nominal", margin, 20);
@@ -111,24 +115,32 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                 pdf.setTextColor(100, 100, 100);
                 pdf.text(`Membros e Visitantes - Página ${pageNum} - Gerado em: ${dateStr}`, margin, 28);
 
+                // Calculate the slice to show
+                // We show a piece of the image starting at currentYMm/pxToMm
+                const sliceHeightMm = Math.min(availableSpaceMm, totalListHeightMm - currentYMm);
+                const sliceHeightPx = sliceHeightMm / pxToMm;
+                const sliceYPx = currentYMm / pxToMm;
+
                 const canvasSlice = document.createElement('canvas');
                 canvasSlice.width = imgWidthLists;
-                // Height is the slice limit or whatever remains
-                const currentSliceHeightPx = Math.min(sliceHeightPx, imgHeightLists - currentPathY);
-                canvasSlice.height = currentSliceHeightPx;
+                canvasSlice.height = sliceHeightPx;
 
                 const ctx = canvasSlice.getContext('2d');
                 if (ctx) {
+                    // Fill background to avoid transparency issues
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvasSlice.width, canvasSlice.height);
+
                     ctx.drawImage(
                         canvasLists,
-                        0, currentPathY, imgWidthLists, currentSliceHeightPx, // Source
-                        0, 0, imgWidthLists, currentSliceHeightPx // Destination
+                        0, sliceYPx, imgWidthLists, sliceHeightPx, // Source
+                        0, 0, imgWidthLists, sliceHeightPx // Destination
                     );
                     const sliceData = canvasSlice.toDataURL('image/png');
-                    pdf.addImage(sliceData, 'PNG', margin, headerHeight, contentWidth, currentSliceHeightPx * pxToMm);
+                    pdf.addImage(sliceData, 'PNG', margin, headerHeightMm, contentWidth, sliceHeightMm);
                 }
 
-                currentPathY += sliceHeightPx;
+                currentYMm += availableSpaceMm;
                 pageNum++;
             }
 
