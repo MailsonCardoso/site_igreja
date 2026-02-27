@@ -159,18 +159,19 @@ export default function AnaliseFinanceira() {
             }
 
             .print-page {
-              page-break-before: always;
+              page-break-after: always;
+              break-after: page;
               width: 100%;
-              padding: 1.5cm;
+              padding: 1.2cm 1.5cm;
               box-sizing: border-box;
               display: block;
               position: relative;
               background: white !important;
             }
             
-            .print-page:first-child {
-              page-break-before: avoid;
-              padding-top: 1cm;
+            .print-page:last-child {
+              page-break-after: auto;
+              break-after: auto;
             }
 
             .header {
@@ -227,19 +228,7 @@ export default function AnaliseFinanceira() {
             .tracking-widest { letter-spacing: 0.1em !important; }
             .leading-none { line-height: 1 !important; }
             
-            .print-page {
-              page-break-after: always;
-              width: 100%;
-              padding: 1cm 1.5cm;
-              box-sizing: border-box;
-              display: block;
-              position: relative;
-              background: white !important;
-            }
-            
-            .print-page:last-child {
-              page-break-after: auto;
-            }
+            /* Removida definição duplicada de .print-page */
 
             .grid { display: grid !important; gap: 40px !important; }
             .print-section.grid { 
@@ -260,7 +249,7 @@ export default function AnaliseFinanceira() {
 
             .print-divider { display: none !important; }
 
-            .h-\[350px\] { height: 300px !important; width: 100% !important; margin-top: 10px; }
+            .h-\[350px\] { height: 280px !important; width: 100% !important; margin-top: 0 !important; }
             
             .text-emerald-600 { color: #059669 !important; }
             .text-rose-600 { color: #dc2626 !important; }
