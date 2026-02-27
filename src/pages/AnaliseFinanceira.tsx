@@ -162,9 +162,11 @@ export default function AnaliseFinanceira() {
               page-break-after: always;
               break-after: page;
               width: 100%;
-              padding: 1.2cm 1.5cm;
+              max-height: 190mm; /* Força o conteúdo a caber no A4 Paisagem */
+              padding: 0.5cm 1.5cm;
               box-sizing: border-box;
               display: block;
+              overflow: hidden; /* Impede vazamento para página seguinte */
               position: relative;
               background: white !important;
             }
@@ -190,7 +192,7 @@ export default function AnaliseFinanceira() {
             .section-content {
               width: 100%;
               display: block;
-              padding: 20px 0;
+              padding: 10px 0;
             }
 
             .footer {
@@ -249,7 +251,7 @@ export default function AnaliseFinanceira() {
 
             .print-divider { display: none !important; }
 
-            .h-\[350px\] { height: 280px !important; width: 100% !important; margin-top: 0 !important; }
+            .h-\[350px\] { height: 240px !important; width: 100% !important; margin-top: 0 !important; }
             
             .text-emerald-600 { color: #059669 !important; }
             .text-rose-600 { color: #dc2626 !important; }
