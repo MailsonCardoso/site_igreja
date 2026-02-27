@@ -241,13 +241,12 @@ export default function AnaliseFinanceira() {
               position: relative !important;
             }
             
-            /* Novo Divisor Vertical Robusto (Borda na coluna da direita) */
             .print-section.grid > div:last-child {
               border-left: 1px solid #e2e8f0 !important;
-              padding-left: 40px !important;
+              padding-left: 30px !important;
             }
             .print-section.grid > div:first-child {
-              padding-right: 40px !important;
+              padding-right: 30px !important;
             }
 
             .print-divider { display: none !important; }
@@ -282,16 +281,43 @@ export default function AnaliseFinanceira() {
             .text-rose-900 { color: #881337 !important; }
             .border-b-2 { border-bottom: 2px solid #f1f5f9 !important; }
             .border-b { border-bottom: 1px solid #f1f5f9 !important; }
-            .bg-emerald-50\/30 { background-color: #f0fdf4 !important; }
-            .bg-rose-50\/30 { background-color: #fff1f2 !important; }
+            .bg-emerald-50\/50 { background-color: #f0fdf4 !important; }
+            .bg-rose-50\/50 { background-color: #fff1f2 !important; }
+            .bg-blue-50\/50 { background-color: #eff6ff !important; }
+            .bg-slate-100 { background-color: #f1f5f9 !important; }
+            .bg-emerald-100 { background-color: #d1fae5 !important; }
+            .bg-rose-100 { background-color: #ffe4e6 !important; }
+            .bg-card { background-color: white !important; }
+            
             .text-emerald-700 { color: #047857 !important; }
             .text-rose-700 { color: #be123c !important; }
             .text-blue-700 { color: #1d4ed8 !important; }
             .text-blue-500 { color: #3b82f6 !important; }
             .text-rose-500 { color: #ef4444 !important; }
+            .text-slate-900 { color: #0f172a !important; }
+            .text-slate-500 { color: #64748b !important; }
+            
             .font-black { font-weight: 900 !important; }
             .tracking-widest { letter-spacing: 0.1em !important; }
+            .tracking-tight { letter-spacing: -0.025em !important; }
+            .tracking-tighter { letter-spacing: -0.05em !important; }
             .tabular-nums { font-variant-numeric: tabular-nums !important; }
+            
+            /* DRE Row Specifics */
+            .max-w-3xl { max-width: 100% !important; margin: 0 auto !important; }
+            .p-5 { padding: 12px !important; }
+            .p-8 { padding: 20px !important; }
+            .px-5 { padding-left: 15px !important; padding-right: 15px !important; }
+            .shadow-sm, .shadow-xl, .shadow-card { shadow: none !important; border: 1px solid #e2e8f0 !important; }
+            
+            /* Typography Scaling for Print */
+            .text-xl { font-size: 16px !important; }
+            .text-2xl { font-size: 20px !important; }
+            .text-3xl { font-size: 24px !important; }
+            .text-4xl { font-size: 28px !important; }
+            .text-lg { font-size: 15px !important; }
+            .text-sm { font-size: 13px !important; }
+            .text-xs { font-size: 11px !important; }
 
             /* Ajuste para itens de lista e DRE */
             .item-label { font-size: 13px; font-weight: 700 !important; color: #475569 !important; }
