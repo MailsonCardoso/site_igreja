@@ -227,19 +227,19 @@ export default function AnaliseFinanceira() {
             .tracking-widest { letter-spacing: 0.1em !important; }
             .leading-none { line-height: 1 !important; }
             
-            /* Ajuste para seções específicas */
-            .print-section { width: 100% !important; margin: 0 !important; }
-            .rounded-\[2\.5rem\] { border-radius: 2rem !important; border: 1px solid #e2e8f0 !important; background: white !important; overflow: hidden; page-break-inside: avoid; width: 100%; }
-            .bg-card { background: white !important; }
-            .p-8 { padding: 2rem !important; }
-            .p-10 { padding: 2.5rem !important; }
-            .p-6 { padding: 1.5rem !important; }
-            .pl-8 { padding-left: 2rem !important; }
-            .py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
-            .py-4 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-            .mt-6 { margin-top: 1.5rem !important; }
-            .mb-8 { margin-bottom: 2rem !important; }
-            .mb-10 { margin-bottom: 2.5rem !important; }
+            .print-page {
+              page-break-after: always;
+              width: 100%;
+              padding: 1cm 1.5cm;
+              box-sizing: border-box;
+              display: block;
+              position: relative;
+              background: white !important;
+            }
+            
+            .print-page:last-child {
+              page-break-after: auto;
+            }
 
             .grid { display: grid !important; gap: 40px !important; }
             .print-section.grid { 
@@ -311,29 +311,45 @@ export default function AnaliseFinanceira() {
           </style>
         </head>
         <body>
-          ${sections.map((section, index) => `
-            <div class="print-page">
-              <div class="header">
-                <div class="titles">
-                  <div class="title">${churchName}</div>
-                  <div class="subtitle">Análise Financeira Inteligente</div>
-                </div>
-                <div style="text-align: right">
-                  <div class="subtitle" style="color: #3b82f6">${periodLabel}</div>
-                  <div class="page-info">PÁGINA ${index + 1} DE ${sections.length}</div>
-                </div>
+          <div class="print-page">
+            <div class="header">
+              <div class="titles">
+                <div class="title">${churchName}</div>
+                <div class="subtitle">Análise Financeira Inteligente</div>
               </div>
-              
-              <div class="section-content">
-                ${section.outerHTML}
-              </div>
-
-              <div class="footer">
-                <div>Relatório Gerencial - Sistema de Gestão Eclesiástica</div>
-                <div>Gerado em ${generationDate}</div>
+              <div style="text-align: right">
+                <div class="subtitle" style="color: #3b82f6">${periodLabel}</div>
               </div>
             </div>
-          `).join('')}
+            
+            <div class="section-content">
+              ${sections[0].outerHTML}
+            </div>
+
+            <div class="footer">
+              <div>Relatório Gerencial - Sistema de Gestão Eclesiástica</div>
+              <div>Gerado em ${generationDate}</div>
+            </div>
+          </div>
+
+          <div class="print-page">
+            <div class="section-content" style="padding-top: 0">
+              ${sections[1].outerHTML}
+            </div>
+            <div class="footer">
+              <div>Relatório Gerencial - Sistema de Gestão Eclesiástica</div>
+            </div>
+          </div>
+
+          <div class="print-page">
+            <div class="section-content" style="padding-top: 0">
+              ${sections[2].outerHTML}
+            </div>
+            <div class="footer">
+              <div>Relatório Gerencial - Sistema de Gestão Eclesiástica</div>
+            </div>
+          </div>
+
           <script>
             window.onload = () => {
               setTimeout(() => {
@@ -341,7 +357,7 @@ export default function AnaliseFinanceira() {
                 window.onafterprint = () => {
                   window.parent.document.body.removeChild(window.frameElement);
                 };
-              }, 1000);
+              }, 1200);
             };
           </script>
         </body>
