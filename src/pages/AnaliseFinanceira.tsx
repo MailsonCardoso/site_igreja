@@ -159,21 +159,18 @@ export default function AnaliseFinanceira() {
             }
 
             .print-page {
-              break-after: page;
-              page-break-after: always;
+              page-break-before: always;
               width: 100%;
-              min-height: 180mm; 
-              padding: 1cm 1.5cm;
+              padding: 1.5cm;
               box-sizing: border-box;
-              display: flex;
-              flex-direction: column;
+              display: block;
               position: relative;
               background: white !important;
             }
             
-            .print-page:last-child {
-              break-after: auto;
-              page-break-after: auto;
+            .print-page:first-child {
+              page-break-before: avoid;
+              padding-top: 1cm;
             }
 
             .header {
@@ -191,16 +188,12 @@ export default function AnaliseFinanceira() {
 
             .section-content {
               width: 100%;
-              flex: 1; /* Ocupa o espaço entre header e footer sem forçar centralização */
               display: block;
-              padding-top: 10px;
+              padding: 20px 0;
             }
 
             .footer {
-              position: absolute;
-              bottom: 0.8cm;
-              left: 1.5cm;
-              right: 1.5cm;
+              margin-top: 30px;
               border-top: 1px solid #f1f5f9;
               padding-top: 10px;
               display: flex;
