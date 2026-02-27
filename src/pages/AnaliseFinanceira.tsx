@@ -162,10 +162,11 @@ export default function AnaliseFinanceira() {
               break-after: page;
               page-break-after: always;
               width: 100%;
-              height: 180mm; /* Altura fixa segura para A4 Paisagem */
-              padding: 0.8cm 1.5cm;
+              min-height: 180mm; 
+              padding: 1cm 1.5cm;
               box-sizing: border-box;
-              display: block;
+              display: flex;
+              flex-direction: column;
               position: relative;
               background: white !important;
             }
@@ -190,10 +191,9 @@ export default function AnaliseFinanceira() {
 
             .section-content {
               width: 100%;
-              height: calc(100% - 120px); /* Reserva espaço para header e footer */
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
+              flex: 1; /* Ocupa o espaço entre header e footer sem forçar centralização */
+              display: block;
+              padding-top: 10px;
             }
 
             .footer {
@@ -248,26 +248,24 @@ export default function AnaliseFinanceira() {
             .mb-8 { margin-bottom: 2rem !important; }
             .mb-10 { margin-bottom: 2.5rem !important; }
 
-            .grid { display: grid !important; gap: 30px !important; }
+            .grid { display: grid !important; gap: 40px !important; }
             .print-section.grid { 
               display: grid !important; 
               grid-template-columns: 1fr 1fr !important; 
-              gap: 60px !important; 
+              gap: 0 !important; /* Usaremos border e padding para o divisor */
               position: relative !important;
-              align-items: start !important;
             }
             
-            /* Divisor Vertical Real */
-            .print-divider {
-              position: absolute !important;
-              left: calc(50% - 1px) !important;
-              top: 5% !important;
-              bottom: 5% !important;
-              width: 2px !important;
-              background-color: #e2e8f0 !important;
-              display: block !important;
-              z-index: 50;
+            /* Novo Divisor Vertical Robusto (Borda na coluna da direita) */
+            .print-section.grid > div:last-child {
+              border-left: 1px solid #e2e8f0 !important;
+              padding-left: 40px !important;
             }
+            .print-section.grid > div:first-child {
+              padding-right: 40px !important;
+            }
+
+            .print-divider { display: none !important; }
 
             .h-\[350px\] { height: 300px !important; width: 100% !important; margin-top: 10px; }
             
