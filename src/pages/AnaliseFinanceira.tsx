@@ -107,6 +107,9 @@ export default function AnaliseFinanceira() {
         const printContent = document.getElementById("analytics-page");
         if (!printContent) return;
 
+        // Captura as seções marcadas para quebra de página
+        const sections = Array.from(printContent.querySelectorAll('.print-section'));
+
         const iframe = document.createElement("iframe");
         iframe.style.position = "fixed";
         iframe.style.right = "0";
@@ -119,53 +122,131 @@ export default function AnaliseFinanceira() {
         const doc = iframe.contentWindow?.document;
         if (!doc) return;
 
+        const churchName = churchSettings?.nome || 'IPR JAGUAREMA';
+        const periodLabel = `${meses.find(m => m.value === selectedMonth)?.label} / ${selectedYear}`;
+        const generationDate = format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
+
         doc.open();
         doc.write(`
       <html>
         <head>
-          <title>Análise Financeira - ${churchSettings?.nome || 'Igreja'}</title>
+          <title>Análise Financeira - ${churchName}</title>
           <style>
-             @media print {
-               @page { margin: 0.5cm; size: landscape; }
-               body { padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-               .no-print { display: none !important; }
-               
-               /* Ajustes para economizar espaço na impressão */
-               #analytics-page { space-y: 4px !important; }
-               .rounded-\[2\.5rem\] { border-radius: 1rem !important; padding: 1.5rem !important; margin-bottom: 1rem !important; }
-               .h-\[350px\] { height: 250px !important; }
-               .mb-8 { margin-bottom: 1rem !important; }
-               .space-y-8 { margin-top: 0 !important; }
-               .p-8, .p-10 { padding: 1rem !important; }
-               .grid { gap: 15px !important; }
-               .max-w-3xl { max-width: 100% !important; }
-               
-               /* Evitar quebras de página no meio dos cards */
-               .rounded-\[2\.5rem\], .bg-card { page-break-inside: avoid; break-inside: avoid; }
-             }
-             body { font-family: sans-serif; padding: 20px; color: #333; line-height: 1.2; }
-             .header { text-align: center; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 15px; }
-             .title { font-size: 20px; font-weight: bold; text-transform: uppercase; }
-             .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-             .section-title { font-size: 16px; font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-bottom: 10px; }
-             .item { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed #eee; }
-             .text-success { color: #16a34a; }
-             .text-destructive { color: #dc2626; }
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+            
+            @media print {
+              @page { size: landscape; margin: 0; }
+              body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+              .no-print { display: none !important; }
+            }
+
+            body { font-family: 'Inter', sans-serif; color: #1e293b; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            
+            .print-page {
+              page-break-after: always;
+              height: 100vh;
+              padding: 1.5cm;
+              box-sizing: border-box;
+              display: flex;
+              flex-direction: column;
+              position: relative;
+            }
+            
+            .print-page:last-child {
+              page-break-after: auto;
+            }
+
+            .header {
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+              border-bottom: 3px solid #3b82f6;
+              padding-bottom: 12px;
+              margin-bottom: 40px;
+            }
+
+            .header .title { font-size: 22px; font-weight: 900; color: #0f172a; text-transform: uppercase; }
+            .header .subtitle { font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+            .header .page-info { font-size: 11px; font-weight: 800; color: #94a3b8; }
+
+            .section-content {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              width: 100%;
+            }
+
+            .footer {
+              position: absolute;
+              bottom: 0.8cm;
+              left: 1.5cm;
+              right: 1.5cm;
+              border-top: 1px solid #f1f5f9;
+              padding-top: 8px;
+              display: flex;
+              justify-content: space-between;
+              font-size: 10px;
+              font-weight: 600;
+              color: #94a3b8;
+            }
+
+            /* Estilização para espelhar o Dashboard */
+            .rounded-\[2\.5rem\] { border-radius: 2rem !important; border: 1px solid #f1f5f9 !important; box-shadow: none !important; overflow: hidden; background: white !important; }
+            .bg-card { background: white !important; }
+            .p-8 { padding: 2rem !important; }
+            .p-10 { padding: 2.5rem !important; }
+            .grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 40px !important; }
+            
+            .h-\[350px\] { height: 350px !important; width: 100% !important; }
+            .text-emerald-600 { color: #059669 !important; }
+            .text-rose-600 { color: #dc2626 !important; }
+            .bg-emerald-500 { background-color: #10b981 !important; }
+            .bg-rose-500 { background-color: #ef4444 !important; }
+            .bg-emerald-500\/10 { background-color: rgba(16, 185, 129, 0.1) !important; }
+            .bg-rose-500\/10 { background-color: rgba(239, 68, 68, 0.1) !important; }
+            .bg-blue-50 { background-color: #eff6ff !important; }
+            .border-blue-100 { border-color: #dbeafe !important; }
+            .text-blue-900 { color: #1e3a8a !important; }
+            .text-blue-600 { color: #2563eb !important; }
+            
+            .max-w-3xl { max-width: 100% !important; }
+            canvas { max-width: 100% !important; }
           </style>
         </head>
         <body>
-          <div class="header">
-            <div class="title">${churchSettings?.nome || 'IPR JAGUAREMA'}</div>
-            <div style="font-size: 14px; color: #666; margin-top: 5px;">ANÁLISE E INTELIGÊNCIA FINANCEIRA - ${meses.find(m => m.value === selectedMonth)?.label} / ${selectedYear}</div>
-          </div>
-          ${printContent.innerHTML}
+          ${sections.map((section, index) => `
+            <div class="print-page">
+              <div class="header">
+                <div class="titles">
+                  <div class="title">${churchName}</div>
+                  <div class="subtitle">Análise Financeira Inteligente</div>
+                </div>
+                <div style="text-align: right">
+                  <div class="subtitle" style="color: #3b82f6">${periodLabel}</div>
+                  <div class="page-info">PÁGINA ${index + 1} DE ${sections.length}</div>
+                </div>
+              </div>
+              
+              <div class="section-content">
+                ${section.innerHTML}
+              </div>
+
+              <div class="footer">
+                <div>Relatório Gerencial - Sistema de Gestão Eclesiástica</div>
+                <div>Gerado em ${generationDate}</div>
+              </div>
+            </div>
+          `).join('')}
           <script>
-            setTimeout(() => {
-              window.print();
-              window.onafterprint = () => {
-                window.parent.document.body.removeChild(window.frameElement);
-              };
-            }, 500);
+            window.onload = () => {
+              setTimeout(() => {
+                window.print();
+                window.onafterprint = () => {
+                  window.parent.document.body.removeChild(window.frameElement);
+                };
+              }, 800);
+            };
           </script>
         </body>
       </html>
@@ -231,7 +312,7 @@ export default function AnaliseFinanceira() {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-[2.5rem] bg-card p-8 shadow-card border border-border/50 relative overflow-hidden"
+                    className="rounded-[2.5rem] bg-card p-8 shadow-card border border-border/50 relative overflow-hidden print-section"
                 >
                     <div className="flex items-center justify-between mb-8">
                         <div>
@@ -321,7 +402,7 @@ export default function AnaliseFinanceira() {
                 </motion.div>
 
                 {/* Detalhamento por Categoria (Lado a Lado) */}
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2 print-section">
                     {/* Receitas */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
@@ -404,7 +485,7 @@ export default function AnaliseFinanceira() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
-                    className="rounded-[2.5rem] bg-card p-10 shadow-card border border-border/50 overflow-hidden"
+                    className="rounded-[2.5rem] bg-card p-10 shadow-card border border-border/50 overflow-hidden print-section"
                 >
                     <div className="mb-10 text-center">
                         <h3 className="text-2xl font-bold text-foreground">Demonstrativo de Resultado (DRE)</h3>
@@ -436,11 +517,11 @@ export default function AnaliseFinanceira() {
                             <span className="font-extrabold text-rose-600">{formatCurrency(reportData?.total_expense || 0)}</span>
                         </div>
 
-                        <div className={`mt-6 flex justify-between items-center p-6 rounded-2xl ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'bg-indigo-50 border border-indigo-100' : 'bg-rose-50 border border-rose-100'}`}>
-                            <span className={`text-lg font-black uppercase tracking-tighter ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-indigo-900' : 'text-rose-900'}`}>
+                        <div className={`mt-6 flex justify-between items-center p-6 rounded-2xl ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'bg-blue-50 border border-blue-100' : 'bg-rose-50 border border-rose-100'}`}>
+                            <span className={`text-lg font-black uppercase tracking-tighter ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-blue-900' : 'text-rose-900'}`}>
                                 (=) Resultado Líquido (Saldo)
                             </span>
-                            <span className={`text-3xl font-black tabular-nums ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-indigo-600' : 'text-rose-600'}`}>
+                            <span className={`text-3xl font-black tabular-nums ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
                                 {formatCurrency(reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) || 0)}
                             </span>
                         </div>
