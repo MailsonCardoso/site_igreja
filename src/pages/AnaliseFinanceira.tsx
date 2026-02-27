@@ -132,7 +132,7 @@ export default function AnaliseFinanceira() {
         <head>
           <title>Análise Financeira - ${churchName}</title>
           <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
             
             @media print {
               @page { size: landscape; margin: 0; }
@@ -140,12 +140,19 @@ export default function AnaliseFinanceira() {
               .no-print { display: none !important; }
             }
 
-            body { font-family: 'Inter', sans-serif; color: #1e293b; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { 
+              font-family: 'Inter', sans-serif; 
+              color: #1e293b; 
+              background: white; 
+              -webkit-print-color-adjust: exact; 
+              print-color-adjust: exact; 
+              font-size: 14px;
+            }
             
             .print-page {
               page-break-after: always;
               height: 100vh;
-              padding: 1.5cm;
+              padding: 1.2cm 1.5cm;
               box-sizing: border-box;
               display: flex;
               flex-direction: column;
@@ -161,19 +168,18 @@ export default function AnaliseFinanceira() {
               justify-content: space-between;
               align-items: flex-end;
               border-bottom: 3px solid #3b82f6;
-              padding-bottom: 12px;
-              margin-bottom: 40px;
+              padding-bottom: 15px;
+              margin-bottom: 30px;
             }
 
-            .header .title { font-size: 22px; font-weight: 900; color: #0f172a; text-transform: uppercase; }
-            .header .subtitle { font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
-            .header .page-info { font-size: 11px; font-weight: 800; color: #94a3b8; }
+            .header .title { font-size: 24px; font-weight: 900; color: #0f172a; text-transform: uppercase; margin: 0; }
+            .header .subtitle { font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+            .header .page-info { font-size: 11px; font-weight: 800; color: #94a3b8; margin-top: 4px; }
 
             .section-content {
               flex: 1;
               display: flex;
               flex-direction: column;
-              justify-content: center;
               width: 100%;
             }
 
@@ -183,7 +189,7 @@ export default function AnaliseFinanceira() {
               left: 1.5cm;
               right: 1.5cm;
               border-top: 1px solid #f1f5f9;
-              padding-top: 8px;
+              padding-top: 10px;
               display: flex;
               justify-content: space-between;
               font-size: 10px;
@@ -191,27 +197,79 @@ export default function AnaliseFinanceira() {
               color: #94a3b8;
             }
 
-            /* Estilização para espelhar o Dashboard */
-            .rounded-\[2\.5rem\] { border-radius: 2rem !important; border: 1px solid #f1f5f9 !important; box-shadow: none !important; overflow: hidden; background: white !important; }
+            /* Tailwind Utility Emulation */
+            .flex { display: flex !important; }
+            .flex-col { flex-direction: column !important; }
+            .justify-between { justify-content: space-between !important; }
+            .justify-center { justify-content: center !important; }
+            .items-center { align-items: center !important; }
+            .items-end { align-items: flex-end !important; }
+            .gap-2 { gap: 8px !important; }
+            .gap-3 { gap: 12px !important; }
+            .gap-4 { gap: 16px !important; }
+            .gap-6 { gap: 24px !important; }
+            .space-y-2 > * + * { margin-top: 8px !important; }
+            .space-y-6 > * + * { margin-top: 24px !important; }
+            .w-full { width: 100% !important; }
+            .h-full { height: 100% !important; }
+            .text-center { text-align: center !important; }
+            .font-bold { font-weight: 700 !important; }
+            .font-extrabold { font-weight: 800 !important; }
+            .font-black { font-weight: 900 !important; }
+            .uppercase { text-transform: uppercase !important; }
+            .italic { font-style: italic !important; }
+            .tracking-widest { letter-spacing: 0.1em !important; }
+            .leading-none { line-height: 1 !important; }
+            
+            /* Component Fixes */
+            .rounded-\[2\.5rem\] { border-radius: 2rem !important; border: 1px solid #e2e8f0 !important; background: white !important; overflow: hidden; page-break-inside: avoid; }
             .bg-card { background: white !important; }
             .p-8 { padding: 2rem !important; }
             .p-10 { padding: 2.5rem !important; }
-            .grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 40px !important; }
+            .p-6 { padding: 1.5rem !important; }
+            .pl-8 { padding-left: 2rem !important; }
+            .py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+            .py-4 { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+            .mt-6 { margin-top: 1.5rem !important; }
+            .mb-8 { margin-bottom: 2rem !important; }
+            .mb-10 { margin-bottom: 2.5rem !important; }
+
+            .grid { display: grid !important; gap: 30px !important; }
+            .md\:grid-cols-2 { grid-template-columns: 1fr 1fr !important; }
             
-            .h-\[350px\] { height: 350px !important; width: 100% !important; }
+            .h-\[350px\] { height: 380px !important; width: 100% !important; margin-top: 20px; }
+            
             .text-emerald-600 { color: #059669 !important; }
             .text-rose-600 { color: #dc2626 !important; }
-            .bg-emerald-500 { background-color: #10b981 !important; }
-            .bg-rose-500 { background-color: #ef4444 !important; }
-            .bg-emerald-500\/10 { background-color: rgba(16, 185, 129, 0.1) !important; }
-            .bg-rose-500\/10 { background-color: rgba(239, 68, 68, 0.1) !important; }
-            .bg-blue-50 { background-color: #eff6ff !important; }
-            .border-blue-100 { border-color: #dbeafe !important; }
+            .text-muted-foreground { color: #64748b !important; }
+            .text-foreground { color: #0f172a !important; }
+            .text-xs { font-size: 12px !important; }
+            .text-sm { font-size: 14px !important; }
+            .text-lg { font-size: 18px !important; }
+            .text-xl { font-size: 20px !important; }
+            .text-2xl { font-size: 24px !important; }
+            .text-3xl { font-size: 30px !important; }
+
+            /* Progress Bar Fix */
+            .h-2 { height: 8px !important; border-radius: 9999px !important; position: relative; width: 100% !important; overflow: hidden; }
+            .bg-emerald-500\/10 { background-color: #ecfdf5 !important; }
+            .bg-rose-500\/10 { background-color: #fff1f2 !important; }
+            .bg-emerald-500 { background-color: #10b981 !important; border-radius: 9999px !important; }
+            .bg-rose-500 { background-color: #ef4444 !important; border-radius: 9999px !important; }
+            
+            /* DRE and Result Boxes */
+            .bg-blue-50 { background-color: #eff6ff !important; border-radius: 1rem !important; }
+            .bg-rose-50 { background-color: #fff1f2 !important; border-radius: 1rem !important; }
+            .border-blue-100 { border: 1px solid #dbeafe !important; }
+            .border-rose-100 { border: 1px solid #ffe4e6 !important; }
             .text-blue-900 { color: #1e3a8a !important; }
             .text-blue-600 { color: #2563eb !important; }
-            
-            .max-w-3xl { max-width: 100% !important; }
-            canvas { max-width: 100% !important; }
+            .text-rose-900 { color: #881337 !important; }
+            .border-b-2 { border-bottom: 2px solid #f1f5f9 !important; }
+            .border-b { border-bottom: 1px solid #f1f5f9 !important; }
+
+            canvas { max-width: 100% !important; height: auto !important; }
+            .recharts-responsive-container { width: 100% !important; height: 100% !important; }
           </style>
         </head>
         <body>
