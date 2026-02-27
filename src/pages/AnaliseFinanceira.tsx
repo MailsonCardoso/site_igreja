@@ -334,7 +334,7 @@ export default function AnaliseFinanceira() {
               </div>
               
               <div class="section-content">
-                ${section.outerHTML.replace(/style="[^"]*"/g, '')}
+                ${section.outerHTML}
               </div>
 
               <div class="footer">
