@@ -153,12 +153,11 @@ export default function AnaliseFinanceira() {
             .print-page {
               break-after: page;
               page-break-after: always;
-              height: 200mm; /* A4 Landscape height is ~210mm. 200mm is safer. */
-              padding: 1cm 1.5cm;
+              min-height: 180mm; 
+              padding: 1.2cm 1.5cm;
               box-sizing: border-box;
               display: block;
               position: relative;
-              overflow: hidden;
             }
             
             .print-page:last-child {
@@ -240,8 +239,19 @@ export default function AnaliseFinanceira() {
             .mb-10 { margin-bottom: 2.5rem !important; }
 
             .grid { display: grid !important; gap: 30px !important; }
-            .md\:grid-cols-2 { grid-template-columns: 1fr 1fr !important; }
+            .md\:grid-cols-2 { grid-template-columns: 1fr 1fr !important; position: relative; }
             
+            /* Divisor Vertical para a página de categorias */
+            .print-divider {
+              position: absolute;
+              left: 50%;
+              top: 10%;
+              bottom: 10%;
+              width: 1px;
+              background-color: #e2e8f0;
+              display: block !important;
+            }
+
             .h-\[350px\] { height: 380px !important; width: 100% !important; margin-top: 20px; }
             
             .text-emerald-600 { color: #059669 !important; }
@@ -480,7 +490,8 @@ export default function AnaliseFinanceira() {
                 </motion.div>
 
                 {/* Detalhamento por Categoria (Lado a Lado) */}
-                <div className="grid gap-6 md:grid-cols-2 print-section">
+                <div className="grid gap-6 md:grid-cols-2 print-section relative">
+                    <div className="hidden print:block print-divider" />
                     {/* Receitas */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
