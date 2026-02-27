@@ -143,21 +143,31 @@ export default function AnaliseFinanceira() {
             body { 
               font-family: 'Inter', sans-serif; 
               color: #1e293b; 
-              background: white; 
+              background: white !important; 
               -webkit-print-color-adjust: exact; 
               print-color-adjust: exact;
               box-decoration-break: clone;
               -webkit-box-decoration-break: clone;
             }
             
+            /* Reset para Framer Motion no Print */
+            * {
+              opacity: 1 !important;
+              transform: none !important;
+              visibility: visible !important;
+              transition: none !important;
+            }
+
             .print-page {
               break-after: page;
               page-break-after: always;
-              min-height: 180mm; 
+              width: 297mm; /* Full A4 Landscape */
+              min-height: 170mm; 
               padding: 1.2cm 1.5cm;
               box-sizing: border-box;
               display: block;
               position: relative;
+              background: white !important;
             }
             
             .print-page:last-child {
@@ -239,17 +249,24 @@ export default function AnaliseFinanceira() {
             .mb-10 { margin-bottom: 2.5rem !important; }
 
             .grid { display: grid !important; gap: 30px !important; }
-            .md\:grid-cols-2 { grid-template-columns: 1fr 1fr !important; position: relative; }
+            .print-section.grid { 
+              display: grid !important; 
+              grid-template-columns: 1fr 1fr !important; 
+              gap: 60px !important; 
+              position: relative !important;
+              align-items: start !important;
+            }
             
-            /* Divisor Vertical para a página de categorias */
+            /* Divisor Vertical Real */
             .print-divider {
-              position: absolute;
-              left: 50%;
-              top: 10%;
-              bottom: 10%;
-              width: 1px;
-              background-color: #e2e8f0;
+              position: absolute !important;
+              left: calc(50% - 1px) !important;
+              top: 5% !important;
+              bottom: 5% !important;
+              width: 2px !important;
+              background-color: #e2e8f0 !important;
               display: block !important;
+              z-index: 50;
             }
 
             .h-\[350px\] { height: 380px !important; width: 100% !important; margin-top: 20px; }
@@ -317,7 +334,7 @@ export default function AnaliseFinanceira() {
               </div>
               
               <div class="section-content">
-                ${section.outerHTML}
+                ${section.outerHTML.replace(/style="[^"]*"/g, '')}
               </div>
 
               <div class="footer">
