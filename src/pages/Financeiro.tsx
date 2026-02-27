@@ -356,7 +356,6 @@ export default function Financeiro() {
             .border-b-4 { border-bottom: 4px solid #3b82f6; }
             .border-b-2 { border-bottom: 2px solid #e2e8f0; }
             .border-t { border-top: 1px solid #e2e8f0; }
-            .border-dashed { border-style: dashed; }
             .border-black { border-color: black; }
             .border-success { border-color: #16a34a; }
             .border-destructive { border-color: #dc2626; }
@@ -725,15 +724,15 @@ export default function Financeiro() {
                 {/* Resumo Consolidado */}
                 <div className="grid grid-cols-2 gap-8">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center py-2 border-b-2 border-dashed">
+                    <div className="flex justify-between items-center py-2 border-b-2">
                       <span className="font-semibold uppercase text-xs">Saldo Inicial (Anterior):</span>
                       <span className="font-semibold tabular-nums">{formatCurrency(reportData.previous_balance)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-2 border-b-2 border-dashed text-success">
+                    <div className="flex justify-between items-center py-2 border-b-2 text-success">
                       <span className="font-semibold uppercase text-xs">Total de Entradas:</span>
                       <span className="font-bold tabular-nums">+ {formatCurrency(reportData.total_income)}</span>
                     </div>
-                    <div className="flex justify-between items-center py-2 border-b-2 border-dashed text-destructive">
+                    <div className="flex justify-between items-center py-2 border-b-2 text-destructive">
                       <span className="font-semibold uppercase text-xs">Total de Saídas:</span>
                       <span className="font-bold tabular-nums">- {formatCurrency(reportData.total_expense)}</span>
                     </div>
@@ -764,7 +763,6 @@ export default function Financeiro() {
                         <div key={cat} className="flex justify-between items-center bg-success/5 p-3 rounded-xl border border-success/10">
                           <div className="flex flex-col">
                             <span className="font-semibold text-sm">{cat}</span>
-                            <span className="text-[9px] font-semibold uppercase opacity-40">{data.count} Lançamento(s)</span>
                           </div>
                           <span className="font-semibold tabular-nums text-success">{formatCurrency(data.total)}</span>
                         </div>
@@ -786,7 +784,6 @@ export default function Financeiro() {
                         <div key={cat} className="flex justify-between items-center bg-destructive/5 p-3 rounded-xl border border-destructive/10">
                           <div className="flex flex-col">
                             <span className="font-semibold text-sm">{cat}</span>
-                            <span className="text-[9px] font-semibold uppercase opacity-40">{data.count} Lançamento(s)</span>
                           </div>
                           <span className="font-semibold tabular-nums text-destructive">{formatCurrency(data.total)}</span>
                         </div>
