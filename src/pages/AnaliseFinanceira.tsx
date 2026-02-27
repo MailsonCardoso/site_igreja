@@ -145,18 +145,20 @@ export default function AnaliseFinanceira() {
               color: #1e293b; 
               background: white; 
               -webkit-print-color-adjust: exact; 
-              print-color-adjust: exact; 
-              font-size: 14px;
+              print-color-adjust: exact;
+              box-decoration-break: clone;
+              -webkit-box-decoration-break: clone;
             }
             
             .print-page {
+              break-after: page;
               page-break-after: always;
-              height: 100vh;
-              padding: 1.2cm 1.5cm;
+              min-height: 190mm; /* Força altura mínima próxima ao A4 paisagem */
+              padding: 1.5cm;
               box-sizing: border-box;
-              display: flex;
-              flex-direction: column;
+              display: block; /* Voltar para block para evitar bugs de flex em quebras de página */
               position: relative;
+              overflow: hidden;
             }
             
             .print-page:last-child {
@@ -177,10 +179,8 @@ export default function AnaliseFinanceira() {
             .header .page-info { font-size: 11px; font-weight: 800; color: #94a3b8; margin-top: 4px; }
 
             .section-content {
-              flex: 1;
-              display: flex;
-              flex-direction: column;
               width: 100%;
+              margin-top: 20px;
             }
 
             .footer {
@@ -192,7 +192,7 @@ export default function AnaliseFinanceira() {
               padding-top: 10px;
               display: flex;
               justify-content: space-between;
-              font-size: 10px;
+              font-size: 11px;
               font-weight: 600;
               color: #94a3b8;
             }
@@ -268,8 +268,23 @@ export default function AnaliseFinanceira() {
             .border-b-2 { border-bottom: 2px solid #f1f5f9 !important; }
             .border-b { border-bottom: 1px solid #f1f5f9 !important; }
 
+            /* Ajuste para itens de lista e DRE */
+            .item-row { 
+              display: flex !important; 
+              justify-content: space-between !important; 
+              align-items: center !important; 
+              width: 100% !important;
+              padding: 8px 0 !important;
+            }
+            
+            .item-label { font-weight: 700 !important; color: #1e293b !important; }
+            .item-value { font-weight: 900 !important; text-align: right !important; min-width: 120px !important; }
+
             canvas { max-width: 100% !important; height: auto !important; }
             .recharts-responsive-container { width: 100% !important; height: 100% !important; }
+            
+            /* Garantir que as barras de progresso não sumam */
+            progress, .h-2 div { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           </style>
         </head>
         <body>
@@ -482,17 +497,17 @@ export default function AnaliseFinanceira() {
                                 const percentage = getPercentage(value, totalIncome);
 
                                 return (
-                                    <div key={cat} className="space-y-2">
-                                        <div className="flex justify-between items-end">
+                                    <div key={cat} className="space-y-4">
+                                        <div className="item-row">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-foreground">{cat}</span>
+                                                <span className="text-sm item-label">{cat}</span>
                                                 <span className="text-[10px] text-muted-foreground font-semibold">{percentage}% da arrecadação</span>
                                             </div>
-                                            <span className="text-sm font-extrabold text-emerald-600">{formatCurrency(value)}</span>
+                                            <span className="text-sm item-value text-emerald-600">{formatCurrency(value)}</span>
                                         </div>
-                                        <Progress value={percentage} className="h-2 bg-emerald-500/10">
+                                        <div className="h-2 w-full bg-emerald-500/10 rounded-full">
                                             <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${percentage}%` }} />
-                                        </Progress>
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -520,17 +535,17 @@ export default function AnaliseFinanceira() {
                                 const percentage = getPercentage(value, totalExpense);
 
                                 return (
-                                    <div key={cat} className="space-y-2">
-                                        <div className="flex justify-between items-end">
+                                    <div key={cat} className="space-y-4">
+                                        <div className="item-row">
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-foreground">{cat}</span>
+                                                <span className="text-sm item-label">{cat}</span>
                                                 <span className="text-[10px] text-muted-foreground font-semibold">{percentage}% do custeio</span>
                                             </div>
-                                            <span className="text-sm font-extrabold text-rose-600">{formatCurrency(value)}</span>
+                                            <span className="text-sm item-value text-rose-600">{formatCurrency(value)}</span>
                                         </div>
-                                        <Progress value={percentage} className="h-2 bg-rose-500/10">
+                                        <div className="h-2 w-full bg-rose-500/10 rounded-full">
                                             <div className="h-full bg-rose-500 rounded-full" style={{ width: `${percentage}%` }} />
-                                        </Progress>
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -550,32 +565,32 @@ export default function AnaliseFinanceira() {
                         <p className="text-muted-foreground font-medium">Resumo consolidado operacional</p>
                     </div>
 
-                    <div className="max-w-3xl mx-auto space-y-2">
-                        <div className="flex justify-between py-4 border-b-2 border-slate-100">
+                    <div className="max-w-3xl mx-auto space-y-4">
+                        <div className="item-row border-b-2 border-slate-100">
                             <span className="font-bold text-emerald-600 uppercase text-xs tracking-widest leading-none flex items-center gap-2">
                                 <TrendingUp className="h-4 w-4" /> (+) Receita Total
                             </span>
-                            <span className="font-extrabold text-emerald-600">{formatCurrency(reportData?.total_income || 0)}</span>
+                            <span className="item-value text-emerald-600">{formatCurrency(reportData?.total_income || 0)}</span>
                         </div>
 
-                        <div className="flex justify-between py-2 pl-8 text-muted-foreground italic">
+                        <div className="item-row pl-8 text-muted-foreground italic">
                             <span className="text-xs font-semibold">Dízimos</span>
                             <span className="text-sm font-bold">{formatCurrency(reportData?.grouped_data?.entrada?.["Dízimo"]?.total || 0)}</span>
                         </div>
 
-                        <div className="flex justify-between py-2 pl-8 text-muted-foreground italic border-b border-slate-50">
+                        <div className="item-row pl-8 text-muted-foreground italic border-b border-slate-50">
                             <span className="text-xs font-semibold">Ofertas</span>
                             <span className="text-sm font-bold">{formatCurrency(reportData?.grouped_data?.entrada?.["Oferta"]?.total || 0)}</span>
                         </div>
 
-                        <div className="flex justify-between py-4 border-b-2 border-slate-100">
+                        <div className="item-row border-b-2 border-slate-100">
                             <span className="font-bold text-rose-600 uppercase text-xs tracking-widest flex items-center gap-2">
                                 <TrendingDown className="h-4 w-4" /> (-) Despesas Totais
                             </span>
-                            <span className="font-extrabold text-rose-600">{formatCurrency(reportData?.total_expense || 0)}</span>
+                            <span className="item-value text-rose-600">{formatCurrency(reportData?.total_expense || 0)}</span>
                         </div>
 
-                        <div className={`mt-6 flex justify-between items-center p-6 rounded-2xl ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'bg-blue-50 border border-blue-100' : 'bg-rose-50 border border-rose-100'}`}>
+                        <div className={`mt-6 item-row p-6 rounded-2xl ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'bg-blue-50 border border-blue-100' : 'bg-rose-50 border border-rose-100'}`}>
                             <span className={`text-lg font-black uppercase tracking-tighter ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-blue-900' : 'text-rose-900'}`}>
                                 (=) Resultado Líquido (Saldo)
                             </span>
