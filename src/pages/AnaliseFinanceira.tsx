@@ -22,7 +22,8 @@ import {
     ArrowUpRight,
     ArrowDownRight,
     TrendingUp as TrendingUpIcon,
-    Loader2
+    Loader2,
+    FileText
 } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -281,19 +282,28 @@ export default function AnaliseFinanceira() {
             .text-rose-900 { color: #881337 !important; }
             .border-b-2 { border-bottom: 2px solid #f1f5f9 !important; }
             .border-b { border-bottom: 1px solid #f1f5f9 !important; }
+            .bg-emerald-50\/30 { background-color: #f0fdf4 !important; }
+            .bg-rose-50\/30 { background-color: #fff1f2 !important; }
+            .text-emerald-700 { color: #047857 !important; }
+            .text-rose-700 { color: #be123c !important; }
+            .text-blue-700 { color: #1d4ed8 !important; }
+            .text-blue-500 { color: #3b82f6 !important; }
+            .text-rose-500 { color: #ef4444 !important; }
+            .font-black { font-weight: 900 !important; }
+            .tracking-widest { letter-spacing: 0.1em !important; }
+            .tabular-nums { font-variant-numeric: tabular-nums !important; }
 
             /* Ajuste para itens de lista e DRE */
-            .item-row { 
-              display: flex !important; 
-              justify-content: space-between !important; 
-              align-items: center !important; 
-              width: 100% !important;
-              padding: 8px 0 !important;
-            }
+            .item-label { font-size: 13px; font-weight: 700 !important; color: #475569 !important; }
+            .item-value { font-size: 15px; font-weight: 900 !important; text-align: right !important; min-width: 120px !important; }
             
-            .item-label { font-weight: 700 !important; color: #1e293b !important; }
-            .item-value { font-weight: 900 !important; text-align: right !important; min-width: 120px !important; }
-
+            /* DRE Specific adjustments */
+            .dre-header { background: #f8fafc !important; padding: 15px !important; border-radius: 12px !important; margin-bottom: 20px !important; }
+            .dre-row { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 12px 10px !important; border-bottom: 1px solid #f1f5f9 !important; }
+            .dre-row-sub { padding-left: 35px !important; font-style: italic !important; color: #64748b !important; }
+            .dre-total { margin-top: 25px !important; padding: 25px !important; border-radius: 20px !important; background: #eff6ff !important; display: flex !important; justify-content: space-between !important; align-items: center !important; }
+            .dre-total.negative { background: #fff1f2 !important; }
+            
             canvas { max-width: 100% !important; height: auto !important; }
             .recharts-responsive-container { width: 100% !important; height: 100% !important; }
             
@@ -591,43 +601,74 @@ export default function AnaliseFinanceira() {
                     transition={{ delay: 0.2 }}
                     className="rounded-[2.5rem] bg-card p-10 shadow-card border border-border/50 overflow-hidden print-section"
                 >
-                    <div className="mb-10 text-center">
-                        <h3 className="text-2xl font-bold text-foreground">Demonstrativo de Resultado (DRE)</h3>
-                        <p className="text-muted-foreground font-medium">Resumo consolidado operacional</p>
+                    <div className="mb-12 text-center">
+                        <div className="inline-block p-3 rounded-2xl bg-slate-50 mb-4 h-14 w-14 flex items-center justify-center mx-auto text-slate-500">
+                            <FileText className="h-7 w-7" />
+                        </div>
+                        <h3 className="text-3xl font-black text-slate-800 tracking-tight">Demonstrativo de Resultado (DRE)</h3>
+                        <p className="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em] mt-2">Resumo consolidado operacional do período</p>
                     </div>
 
-                    <div className="max-w-3xl mx-auto space-y-4">
-                        <div className="item-row border-b-2 border-slate-100">
-                            <span className="font-bold text-emerald-600 uppercase text-xs tracking-widest leading-none flex items-center gap-2">
-                                <TrendingUp className="h-4 w-4" /> (+) Receita Total
-                            </span>
-                            <span className="item-value text-emerald-600">{formatCurrency(reportData?.total_income || 0)}</span>
-                        </div>
+                    <div className="max-w-4xl mx-auto">
+                        <div className="space-y-2">
+                            {/* Receitas Section */}
+                            <div className="dre-row border-b-2 border-emerald-100 bg-emerald-50/30 rounded-t-2xl">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                        <TrendingUp className="h-4 w-4" />
+                                    </div>
+                                    <span className="font-black text-emerald-700 uppercase text-xs tracking-widest leading-none">
+                                        (+) RECEITA TOTAL
+                                    </span>
+                                </div>
+                                <span className="text-lg font-black text-emerald-600 tabular-nums">
+                                    {formatCurrency(reportData?.total_income || 0)}
+                                </span>
+                            </div>
 
-                        <div className="item-row pl-8 text-muted-foreground italic">
-                            <span className="text-xs font-semibold">Dízimos</span>
-                            <span className="text-sm font-bold">{formatCurrency(reportData?.grouped_data?.entrada?.["Dízimo"]?.total || 0)}</span>
-                        </div>
+                            <div className="dre-row dre-row-sub">
+                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Dízimos</span>
+                                <span className="text-sm font-black text-slate-700">
+                                    {formatCurrency(reportData?.grouped_data?.entrada?.["Dízimo"]?.total || 0)}
+                                </span>
+                            </div>
 
-                        <div className="item-row pl-8 text-muted-foreground italic border-b border-slate-50">
-                            <span className="text-xs font-semibold">Ofertas</span>
-                            <span className="text-sm font-bold">{formatCurrency(reportData?.grouped_data?.entrada?.["Oferta"]?.total || 0)}</span>
-                        </div>
+                            <div className="dre-row dre-row-sub border-b-2 border-slate-100">
+                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ofertas</span>
+                                <span className="text-sm font-black text-slate-700">
+                                    {formatCurrency(reportData?.grouped_data?.entrada?.["Oferta"]?.total || 0)}
+                                </span>
+                            </div>
 
-                        <div className="item-row border-b-2 border-slate-100">
-                            <span className="font-bold text-rose-600 uppercase text-xs tracking-widest flex items-center gap-2">
-                                <TrendingDown className="h-4 w-4" /> (-) Despesas Totais
-                            </span>
-                            <span className="item-value text-rose-600">{formatCurrency(reportData?.total_expense || 0)}</span>
-                        </div>
+                            {/* Despesas Section */}
+                            <div className="dre-row border-b-2 border-rose-100 bg-rose-50/30 mt-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="h-8 w-8 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
+                                        <TrendingDown className="h-4 w-4" />
+                                    </div>
+                                    <span className="font-black text-rose-700 uppercase text-xs tracking-widest leading-none">
+                                        (-) DESPESAS TOTAIS
+                                    </span>
+                                </div>
+                                <span className="text-lg font-black text-rose-600 tabular-nums">
+                                    {formatCurrency(reportData?.total_expense || 0)}
+                                </span>
+                            </div>
 
-                        <div className={`mt-6 item-row p-6 rounded-2xl ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'bg-blue-50 border border-blue-100' : 'bg-rose-50 border border-rose-100'}`}>
-                            <span className={`text-lg font-black uppercase tracking-tighter ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-blue-900' : 'text-rose-900'}`}>
-                                (=) Resultado Líquido (Saldo)
-                            </span>
-                            <span className={`text-3xl font-black tabular-nums ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
-                                {formatCurrency(reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) || 0)}
-                            </span>
+                            {/* Net Result Section */}
+                            <div className={`mt-8 dre-total shadow-lg border-2 ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'bg-blue-50 border-blue-200' : 'bg-rose-50 border-rose-200'} rounded-3xl`}>
+                                <div className="flex flex-col gap-1">
+                                    <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-blue-500' : 'text-rose-500'}`}>
+                                        Fechamento Líquido
+                                    </span>
+                                    <span className={`text-xl font-black uppercase ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-blue-900' : 'text-rose-900'}`}>
+                                        (=) Resultado do Período
+                                    </span>
+                                </div>
+                                <div className={`text-4xl font-black tabular-nums ${reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) >= 0 ? 'text-blue-700' : 'text-rose-700'}`}>
+                                    {formatCurrency(reportData?.previous_balance + (reportData?.total_income - reportData?.total_expense) || 0)}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </motion.div>
