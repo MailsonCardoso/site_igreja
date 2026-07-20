@@ -45,12 +45,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+const DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"];
+
 export default function Celulas() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedCell, setSelectedCell] = useState<any>(null);
+  const [selectedDays, setSelectedDays] = useState<string[]>([]);
   const queryClient = useQueryClient();
 
   // Verificar role do usuário
@@ -131,6 +134,14 @@ export default function Celulas() {
     },
   });
 
+  const toggleDay = (dia: string) => {
+    const updated = selectedDays.includes(dia)
+      ? selectedDays.filter(d => d !== dia)
+      : [...selectedDays, dia];
+    setSelectedDays(updated);
+    setValue("meeting_day", updated.join(", "));
+  };
+
   const onSubmit = (data: any) => {
     saveCellMutation.mutate(data);
   };
@@ -138,6 +149,10 @@ export default function Celulas() {
   const handleEdit = (celula: any) => {
     setSelectedCell(celula);
     setIsEditMode(true);
+    const days = celula.meeting_day
+      ? celula.meeting_day.split(",").map((d: string) => d.trim()).filter(Boolean)
+      : [];
+    setSelectedDays(days);
     reset({
       name: celula.name || "",
       leader_id: celula.leader_id?.toString() || "",
@@ -305,6 +320,7 @@ export default function Celulas() {
         if (!open) {
           setIsEditMode(false);
           setSelectedCell(null);
+          setSelectedDays([]);
           reset();
         }
       }}>
@@ -336,30 +352,42 @@ export default function Celulas() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Dia da Semana</Label>
-                <Select onValueChange={(val) => setValue("meeting_day", val)} value={watch("meeting_day")}>
-                  <SelectTrigger className="h-11 rounded-xl border-input bg-background font-semibold focus:border-primary/50">
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl border-primary/10">
-                    {["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"].map(dia => (
-                      <SelectItem key={dia} value={dia}>{dia}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                Dia(s) da Semana
+                {selectedDays.length > 0 && (
+                  <span className="ml-2 normal-case font-normal text-primary">({selectedDays.join(", ")})</span>
+                )}
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {DIAS_SEMANA.map(dia => {
+                  const active = selectedDays.includes(dia);
+                  return (
+                    <button
+                      key={dia}
+                      type="button"
+                      onClick={() => toggleDay(dia)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-150 select-none ${
+                        active
+                          ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/30'
+                          : 'bg-background text-muted-foreground border-input hover:border-primary/50 hover:text-primary'
+                      }`}
+                    >
+                      {dia}
+                    </button>
+                  );
+                })}
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="meeting_time" className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Horário</Label>
-                <Input
-                  id="meeting_time"
-                  type="time"
-                  {...form.register("meeting_time")}
-                  className="h-11 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
-                />
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="meeting_time" className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Horário</Label>
+              <Input
+                id="meeting_time"
+                type="time"
+                {...form.register("meeting_time")}
+                className="h-11 rounded-xl border-input bg-background font-semibold focus:border-primary/50"
+              />
             </div>
 
             <div className="space-y-2">
