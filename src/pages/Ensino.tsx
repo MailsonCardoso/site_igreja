@@ -49,6 +49,9 @@ export default function Ensino() {
   const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [selectedLesson, setSelectedLesson] = useState<any>(null);
   const [studentSearch, setStudentSearch] = useState("");
+  const [isEditLessonMode, setIsEditLessonMode] = useState(false);
+  const [isDeleteLessonOpen, setIsDeleteLessonOpen] = useState(false);
+  const [lessonToDelete, setLessonToDelete] = useState<any>(null);
 
   const queryClient = useQueryClient();
   const form = useForm({
@@ -139,6 +142,39 @@ export default function Ensino() {
     },
   });
 
+  // Update Lesson Mutation
+  const updateLessonMutation = useMutation({
+    mutationFn: ({ lessonId, data }: { lessonId: number; data: any }) =>
+      api.put(`/courses/${selectedCourse.id}/lessons/${lessonId}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lessons", selectedCourse?.id] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      toast.success("Aula atualizada!");
+      lessonForm.reset();
+      setIsEditLessonMode(false);
+      setSelectedLesson(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao atualizar aula");
+    },
+  });
+
+  // Delete Lesson Mutation
+  const deleteLessonMutation = useMutation({
+    mutationFn: (lessonId: number) =>
+      api.delete(`/courses/${selectedCourse.id}/lessons/${lessonId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["lessons", selectedCourse?.id] });
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+      toast.success("Aula excluída!");
+      setIsDeleteLessonOpen(false);
+      setLessonToDelete(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao excluir aula");
+    },
+  });
+
   // Enroll Student Mutation
   const enrollStudentMutation = useMutation({
     mutationFn: (memberId: number) => api.post(`/courses/${selectedCourse.id}/students`, {
@@ -214,7 +250,33 @@ export default function Ensino() {
   };
 
   const handleCreateLesson = (data: any) => {
-    createLessonMutation.mutate(data);
+    if (isEditLessonMode && selectedLesson) {
+      updateLessonMutation.mutate({ lessonId: selectedLesson.id, data });
+    } else {
+      createLessonMutation.mutate(data);
+    }
+  };
+
+  const handleEditLesson = (lesson: any) => {
+    setSelectedLesson(lesson);
+    setIsEditLessonMode(true);
+    lessonForm.reset({
+      lesson_number: lesson.lesson_number,
+      title: lesson.title || "",
+      date: lesson.date ? lesson.date.split('T')[0] : "",
+      topic: lesson.topic || "",
+    });
+  };
+
+  const handleCancelEditLesson = () => {
+    setIsEditLessonMode(false);
+    setSelectedLesson(null);
+    lessonForm.reset();
+  };
+
+  const handleDeleteLesson = (lesson: any) => {
+    setLessonToDelete(lesson);
+    setIsDeleteLessonOpen(true);
   };
 
   const calculateProgress = (course: any) => {
@@ -634,8 +696,23 @@ export default function Ensino() {
             <ScrollArea className="flex-1 h-full">
               {/* Aba Aulas */}
               <TabsContent value="aulas" className="p-6 space-y-6">
-                <div className="bg-secondary/5 p-5 rounded-2xl border border-secondary/10">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground mb-4">Nova Aula</h3>
+                <div className={`p-5 rounded-2xl border transition-colors ${isEditLessonMode ? 'bg-primary/5 border-primary/20' : 'bg-secondary/5 border-secondary/10'}`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground">
+                      {isEditLessonMode ? `✏️ Editando Aula ${selectedLesson?.lesson_number}` : 'Nova Aula'}
+                    </h3>
+                    {isEditLessonMode && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleCancelEditLesson}
+                        className="h-7 text-xs text-muted-foreground hover:text-foreground rounded-lg px-2"
+                      >
+                        <X className="h-3.5 w-3.5 mr-1" /> Cancelar Edição
+                      </Button>
+                    )}
+                  </div>
                   <form onSubmit={lessonForm.handleSubmit(handleCreateLesson)} className="space-y-4">
                     <div className="grid grid-cols-3 gap-4">
                       <div className="space-y-2">
@@ -676,10 +753,15 @@ export default function Ensino() {
                     </div>
                     <Button
                       type="submit"
-                      disabled={createLessonMutation.isPending}
-                      className="w-full h-10 rounded-xl font-semibold bg-primary hover:bg-primary/90"
+                      disabled={createLessonMutation.isPending || updateLessonMutation.isPending}
+                      className={`w-full h-10 rounded-xl font-semibold ${isEditLessonMode ? 'bg-primary hover:bg-primary/90' : 'bg-primary hover:bg-primary/90'}`}
                     >
-                      {createLessonMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Plus className="h-4 w-4 mr-2" /> Adicionar Aula</>}
+                      {(createLessonMutation.isPending || updateLessonMutation.isPending)
+                        ? <Loader2 className="h-4 w-4 animate-spin" />
+                        : isEditLessonMode
+                          ? <><Save className="h-4 w-4 mr-2" /> Salvar Alterações</>
+                          : <><Plus className="h-4 w-4 mr-2" /> Adicionar Aula</>
+                      }
                     </Button>
                   </form>
                 </div>
@@ -695,7 +777,11 @@ export default function Ensino() {
                     lessons.map((lesson: any) => (
                       <div
                         key={lesson.id}
-                        className="flex items-center justify-between p-4 rounded-xl border border-border/50 hover:border-primary/30 transition-all bg-card"
+                        className={`flex items-center justify-between p-4 rounded-xl border transition-all bg-card ${
+                          selectedLesson?.id === lesson.id && isEditLessonMode
+                            ? 'border-primary/50 bg-primary/5'
+                            : 'border-border/50 hover:border-primary/30'
+                        }`}
                       >
                         <div className="flex items-center gap-4 flex-1">
                           <Checkbox
@@ -718,13 +804,33 @@ export default function Ensino() {
                             )}
                           </div>
                           {lesson.date && (
-                            <div className="text-right">
+                            <div className="text-right mr-2">
                               <p className="text-xs text-muted-foreground">Data</p>
                               <p className="text-sm font-semibold text-foreground">
                                 {new Date(lesson.date).toLocaleDateString('pt-BR')}
                               </p>
                             </div>
                           )}
+                        </div>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleEditLesson(lesson)}
+                            className="h-8 w-8 rounded-lg hover:bg-primary/10 text-muted-foreground hover:text-primary transition-all"
+                            title="Editar aula"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDeleteLesson(lesson)}
+                            className="h-8 w-8 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all"
+                            title="Excluir aula"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
                         </div>
                       </div>
                     ))
@@ -857,6 +963,29 @@ export default function Ensino() {
           </Tabs>
         </DialogContent>
       </Dialog>
+
+      {/* AlertDialog de confirmação para excluir aula */}
+      <AlertDialog open={isDeleteLessonOpen} onOpenChange={setIsDeleteLessonOpen}>
+        <AlertDialogContent className="rounded-[2rem]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl font-bold">Excluir Aula</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir a aula{" "}
+              <strong>{lessonToDelete?.title || `Aula ${lessonToDelete?.lesson_number}`}</strong>?
+              Esta ação não poderá ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 pt-4">
+            <AlertDialogCancel className="rounded-xl font-semibold">Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => lessonToDelete && deleteLessonMutation.mutate(lessonToDelete.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-xl font-semibold"
+            >
+              {deleteLessonMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirmar Exclusão"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MainLayout>
   );
 }
