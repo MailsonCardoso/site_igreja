@@ -115,6 +115,18 @@ const displayDate = (dateString: string) => {
   }
 };
 
+const ROLES = [
+  "Membro",
+  "Diácono",
+  "Obreiro",
+  "Ministro de Louvor",
+  "Pastor",
+  "Instrumentista",
+  "Financeiro",
+  "Secretaria",
+  "Líder de Pequeno Grupo"
+];
+
 export default function Secretaria() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
@@ -124,6 +136,7 @@ export default function Secretaria() {
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>(["Membro"]);
 
   const queryClient = useQueryClient();
 
@@ -251,6 +264,16 @@ export default function Secretaria() {
     },
   });
 
+  const toggleRole = (role: string) => {
+    const updated = selectedRoles.includes(role)
+      ? selectedRoles.filter(r => r !== role)
+      : [...selectedRoles, role];
+    
+    const finalRoles = updated.length === 0 ? ["Membro"] : updated;
+    setSelectedRoles(finalRoles);
+    setValue("role", finalRoles.join(", "));
+  };
+
   const onSubmit = (data: any) => {
     const processedData = {
       ...data,
@@ -269,6 +292,10 @@ export default function Secretaria() {
   const handleEdit = (member: any) => {
     setSelectedMember(member);
     setIsEditMode(true);
+    const roles = member.role
+      ? member.role.split(",").map((r: string) => r.trim()).filter(Boolean)
+      : ["Membro"];
+    setSelectedRoles(roles);
     reset({
       name: member.name || "",
       birth_date: member.birth_date ? member.birth_date.split('T')[0] : "",
@@ -358,12 +385,14 @@ export default function Secretaria() {
               if (!open) {
                 setIsEditMode(false);
                 setSelectedMember(null);
+                setSelectedRoles(["Membro"]);
                 reset();
               }
             }}>
               <SheetTrigger asChild>
                 <Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => {
                   setIsEditMode(false);
+                  setSelectedRoles(["Membro"]);
                   reset();
                 }}>
                   <Plus className="h-4 w-4" />
@@ -518,25 +547,6 @@ export default function Secretaria() {
                             </Select>
                           </div>
                           <div className="space-y-2 p-0.5">
-                            <Label htmlFor="role">Função / Cargo</Label>
-                            <Select onValueChange={(val) => setValue("role", val)} value={watch("role")}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Selecione" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Membro">Membro</SelectItem>
-                                <SelectItem value="Diácono">Diácono</SelectItem>
-                                <SelectItem value="Obreiro">Obreiro</SelectItem>
-                                <SelectItem value="Ministro de Louvor">Ministro de Louvor</SelectItem>
-                                <SelectItem value="Pastor">Pastor</SelectItem>
-                                <SelectItem value="Instrumentista">Instrumentista</SelectItem>
-                                <SelectItem value="Financeiro">Financeiro</SelectItem>
-                                <SelectItem value="Secretaria">Secretaria</SelectItem>
-                                <SelectItem value="Líder de Pequeno Grupo">Líder de Pequeno Grupo</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div className="space-y-2 p-0.5">
                             <Label htmlFor="cell_id">Célula / Pequeno Grupo</Label>
                             <Select onValueChange={(val) => setValue("cell_id", val)} value={watch("cell_id")}>
                               <SelectTrigger>
@@ -549,6 +559,31 @@ export default function Secretaria() {
                                 ))}
                               </SelectContent>
                             </Select>
+                          </div>
+
+                          <div className="col-span-2 space-y-3 p-0.5">
+                            <Label className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground flex items-center justify-between">
+                              <span>Função / Cargo</span>
+                            </Label>
+                            <div className="flex flex-wrap gap-2 pt-1">
+                              {ROLES.map(role => {
+                                const active = selectedRoles.includes(role);
+                                return (
+                                  <button
+                                    key={role}
+                                    type="button"
+                                    onClick={() => toggleRole(role)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all duration-150 select-none ${
+                                      active
+                                        ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/30'
+                                        : 'bg-background text-muted-foreground border-input hover:border-primary/50 hover:text-primary'
+                                    }`}
+                                  >
+                                    {role}
+                                  </button>
+                                );
+                              })}
+                            </div>
                           </div>
                         </div>
                       </TabsContent>
