@@ -282,10 +282,10 @@ export default function SeriesPage() {
                 {/* Modal Editor */}
                 <Sheet open={isEditorOpen} onOpenChange={setIsEditorOpen}>
                     <SheetContent side="right" className="sm:max-w-[650px] w-full h-full flex flex-col p-0 border-none shadow-2xl">
-                        <div className="bg-primary/5 p-6 border-b relative">
+                        <div className="bg-primary/5 p-4 border-b relative">
                             <div className="flex items-center gap-4">
-                                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                                    <Folder className="h-7 w-7 text-primary" />
+                                <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                    <Folder className="h-5 w-5 text-primary" />
                                 </div>
                                 <div>
                                     <SheetTitle className="text-xl font-semibold text-foreground">

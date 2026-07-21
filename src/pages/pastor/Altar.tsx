@@ -317,10 +317,10 @@ export default function Altar() {
                 {/* Editor Sheet */}
                 <Sheet open={isEditorOpen} onOpenChange={setIsEditorOpen}>
                     <SheetContent side="right" className="sm:max-w-[750px] w-full h-full overflow-hidden border-none bg-background shadow-2xl p-0 flex flex-col">
-                        <div className="bg-primary/5 p-8 border-b relative shrink-0">
+                        <div className="bg-primary/5 p-4 border-b relative shrink-0">
                             <div className="flex items-center gap-4">
-                                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                                    <PenTool className="h-8 w-8 text-primary" />
+                                <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                    <PenTool className="h-5 w-5 text-primary" />
                                 </div>
                                 <div>
                                     <SheetTitle className="text-2xl font-bold font-display tracking-tight text-foreground">

@@ -387,10 +387,10 @@ export default function Agenda() {
       {/* Sheet de Cadastro/Edição */}
       <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <SheetContent side="right" className="sm:max-w-[650px] w-full h-full p-0 flex flex-col border-none shadow-2xl">
-          <div className="bg-primary/5 p-6 border-b relative">
+          <div className="bg-primary/5 p-4 border-b relative">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                {isEditMode ? <Pencil className="h-7 w-7 text-primary" /> : <CalendarIcon className="h-7 w-7 text-primary" />}
+              <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                {isEditMode ? <Pencil className="h-5 w-5 text-primary" /> : <CalendarIcon className="h-5 w-5 text-primary" />}
               </div>
               <div>
                 <SheetTitle className="text-xl font-semibold text-foreground">
@@ -502,10 +502,10 @@ export default function Agenda() {
       {/* Sheet de Visualização de Evento */}
       <Sheet open={isViewOpen} onOpenChange={setIsViewOpen}>
         <SheetContent side="right" className="sm:max-w-[600px] w-full h-full p-0 flex flex-col border-none shadow-2xl">
-          <div className="bg-primary/5 p-6 border-b">
+          <div className="bg-primary/5 p-4 border-b">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                <CalendarIcon className="h-7 w-7 text-primary" />
+              <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <CalendarIcon className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <SheetTitle className="text-xl font-semibold text-foreground">

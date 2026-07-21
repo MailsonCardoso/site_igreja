@@ -325,10 +325,10 @@ export default function Celulas() {
         }
       }}>
         <SheetContent side="right" className="sm:max-w-xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
-          <div className="bg-primary/5 p-8 border-b relative">
+          <div className="bg-primary/5 p-4 border-b relative">
             <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                {isEditMode ? <Pencil className="h-8 w-8 text-primary" /> : <Users className="h-8 w-8 text-primary" />}
+              <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                {isEditMode ? <Pencil className="h-5 w-5 text-primary" /> : <Users className="h-5 w-5 text-primary" />}
               </div>
               <div>
                 <SheetTitle className="text-xl font-semibold text-foreground">
@@ -341,7 +341,7 @@ export default function Celulas() {
             </div>
           </div>
 
-          <form onSubmit={form.handleSubmit(onSubmit)} className="p-8 space-y-6 bg-card">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 overflow-y-auto p-6 space-y-4 bg-card">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Nome da Célula</Label>
               <Input
@@ -418,7 +418,7 @@ export default function Celulas() {
               />
             </div>
 
-            <div className="flex gap-4 pt-6 border-t border-border/50">
+            <div className="flex gap-4 pt-4 border-t border-border/50">
               <Button
                 type="button"
                 variant="outline"
@@ -469,10 +469,10 @@ export default function Celulas() {
       {/* Sheet de Detalhes da Célula */}
       <Sheet open={isViewOpen} onOpenChange={setIsViewOpen}>
         <SheetContent side="right" className="sm:max-w-xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
-          <div className="bg-primary/5 p-5 border-b">
+          <div className="bg-primary/5 p-4 border-b">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                <Users className="h-7 w-7 text-primary" />
+              <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <Users className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <SheetTitle className="text-xl font-semibold text-foreground leading-tight">{selectedCell?.name}</SheetTitle>

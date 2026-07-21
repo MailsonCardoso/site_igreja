@@ -269,10 +269,10 @@ export default function Inventario() {
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="right" className="sm:max-w-xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
-                            <div className="bg-primary/5 p-8 border-b border-primary/10">
+                            <div className="bg-primary/5 p-4 border-b border-primary/10">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                                        <Package className="h-6 w-6 text-primary" />
+                                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                                        <Package className="h-5 w-5 text-primary" />
                                     </div>
                                     <div>
                                         <SheetTitle className="text-xl font-bold">
@@ -566,7 +566,7 @@ export default function Inventario() {
                 {/* Dispose Sheet */}
                 <Sheet open={isDisposeDialogOpen} onOpenChange={setIsDisposeDialogOpen}>
                     <SheetContent side="right" className="sm:max-w-md w-full h-full p-0 flex flex-col border-none shadow-2xl overflow-hidden">
-                        <SheetHeader className="p-8 bg-amber-500/5 border-b">
+                        <SheetHeader className="p-4 bg-amber-500/5 border-b">
                             <SheetTitle className="text-xl font-bold">Dar Baixa no Item</SheetTitle>
                             <SheetDescription className="font-semibold text-amber-600">
                                 Informe o motivo para remover <strong>{selectedItem?.name}</strong> do estoque ativo.

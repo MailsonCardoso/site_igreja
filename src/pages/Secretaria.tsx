@@ -400,10 +400,10 @@ export default function Secretaria() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="sm:max-w-3xl w-full h-full flex flex-col p-0 border-none shadow-2xl">
-                <div className="bg-primary/5 p-6 border-b">
+                <div className="bg-primary/5 p-4 border-b">
                   <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                      <User className="h-6 w-6 text-primary" />
+                    <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                      <User className="h-5 w-5 text-primary" />
                     </div>
                     <div>
                       <SheetTitle className="text-xl font-semibold text-foreground">

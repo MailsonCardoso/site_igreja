@@ -452,10 +452,10 @@ export default function Ensino() {
       {/* Sheet de Cadastro/Edição */}
       <Sheet open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <SheetContent side="right" className="sm:max-w-[750px] w-full h-full p-0 overflow-hidden flex flex-col border-none shadow-2xl">
-          <div className="bg-primary/5 p-6 border-b shrink-0">
+          <div className="bg-primary/5 p-4 border-b shrink-0">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                {isEditMode ? <Pencil className="h-7 w-7 text-primary" /> : <BookOpen className="h-7 w-7 text-primary" />}
+              <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                {isEditMode ? <Pencil className="h-5 w-5 text-primary" /> : <BookOpen className="h-5 w-5 text-primary" />}
               </div>
               <div>
                 <SheetTitle className="text-xl font-semibold text-foreground">
@@ -595,10 +595,10 @@ export default function Ensino() {
       {/* Sheet de Visualização */}
       <Sheet open={isViewOpen} onOpenChange={setIsViewOpen}>
         <SheetContent side="right" className="sm:max-w-[700px] w-full h-full p-0 overflow-hidden border-none shadow-2xl flex flex-col">
-          <div className="bg-primary/5 p-6 border-b">
+          <div className="bg-primary/5 p-4 border-b">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                <BookOpen className="h-7 w-7 text-primary" />
+              <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <BookOpen className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <SheetTitle className="text-xl font-bold text-foreground">
@@ -668,10 +668,10 @@ export default function Ensino() {
       {/* Modal de Gerenciamento - Revertido para Dialog como solicitado */}
       <Dialog open={isManageOpen} onOpenChange={setIsManageOpen}>
         <DialogContent className="sm:max-w-[85vw] w-full h-[90vh] p-0 overflow-hidden border-none shadow-2xl flex flex-col rounded-[2.5rem]">
-          <div className="bg-primary/5 p-6 border-b shrink-0">
+          <div className="bg-primary/5 p-4 border-b shrink-0">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border border-primary/20">
-                <ClipboardCheck className="h-7 w-7 text-primary" />
+              <div className="h-11 w-11 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                <ClipboardCheck className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1">
                 <DialogTitle className="text-xl font-semibold text-foreground">

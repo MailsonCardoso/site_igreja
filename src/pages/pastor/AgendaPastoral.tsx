@@ -596,9 +596,9 @@ export default function AgendaPastoral() {
             {/* Sheet Lateral - Padrão Novo */}
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetContent side="right" className="sm:max-w-[500px] w-full h-full p-0 overflow-hidden border-none shadow-2xl flex flex-col">
-                    <div className="p-6 bg-primary/5 flex items-center gap-4 border-b shrink-0">
-                        <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 text-primary">
-                            <Calendar className="h-6 w-6" />
+                    <div className="p-4 bg-primary/5 flex items-center gap-4 border-b shrink-0">
+                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 text-primary">
+                            <Calendar className="h-5 w-5" />
                         </div>
                         <div>
                             <SheetTitle className="text-xl font-bold text-foreground">
