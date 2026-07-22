@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { PenTool, Quote, Plus, X, Search, Lightbulb, Trash2, BookOpen, Edit2 } from "lucide-react";
+import { PenTool, Quote, X, Search, Lightbulb, Trash2, BookOpen, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { PastoralStore, Sermon } from "@/data/pastoral-store";
+import { useInsights, useSermons, useCreateInsight, useUpdateInsight, useDeleteInsight } from "@/data/pastoral-api";
 
 interface Insight {
     id: number;
@@ -29,35 +29,21 @@ interface Insight {
     sermonId?: number;
 }
 
-const initialInsights: Insight[] = [
-    { id: 1, type: "verse", content: "Porque a palavra de Deus é viva e eficaz, e mais penetrante do que espada alguma de dois gumes...", reference: "Hebreus 4:12", tags: ["Bíblia", "Poder"] },
-    { id: 2, type: "note", content: "A graça não é apenas o favor imerecido para salvação, mas o poder capacitador para vivermos a vida cristã.", title: "Definição de Graça", tags: ["Teologia", "Vida Cristã"] },
-    { id: 3, type: "note", content: "Ilustração: O equilibrista nas Cataratas do Niágara. O público acreditava que ele podia, mas só quem subiu nas costas dele confiou de verdade.", title: "Fé vs Crença", tags: ["Ilustração", "Fé"] },
-    { id: 4, type: "verse", content: "O Senhor é o meu pastor, nada me faltará.", reference: "Salmos 23:1", tags: ["Conforto", "Provisão"] },
-    { id: 5, type: "note", content: "Lembrar de falar sobre a importância da oração comunitária no próximo domingo.", title: "Aviso", tags: ["Lembrete"] }
-];
-
 export default function Insights() {
-    const [insights, setInsights] = useState<Insight[]>([]);
+    const { data: insights = [] } = useInsights();
+    const { data: sermonsList = [] } = useSermons();
+    const createInsight = useCreateInsight();
+    const updateInsight = useUpdateInsight();
+    const deleteInsight = useDeleteInsight();
+
     const [activeTab, setActiveTab] = useState("todos");
     const [searchTerm, setSearchTerm] = useState("");
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [insightToDelete, setInsightToDelete] = useState<Insight | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
 
-    // Carregar dados
-    useEffect(() => {
-        const savedInsights = PastoralStore.getInsights();
-        if (savedInsights.length > 0) {
-            setInsights(savedInsights);
-        } else {
-            setInsights(initialInsights);
-        }
-    }, []);
-
     // Form States
     const [newType, setNewType] = useState("note");
-    const [sermonsList] = useState<Sermon[]>(PastoralStore.getSermons());
     const [formData, setFormData] = useState({
         title: "",
         content: "",
@@ -77,28 +63,37 @@ export default function Insights() {
             return;
         }
 
-        const newInsight: Insight = {
-            id: editingId || Date.now(),
+        const insightData = {
             type: newType,
             content: formData.content,
             ...(newType === 'note' ? { title: formData.title } : { reference: formData.reference }),
-            tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== ""),
-            sermonId: formData.sermonId === "none" ? undefined : Number(formData.sermonId)
+            tags: formData.tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag !== ""),
+            sermon_id: formData.sermonId === "none" ? null : Number(formData.sermonId)
         };
 
-        let updatedInsights;
         if (editingId) {
-            updatedInsights = insights.map(i => i.id === editingId ? newInsight : i);
-            toast.success("Insight atualizado!");
+            updateInsight.mutate(
+                { id: editingId, ...insightData },
+                {
+                    onSuccess: () => {
+                        toast.success("Insight atualizado!");
+                        resetForm();
+                    },
+                    onError: () => toast.error("Erro ao atualizar insight.")
+                }
+            );
         } else {
-            updatedInsights = [newInsight, ...insights];
-            toast.success("Insight salvo!");
+            createInsight.mutate(insightData, {
+                onSuccess: () => {
+                    toast.success("Insight salvo!");
+                    resetForm();
+                },
+                onError: () => toast.error("Erro ao salvar insight.")
+            });
         }
+    };
 
-        setInsights(updatedInsights);
-        PastoralStore.saveInsights(updatedInsights);
-
-        // Reset Form
+    const resetForm = () => {
         setFormData({
             title: "",
             content: "",
@@ -123,14 +118,7 @@ export default function Insights() {
     };
 
     const cancelEdit = () => {
-        setEditingId(null);
-        setFormData({
-            title: "",
-            content: "",
-            reference: "",
-            tags: "",
-            sermonId: "none"
-        });
+        resetForm();
     };
 
     const handleDelete = (insight: Insight) => {
@@ -140,12 +128,14 @@ export default function Insights() {
 
     const confirmDelete = () => {
         if (!insightToDelete) return;
-        const updatedInsights = insights.filter(i => i.id !== insightToDelete.id);
-        setInsights(updatedInsights);
-        PastoralStore.saveInsights(updatedInsights);
-        toast.success("Insight removido!");
-        setIsDeleteOpen(false);
-        setInsightToDelete(null);
+        deleteInsight.mutate(insightToDelete.id, {
+            onSuccess: () => {
+                toast.success("Insight removido!");
+                setIsDeleteOpen(false);
+                setInsightToDelete(null);
+            },
+            onError: () => toast.error("Erro ao remover insight.")
+        });
     };
 
     const filteredInsights = insights.filter(i => {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import {
@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
     DropdownMenu,
@@ -30,7 +30,6 @@ import {
     SheetDescription,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
 } from "@/components/ui/sheet";
 import {
     AlertDialog,
@@ -45,7 +44,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { PastoralStore, Sermon, Series } from "@/data/pastoral-store";
+import { Sermon, Series } from "@/data/pastoral-store";
+import { useSermons, useSeriesList, useCreateSermon, useUpdateSermon, useDeleteSermon } from "@/data/pastoral-api";
 import {
     Select,
     SelectContent,
@@ -58,9 +58,12 @@ export default function Altar() {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
 
-    // Estados do Store
-    const [sermons, setSermons] = useState<Sermon[]>(PastoralStore.getSermons());
-    const [seriesList] = useState<Series[]>(PastoralStore.getSeries());
+    const { data: sermons = [] } = useSermons();
+    const { data: seriesList = [] } = useSeriesList();
+
+    const createSermon = useCreateSermon();
+    const updateSermon = useUpdateSermon();
+    const deleteSermon = useDeleteSermon();
 
     // Editor State
     const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -80,11 +83,6 @@ export default function Altar() {
             conclusion: ""
         }
     });
-
-    // Sincronizar com LocalStorage quando mudar
-    useEffect(() => {
-        PastoralStore.saveSermons(sermons);
-    }, [sermons]);
 
     const handleOpenEditor = (sermon: Sermon | null = null) => {
         if (sermon) {
@@ -124,27 +122,25 @@ export default function Altar() {
         }
 
         if (currentSermon) {
-            setSermons(sermons.map(s =>
-                s.id === currentSermon.id
-                    ? { ...currentSermon, ...formData }
-                    : s
-            ));
-            toast.success("Sermão atualizado com sucesso!");
+            updateSermon.mutate(
+                { id: currentSermon.id, ...formData },
+                {
+                    onSuccess: () => {
+                        toast.success("Sermão atualizado com sucesso!");
+                        setIsEditorOpen(false);
+                    },
+                    onError: () => toast.error("Erro ao atualizar sermão.")
+                }
+            );
         } else {
-            const newSermon: Sermon = {
-                id: Math.max(...sermons.map(s => s.id), 0) + 1,
-                title: formData.title,
-                series: formData.series,
-                verse: formData.verse,
-                date: formData.date,
-                status: formData.status,
-                color: formData.color,
-                content: formData.content
-            };
-            setSermons([newSermon, ...sermons]);
-            toast.success("Sermão criado com sucesso!");
+            createSermon.mutate(formData, {
+                onSuccess: () => {
+                    toast.success("Sermão criado com sucesso!");
+                    setIsEditorOpen(false);
+                },
+                onError: () => toast.error("Erro ao criar sermão.")
+            });
         }
-        setIsEditorOpen(false);
     };
 
     const handleDelete = (sermon: Sermon) => {
@@ -154,23 +150,26 @@ export default function Altar() {
 
     const confirmDelete = () => {
         if (currentSermon) {
-            setSermons(sermons.filter(s => s.id !== currentSermon.id));
-            toast.success("Sermão excluído com sucesso!");
-            setIsDeleteOpen(false);
-            setCurrentSermon(null);
+            deleteSermon.mutate(currentSermon.id, {
+                onSuccess: () => {
+                    toast.success("Sermão excluído com sucesso!");
+                    setIsDeleteOpen(false);
+                    setCurrentSermon(null);
+                },
+                onError: () => toast.error("Erro ao excluir sermão.")
+            });
         }
     };
 
     const duplicateSermon = (sermon: Sermon) => {
-        const duplicated: Sermon = {
-            ...sermon,
-            id: Math.max(...sermons.map(s => s.id), 0) + 1,
-            title: `${sermon.title} (Cópia)`,
-            date: new Date().toISOString().split('T')[0],
-            status: "Rascunho"
-        };
-        setSermons([duplicated, ...sermons]);
-        toast.success("Sermão duplicado!");
+        const { id, ...rest } = sermon;
+        createSermon.mutate(
+            { ...rest, title: `${sermon.title} (Cópia)`, date: new Date().toISOString().split('T')[0], status: "Rascunho" },
+            {
+                onSuccess: () => toast.success("Sermão duplicado!"),
+                onError: () => toast.error("Erro ao duplicar sermão.")
+            }
+        );
     };
 
     const handleTopicChange = (index: number, value: string) => {

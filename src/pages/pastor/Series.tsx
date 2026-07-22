@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Folder, Plus, BookOpen, MoreVertical, Calendar, Trash2, Edit, Save, List, Search } from "lucide-react";
@@ -10,20 +10,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import {
     Sheet,
     SheetContent,
     SheetDescription,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
 } from "@/components/ui/sheet";
 import {
     AlertDialog,
@@ -42,13 +33,18 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { PastoralStore, Series, Sermon } from "@/data/pastoral-store";
+import { Series } from "@/data/pastoral-store";
+import { useSeriesList, useSermons, useCreateSeries, useUpdateSeries, useDeleteSeries } from "@/data/pastoral-api";
 
 export default function SeriesPage() {
-    const [series, setSeries] = useState<Series[]>(PastoralStore.getSeries());
-    const [sermons] = useState<Sermon[]>(PastoralStore.getSermons());
+    const { data: series = [] } = useSeriesList();
+    const { data: sermons = [] } = useSermons();
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate();
+
+    const createSeries = useCreateSeries();
+    const updateSeries = useUpdateSeries();
+    const deleteSeries = useDeleteSeries();
 
     const [isEditorOpen, setIsEditorOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -63,11 +59,6 @@ export default function SeriesPage() {
         coverColor: "from-blue-500/20 to-blue-500/5",
         startDate: ""
     });
-
-    // Sincronizar com LocalStorage
-    useEffect(() => {
-        PastoralStore.saveSeries(series);
-    }, [series]);
 
     const handleOpenEditor = (serie: Series | null = null) => {
         if (serie) {
@@ -103,22 +94,25 @@ export default function SeriesPage() {
         }
 
         if (currentSerie) {
-            setSeries(series.map(s =>
-                s.id === currentSerie.id
-                    ? { ...currentSerie, ...formData }
-                    : s
-            ));
-            toast.success("Série atualizada com sucesso!");
+            updateSeries.mutate(
+                { id: currentSerie.id, ...formData },
+                {
+                    onSuccess: () => {
+                        toast.success("Série atualizada com sucesso!");
+                        setIsEditorOpen(false);
+                    },
+                    onError: () => toast.error("Erro ao atualizar série.")
+                }
+            );
         } else {
-            const newSerie: Series = {
-                id: Math.max(...series.map(s => s.id), 0) + 1,
-                ...formData
-            };
-            setSeries([newSerie, ...series]);
-            toast.success("Série criada com sucesso!");
+            createSeries.mutate(formData, {
+                onSuccess: () => {
+                    toast.success("Série criada com sucesso!");
+                    setIsEditorOpen(false);
+                },
+                onError: () => toast.error("Erro ao criar série.")
+            });
         }
-
-        setIsEditorOpen(false);
     };
 
     const handleDelete = (serie: Series) => {
@@ -128,10 +122,14 @@ export default function SeriesPage() {
 
     const confirmDelete = () => {
         if (currentSerie) {
-            setSeries(series.filter(s => s.id !== currentSerie.id));
-            toast.success("Série excluída com sucesso!");
-            setIsDeleteOpen(false);
-            setCurrentSerie(null);
+            deleteSeries.mutate(currentSerie.id, {
+                onSuccess: () => {
+                    toast.success("Série excluída com sucesso!");
+                    setIsDeleteOpen(false);
+                    setCurrentSerie(null);
+                },
+                onError: () => toast.error("Erro ao excluir série.")
+            });
         }
     };
 

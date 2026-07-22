@@ -51,6 +51,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('pastoral/requests', [PastoralController::class, 'storeRequest']);
     Route::delete('pastoral/requests/{id}', [PastoralController::class, 'destroyRequest']);
 
+    // Pastoral Sermons
+    Route::get('pastoral/sermons', [PastoralController::class, 'indexSermons']);
+    Route::post('pastoral/sermons', [PastoralController::class, 'storeSermon']);
+    Route::put('pastoral/sermons/{id}', [PastoralController::class, 'updateSermon']);
+    Route::delete('pastoral/sermons/{id}', [PastoralController::class, 'destroySermon']);
+
+    // Pastoral Series
+    Route::get('pastoral/series', [PastoralController::class, 'indexSeries']);
+    Route::post('pastoral/series', [PastoralController::class, 'storeSeries']);
+    Route::put('pastoral/series/{id}', [PastoralController::class, 'updateSeries']);
+    Route::delete('pastoral/series/{id}', [PastoralController::class, 'destroySeries']);
+
+    // Pastoral Insights
+    Route::get('pastoral/insights', [PastoralController::class, 'indexInsights']);
+    Route::post('pastoral/insights', [PastoralController::class, 'storeInsight']);
+    Route::put('pastoral/insights/{id}', [PastoralController::class, 'updateInsight']);
+    Route::delete('pastoral/insights/{id}', [PastoralController::class, 'destroyInsight']);
+
     // Courses & Lessons
     Route::apiResource('courses', CourseController::class);
     Route::post('courses/{course}/students', [CourseController::class, 'enrollStudent']);
