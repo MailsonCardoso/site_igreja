@@ -91,9 +91,9 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
   });
 
   return (
-    <div className="flex h-full flex-col bg-sidebar">
+    <div className="flex h-full flex-col overflow-hidden bg-sidebar">
       {/* Logo */}
-      <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4">
+      <div className="flex h-16 shrink-0 items-center justify-between border-b border-sidebar-border px-4">
         <Link to="/" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1 shadow-sm border border-sidebar-border overflow-hidden">
             <img
@@ -130,7 +130,7 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-sidebar-border [&::-webkit-scrollbar-track]:bg-transparent">
+      <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-sidebar-border [&::-webkit-scrollbar-track]:bg-transparent">
         {filteredNavigation.map((item) => {
           const isActive = currentPath === item.href;
           return (
@@ -157,7 +157,7 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
       </nav>
 
       {/* User Profile */}
-      <div className="border-t border-sidebar-border p-4">
+      <div className="shrink-0 border-t border-sidebar-border p-4">
         <div className={cn("flex items-center gap-3", collapsed && "justify-center")}>
           <Avatar className="h-9 w-9 border-2 border-sidebar-border">
             <AvatarFallback className="bg-sidebar-accent text-sidebar-foreground text-sm font-medium">
@@ -221,7 +221,7 @@ export function AppSidebar({ currentPath }: AppSidebarProps) {
         initial={false}
         animate={{ width: collapsed ? 72 : 256 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
-        className="fixed inset-y-0 left-0 z-40 hidden border-r border-sidebar-border lg:block"
+        className="fixed inset-y-0 left-0 z-40 hidden h-svh border-r border-sidebar-border lg:block"
       >
         <SidebarContent collapsed={collapsed} onCollapse={toggleCollapsed} currentPath={currentPath} />
       </motion.aside>
