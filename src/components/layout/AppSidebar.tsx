@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigationItems = [
@@ -130,31 +131,33 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
       </div>
 
       {/* Navigation */}
-      <nav className="min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-sidebar-border [&::-webkit-scrollbar-track]:bg-transparent">
-        {filteredNavigation.map((item) => {
-          const isActive = currentPath === item.href;
-          return (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={cn(
-                "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200",
-                isActive
-                  ? "bg-sidebar-accent text-sidebar-primary border-l-2 border-sidebar-primary shadow-sm"
-                  : "text-sidebar-muted/90 hover:bg-sidebar-accent hover:text-white"
-              )}
-            >
-              <item.icon
+      <ScrollArea className="min-h-0 flex-1 px-3 py-4">
+        <nav className="space-y-1">
+          {filteredNavigation.map((item) => {
+            const isActive = currentPath === item.href;
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
                 className={cn(
-                  "h-5 w-5 flex-shrink-0 transition-colors",
-                  isActive ? "text-sidebar-primary" : "text-sidebar-muted group-hover:text-sidebar-foreground"
+                  "group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200",
+                  isActive
+                    ? "bg-sidebar-accent text-sidebar-primary border-l-2 border-sidebar-primary shadow-sm"
+                    : "text-sidebar-muted/90 hover:bg-sidebar-accent hover:text-white"
                 )}
-              />
-              {!collapsed && <span>{item.name}</span>}
-            </Link>
-          );
-        })}
-      </nav>
+              >
+                <item.icon
+                  className={cn(
+                    "h-5 w-5 flex-shrink-0 transition-colors",
+                    isActive ? "text-sidebar-primary" : "text-sidebar-muted group-hover:text-sidebar-foreground"
+                  )}
+                />
+                {!collapsed && <span>{item.name}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+      </ScrollArea>
 
       {/* User Profile */}
       <div className="shrink-0 border-t border-sidebar-border p-4">
