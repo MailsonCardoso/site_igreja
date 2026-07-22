@@ -131,7 +131,7 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
       </div>
 
       {/* Navigation */}
-      <ScrollArea type="auto" className="min-h-0 flex-1 px-3 py-4">
+      <ScrollArea className="min-h-0 flex-1 px-3 py-4">
         <nav className="space-y-1">
           {filteredNavigation.map((item) => {
             const isActive = currentPath === item.href;
