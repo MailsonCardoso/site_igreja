@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="80" fill="#FFFFFF"/>
+
+  <!-- Foundation / Base -->
+  <rect x="136" y="340" width="240" height="24" rx="12" fill="#0D7377"/>
+  <rect x="156" y="370" width="200" height="16" rx="8" fill="#14919B"/>
+  <rect x="176" y="392" width="160" height="10" rx="5" fill="#45B7D1"/>
+
+  <!-- Cross vertical pillar -->
+  <rect x="242" y="120" width="28" height="228" rx="14" fill="#14919B"/>
+  
+  <!-- Cross horizontal beam -->
+  <rect x="180" y="208" width="152" height="28" rx="14" fill="#14919B"/>
+
+  <!-- Network node centers -->
+  <circle cx="256" cy="120" r="16" fill="#0D7377"/>
+  <circle cx="256" cy="120" r="8" fill="#FFFFFF"/>
+
+  <circle cx="256" cy="348" r="18" fill="#0A4B7A"/>
+  <circle cx="256" cy="348" r="9" fill="#FFFFFF"/>
+
+  <circle cx="256" cy="236" r="14" fill="#0D7377"/>
+  <circle cx="256" cy="236" r="6" fill="#FFFFFF"/>
+
+  <!-- Network nodes - interconnected circles around cross -->
+  <circle cx="170" cy="140" r="14" fill="#45B7D1"/>
+  <circle cx="170" cy="140" r="6" fill="#FFFFFF"/>
+
+  <circle cx="342" cy="140" r="14" fill="#45B7D1"/>
+  <circle cx="342" cy="140" r="6" fill="#FFFFFF"/>
+
+  <circle cx="170" cy="280" r="14" fill="#45B7D1"/>
+  <circle cx="170" cy="280" r="6" fill="#FFFFFF"/>
+
+  <circle cx="342" cy="280" r="14" fill="#45B7D1"/>
+  <circle cx="342" cy="280" r="6" fill="#FFFFFF"/>
+
+  <circle cx="210" cy="170" r="10" fill="#14919B"/>
+  <circle cx="210" cy="170" r="4" fill="#FFFFFF"/>
+
+  <circle cx="302" cy="170" r="10" fill="#14919B"/>
+  <circle cx="302" cy="170" r="4" fill="#FFFFFF"/>
+
+  <circle cx="210" cy="280" r="10" fill="#14919B"/>
+  <circle cx="210" cy="280" r="4" fill="#FFFFFF"/>
+
+  <circle cx="302" cy="280" r="10" fill="#14919B"/>
+  <circle cx="302" cy="280" r="4" fill="#FFFFFF"/>
+
+  <!-- Connection lines (network) -->
+  <line x1="256" y1="136" x2="256" y2="218" stroke="#0D7377" stroke-width="2.5" opacity="0.5"/>
+  <line x1="256" y1="250" x2="256" y2="330" stroke="#0D7377" stroke-width="2.5" opacity="0.5"/>
+
+  <line x1="184" y1="140" x2="256" y2="120" stroke="#45B7D1" stroke-width="2" opacity="0.4"/>
+  <line x1="328" y1="140" x2="256" y2="120" stroke="#45B7D1" stroke-width="2" opacity="0.4"/>
+
+  <line x1="184" y1="140" x2="220" y2="170" stroke="#14919B" stroke-width="2" opacity="0.4"/>
+  <line x1="328" y1="140" x2="292" y2="170" stroke="#14919B" stroke-width="2" opacity="0.4"/>
+
+  <line x1="184" y1="280" x2="220" y2="280" stroke="#14919B" stroke-width="2" opacity="0.4"/>
+  <line x1="328" y1="280" x2="292" y2="280" stroke="#14919B" stroke-width="2" opacity="0.4"/>
+
+  <line x1="170" y1="154" x2="170" y2="266" stroke="#45B7D1" stroke-width="2" opacity="0.35"/>
+  <line x1="342" y1="154" x2="342" y2="266" stroke="#45B7D1" stroke-width="2" opacity="0.35"/>
+
+  <!-- Subtle glow behind cross -->
+  <circle cx="256" cy="236" r="100" fill="none" stroke="#45B7D1" stroke-width="1" opacity="0.15"/>
+  <circle cx="256" cy="236" r="80" fill="none" stroke="#45B7D1" stroke-width="0.8" opacity="0.1"/>
+</svg>

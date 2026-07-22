@@ -116,8 +116,8 @@ export default function Auth() {
           <CardHeader className="text-center space-y-4">
             <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-white p-2 shadow-sm border border-border/50 overflow-hidden">
               <img
-                src="/logo_ipr.png"
-                alt="Logo IPR"
+                src="/basehub-icon.svg"
+                alt="BaseHub"
                 className="h-full w-full object-contain"
               />
             </div>

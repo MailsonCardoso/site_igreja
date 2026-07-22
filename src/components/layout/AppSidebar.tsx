@@ -98,8 +98,8 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
         <Link to="/" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white p-1 shadow-sm border border-sidebar-border overflow-hidden">
             <img
-              src="/logo_ipr.png"
-              alt="Logo IPR"
+              src="/basehub-icon.svg"
+              alt="BaseHub"
               className="h-full w-full object-contain"
               onError={(e) => {
                 // Fallback to Icon if image doesn't exist yet
