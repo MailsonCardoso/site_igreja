@@ -73,8 +73,8 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
     }
 
     if (normalizedRole === "pastor") {
-      // Pastor vê apenas: Dashboard, Pastoral, Séries, Insights, Agenda, Agenda Pastoral, Ensino, Células
-      return ["Dashboard", "Pastoral", "Séries", "Insights", "Agenda", "Agenda Pastoral", "Ensino", "Células"].includes(item.name);
+      // Pastor vê apenas: Dashboard, Pastoral, Séries, Insights
+      return ["Dashboard", "Pastoral", "Séries", "Insights"].includes(item.name);
     }
 
     if (normalizedRole === "secretaria" || normalizedRole === "secretária" || normalizedRole === "secretário") {
