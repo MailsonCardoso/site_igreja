@@ -67,7 +67,7 @@ export default function Celulas() {
   } catch (e) {
     console.error("Error parsing user", e);
   }
-  const isReadOnly = userRole.toLowerCase() === "pastor";
+  const isReadOnly = userRole.toLowerCase() === "membro";
 
   // Fetch Cells
   const { data: celulas = [], isLoading } = useQuery({
