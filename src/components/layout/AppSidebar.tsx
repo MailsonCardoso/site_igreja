@@ -130,7 +130,7 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-sidebar-border [&::-webkit-scrollbar-track]:bg-transparent">
         {filteredNavigation.map((item) => {
           const isActive = currentPath === item.href;
           return (
