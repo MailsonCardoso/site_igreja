@@ -714,7 +714,7 @@ export default function Financeiro() {
             ) : reportData ? (
               <div id="printable-report" className="p-8 space-y-8 bg-white text-black min-h-0 report-container">
                 <div className="text-center space-y-2 pb-8 border-b-4 border-primary">
-                  <h1 className="text-3xl font-bold uppercase tracking-tight">{churchSettings?.nome || 'IPR JAGUAREMA'}</h1>
+                  <h1 className="text-3xl font-bold uppercase tracking-tight">{churchSettings?.nome || 'BaseHub'}</h1>
                   <p className="text-sm font-semibold opacity-60">Relatório Consolidado de Transações Financeiras</p>
                   <p className="text-lg font-bold bg-primary/10 py-1 rounded-lg inline-block px-4">
                     FECHAMENTO: {meses.find(m => m.value === selectedMonth)?.label.toUpperCase()} / {selectedYear}

@@ -114,7 +114,7 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
               animate={{ opacity: 1 }}
               className="text-lg font-bold text-sidebar-foreground"
             >
-              IPR JAGUAREMA
+              BaseHub
             </motion.span>
           )}
         </Link>

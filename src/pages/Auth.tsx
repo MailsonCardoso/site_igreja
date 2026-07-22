@@ -123,7 +123,7 @@ export default function Auth() {
             </div>
             <div>
               <CardTitle className="text-2xl font-black text-primary tracking-tight">
-                IPR JAGUAREMA
+                BaseHub
               </CardTitle>
               <CardDescription className="mt-2">
                 {isLogin

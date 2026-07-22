@@ -123,7 +123,7 @@ export default function AnaliseFinanceira() {
         const doc = iframe.contentWindow?.document;
         if (!doc) return;
 
-        const churchName = churchSettings?.nome || 'IPR JAGUAREMA';
+        const churchName = churchSettings?.nome || 'BaseHub';
         const periodLabel = `${meses.find(m => m.value === selectedMonth)?.label} / ${selectedYear}`;
         const generationDate = format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR });
 

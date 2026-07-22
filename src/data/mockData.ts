@@ -134,7 +134,7 @@ export const cursos = [
 ];
 
 export const configuracoesIgreja = {
-  nome: "IPR JAGUAREMA",
+  nome: "BaseHub",
   endereco: "Rua das Flores, 123 - Centro",
   cidade: "São Paulo - SP",
   telefone: "(11) 3333-4444",
