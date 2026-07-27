@@ -34,7 +34,8 @@ class Member extends Model
         'father_id',
         'mother_id',
         'spouse_id',
-        'cell_id'
+        'cell_id',
+        'congregacao'
     ];
 
     protected $casts = [

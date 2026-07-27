@@ -564,7 +564,7 @@ export default function Secretaria() {
                             </Select>
                           </div>
                           
-                          <div className="col-span-2 space-y-2 p-0.5">
+                          <div className="space-y-2 p-0.5">
                             <Label htmlFor="congregacao">Congregação *</Label>
                             <Select onValueChange={(val) => setValue("congregacao", val)} value={watch("congregacao")}>
                               <SelectTrigger className={!watch("congregacao") ? "border-destructive text-destructive" : ""}>
