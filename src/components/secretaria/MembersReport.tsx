@@ -4,8 +4,15 @@ import { Loader2, PieChart as PieChartIcon, FileDown, User, Users } from "lucide
 import { Button } from "@/components/ui/button";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { differenceInYears, parseISO } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface MembersReportProps {
     members: any[];
@@ -16,10 +23,16 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
     const summaryRef = useRef<HTMLDivElement>(null);
     const listsRef = useRef<HTMLDivElement>(null);
     const [isExporting, setIsExporting] = useState(false);
+    const [congregacaoFilter, setCongregacaoFilter] = useState("todas");
 
     // Filter lists
-    const membrosList = members.filter(m => m.status !== 'visitante' && m.status !== 'afastado' && m.status !== 'inativo');
-    const visitantesList = members.filter(m => m.status === 'visitante');
+    const filteredMembers = useMemo(() => {
+        if (congregacaoFilter === "todas") return members;
+        return members.filter((m) => m.congregacao === congregacaoFilter);
+    }, [members, congregacaoFilter]);
+
+    const membrosList = filteredMembers.filter(m => m.status !== 'visitante' && m.status !== 'afastado' && m.status !== 'inativo');
+    const visitantesList = filteredMembers.filter(m => m.status === 'visitante');
 
     // Sort alphabetically
     membrosList.sort((a, b) => (a.name || a.nome || "").localeCompare(b.name || b.nome || ""));
@@ -160,14 +173,26 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                         <h2 className="text-2xl font-bold">Relatório Administrativo</h2>
                         <p className="text-muted-foreground">Visão geral e listagem completa</p>
                     </div>
-                    <Button
-                        onClick={exportPDF}
-                        disabled={isExporting || isLoading || totalMembers + totalVisitors === 0}
-                        className="bg-primary hover:bg-primary/90 gap-2 rounded-xl"
-                    >
-                        {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
-                        Baixar Relatório (PDF)
-                    </Button>
+                    <div className="flex items-center gap-4">
+                        <Select value={congregacaoFilter} onValueChange={setCongregacaoFilter}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Congregação" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="todas">Todas as Congregações</SelectItem>
+                                <SelectItem value="IPR JAGUAREMA">IPR JAGUAREMA</SelectItem>
+                                <SelectItem value="IPR PARANÃ">IPR PARANÃ</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Button
+                            onClick={exportPDF}
+                            disabled={isExporting || isLoading || totalMembers + totalVisitors === 0}
+                            className="bg-primary hover:bg-primary/90 gap-2 rounded-xl"
+                        >
+                            {isExporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileDown className="h-4 w-4" />}
+                            Baixar Relatório (PDF)
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Section 1: Summary (Page 1) */}
@@ -223,6 +248,8 @@ export function MembersReport({ members, isLoading }: MembersReportProps) {
                                             paddingAngle={4}
                                             dataKey="quantidade"
                                             nameKey="faixa"
+                                            label={({ quantidade }) => quantidade > 0 ? `${quantidade}` : null}
+                                            labelLine={false}
                                         >
                                             {ageDistribution.map((entry, index) => (
                                                 <Cell key={`cell-${index}`} fill={entry.fill} strokeWidth={2} stroke="#ffffff" />

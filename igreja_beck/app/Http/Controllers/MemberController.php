@@ -21,6 +21,7 @@ class MemberController extends Controller
             'birth_date' => 'nullable|date',
             'category' => 'required|string',
             'status' => 'required|string',
+            'congregacao' => 'required|string',
             'address' => 'nullable|string',
             'sex' => 'nullable|string',
             'marital_status' => 'nullable|string',
@@ -46,6 +47,7 @@ class MemberController extends Controller
             'email.email' => 'Informe um e-mail válido.',
             'category.required' => 'A categoria é obrigatória.',
             'status.required' => 'A situação é obrigatória.',
+            'congregacao.required' => 'A congregação é obrigatória.',
         ]);
 
         $member = Member::create($validated);
@@ -66,6 +68,7 @@ class MemberController extends Controller
             'birth_date' => 'nullable|date',
             'category' => 'string',
             'status' => 'string',
+            'congregacao' => 'required|string',
             'address' => 'nullable|string',
             'sex' => 'nullable|string',
             'marital_status' => 'nullable|string',
@@ -88,6 +91,7 @@ class MemberController extends Controller
             'cpf.unique' => 'Este CPF já está cadastrado em outro membro.',
             'email.unique' => 'Este e-mail já está sendo utilizado.',
             'email.email' => 'Informe um e-mail válido.',
+            'congregacao.required' => 'A congregação é obrigatória.',
         ]);
 
         $member->update($validated);

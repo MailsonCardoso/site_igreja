@@ -63,7 +63,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useForm } from "react-hook-form";
 import { MembersReport } from "@/components/secretaria/MembersReport";
 
-type MemberStatus = "membro" | "congregado" | "visitante" | "afastado";
+type MemberStatus = "membro" | "congregado" | "visitante" | "afastado" | "inativo";
 
 const statusStyles: Record<string, string> = {
   membro: "bg-success/10 text-success border-success/20",
@@ -164,6 +164,7 @@ export default function Secretaria() {
       mother_id: "",
       spouse_id: "",
       cell_id: "",
+      congregacao: "",
     },
   });
 
@@ -319,6 +320,7 @@ export default function Secretaria() {
       mother_id: member.mother_id?.toString() || "",
       spouse_id: member.spouse_id?.toString() || "",
       cell_id: member.cell_id?.toString() || "",
+      congregacao: member.congregacao || "",
     });
     setIsDialogOpen(true);
   };
@@ -543,6 +545,7 @@ export default function Secretaria() {
                                 <SelectItem value="congregado">Congregado</SelectItem>
                                 <SelectItem value="visitante">Visitante</SelectItem>
                                 <SelectItem value="afastado">Afastado</SelectItem>
+                                <SelectItem value="inativo">Inativo</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -557,6 +560,19 @@ export default function Secretaria() {
                                 {cells.map((cell: any) => (
                                   <SelectItem key={cell.id} value={cell.id.toString()}>{cell.name}</SelectItem>
                                 ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="col-span-2 space-y-2 p-0.5">
+                            <Label htmlFor="congregacao">Congregação *</Label>
+                            <Select onValueChange={(val) => setValue("congregacao", val)} value={watch("congregacao")}>
+                              <SelectTrigger className={!watch("congregacao") ? "border-destructive text-destructive" : ""}>
+                                <SelectValue placeholder="Selecione a congregação" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="IPR JAGUAREMA">IPR JAGUAREMA</SelectItem>
+                                <SelectItem value="IPR PARANÃ">IPR PARANÃ</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -687,6 +703,7 @@ export default function Secretaria() {
               <SelectItem value="congregado">Congregados</SelectItem>
               <SelectItem value="visitante">Visitantes</SelectItem>
               <SelectItem value="afastado">Afastados</SelectItem>
+              <SelectItem value="inativo">Inativos</SelectItem>
             </SelectContent>
           </Select>
         </div>
