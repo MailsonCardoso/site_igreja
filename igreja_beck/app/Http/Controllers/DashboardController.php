@@ -11,6 +11,33 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    private function sanitize($value)
+    {
+        if (is_string($value)) {
+            $value = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+            return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $value) ?? '';
+        }
+
+        if ($value instanceof \Illuminate\Support\Collection) {
+            return $value->map(function ($item) {
+                return $this->sanitize($item);
+            });
+        }
+
+        if ($value instanceof \Illuminate\Database\Eloquent\Model) {
+            return $this->sanitize($value->toArray());
+        }
+
+        if (is_array($value)) {
+            foreach ($value as $key => $item) {
+                $value[$key] = $this->sanitize($item);
+            }
+            return $value;
+        }
+
+        return $value;
+    }
+
     public function index()
     {
         // Total de membros ativos (considerando apenas Membros e Congregados)
@@ -90,7 +117,7 @@ class DashboardController extends Controller
             }
         }
 
-        return response()->json([
+        return response()->json($this->sanitize([
             'members_count' => $totalMembers,
             'visitors_count' => $totalVisitors,
             'balance' => $balance,
@@ -101,6 +128,6 @@ class DashboardController extends Controller
             'member_growth' => $memberGrowth,
             'age_distribution' => $ageDistribution,
             'upcoming_events' => $upcomingEvents
-        ]);
+        ]), 200, [], JSON_UNESCAPED_UNICODE);
     }
 }
