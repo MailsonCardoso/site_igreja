@@ -34,14 +34,26 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}) {
     }
 
     const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
 
     if (!response.ok) {
+      let data: any = {};
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch (_) {
+        data = { message: text || 'Erro na requisição' };
+      }
       console.error(`[API Error] ${response.status}`, data);
       throw new Error(data.message || 'Erro na requisição');
     }
 
-    return data;
+    if (!text) return {};
+
+    try {
+      return JSON.parse(text);
+    } catch (_) {
+      console.error('[API] Resposta com caracteres UTF-8 inválidos');
+      return {};
+    }
   } catch (error: any) {
     console.error(`[API Fetch Exception]`, error);
     throw error;
