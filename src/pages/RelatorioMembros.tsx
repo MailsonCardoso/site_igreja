@@ -1140,8 +1140,8 @@ export default function RelatorioMembros() {
     const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     const pdfWidth = 210;
     const pdfHeight = 297;
-    const margin = 10;
-    const contentWidth = pdfWidth - 2 * margin; // 190mm
+    const margin = 12;
+    const contentWidth = pdfWidth - 2 * margin; // 186mm
     const dateStr = new Date().toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "2-digit",
@@ -1154,14 +1154,14 @@ export default function RelatorioMembros() {
     let pageNumber = 1;
 
     const drawHeader = (page: number) => {
-      // Top Dark Banner
+      // Top Dark Banner Executivo
       pdf.setFillColor(15, 23, 42); // slate-900
-      pdf.rect(0, 0, pdfWidth, 24, "F");
+      pdf.rect(0, 0, pdfWidth, 26, "F");
 
       pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(13);
+      pdf.setFontSize(14);
       pdf.setTextColor(255, 255, 255);
-      pdf.text("RELATÓRIO GERAL DE MEMBROS", margin, 11);
+      pdf.text("RELATÓRIO GERAL DE MEMBROS", margin, 12);
 
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(8.5);
@@ -1173,57 +1173,60 @@ export default function RelatorioMembros() {
       pdf.text(
         `Congregação: ${congLabel}   •   Emissão: ${dateStr}   •   Página ${page}`,
         margin,
-        18
+        19
       );
 
-      // Resumo Executivo apenas na Página 1
+      // Resumo Executivo em Destaque na Página 1
       if (page === 1) {
         pdf.setFillColor(248, 250, 252);
-        pdf.rect(margin, 28, contentWidth, 11, "F");
+        pdf.rect(margin, 30, contentWidth, 12, "F");
         pdf.setDrawColor(226, 232, 240);
-        pdf.rect(margin, 28, contentWidth, 11, "S");
+        pdf.rect(margin, 30, contentWidth, 12, "S");
+
+        // Detalhe de acento azul no cartão de resumo
+        pdf.setFillColor(2, 132, 199);
+        pdf.rect(margin, 30, 2.5, 12, "F");
 
         pdf.setFont("helvetica", "bold");
         pdf.setFontSize(8);
         pdf.setTextColor(30, 41, 59);
 
-        const summaryText = `TOTAL: ${todosMembrosList.length}   |   HOMENS (18+): ${stats.totalHomens}   |   MULHERES (18+): ${stats.totalMulheres}   |   ADOLESCENTES (13-17): ${stats.totalAdolescentes}   |   CRIANÇAS (0-12): ${stats.totalCriancas}`;
-        pdf.text(summaryText, margin + 4, 35);
+        const summaryText = `TOTAL: ${todosMembrosList.length}   |   HOMENS (18+): ${stats.totalHomens}   |   MULHERES (18+): ${stats.totalMulheres}   |   ADOLESCENTES (13-17): ${stats.totalAdolescentes}   |   CRIANÇAS (0-12): ${stats.totalCriancas}   |   CASADOS: ${stats.totalCasais} un.`;
+        pdf.text(summaryText, margin + 6, 37.5);
 
-        currentY = 43;
+        currentY = 46;
       } else {
-        currentY = 28;
+        currentY = 30;
       }
 
-      // Cabeçalho da Tabela
+      // Cabeçalho da Tabela Limpo e Espaçoso
       pdf.setFillColor(241, 245, 249);
-      pdf.rect(margin, currentY, contentWidth, 8, "F");
+      pdf.rect(margin, currentY, contentWidth, 9, "F");
       pdf.setDrawColor(203, 213, 225);
-      pdf.rect(margin, currentY, contentWidth, 8, "S");
+      pdf.rect(margin, currentY, contentWidth, 9, "S");
 
       pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(7.5);
+      pdf.setFontSize(8);
       pdf.setTextColor(51, 65, 85);
 
-      pdf.text("#", margin + 2.5, currentY + 5.5);
-      pdf.text("NOME DO MEMBRO", margin + 9, currentY + 5.5);
-      pdf.text("CATEGORIA", margin + 70, currentY + 5.5);
-      pdf.text("CARGO / MINISTÉRIO", margin + 96, currentY + 5.5);
-      pdf.text("ANIV. / IDADE", margin + 128, currentY + 5.5);
-      pdf.text("WHATSAPP / TEL", margin + 148, currentY + 5.5);
-      pdf.text("CONGREGAÇÃO", margin + 171, currentY + 5.5);
+      pdf.text("#", margin + 3, currentY + 6);
+      pdf.text("NOME COMPLETO DO MEMBRO", margin + 12, currentY + 6);
+      pdf.text("CATEGORIA", margin + 104, currentY + 6);
+      pdf.text("TELEFONE / WHATSAPP", margin + 134, currentY + 6);
+      pdf.text("CONGREGAÇÃO", margin + 162, currentY + 6);
 
-      currentY += 8;
+      currentY += 9;
     };
 
     drawHeader(pageNumber);
 
     todosMembrosList.forEach((m, idx) => {
-      if (currentY + 9 > pdfHeight - 16) {
+      // Quebra de página com margem segura
+      if (currentY + 10 > pdfHeight - 16) {
         pdf.setFont("helvetica", "normal");
         pdf.setFontSize(7.5);
         pdf.setTextColor(148, 163, 184);
-        pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+        pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão da Secretaria", margin, pdfHeight - 8);
         pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
 
         pdf.addPage();
@@ -1231,7 +1234,7 @@ export default function RelatorioMembros() {
         drawHeader(pageNumber);
       }
 
-      const rowHeight = 8.5;
+      const rowHeight = 9.5;
       const isEven = idx % 2 === 0;
 
       pdf.setFillColor(isEven ? 255 : 248, isEven ? 255 : 250, isEven ? 255 : 252);
@@ -1241,40 +1244,42 @@ export default function RelatorioMembros() {
 
       const name = m.name || m.nome || "-";
       const cat = getMemberCategory(m);
-      const role = (m.role || "Membro").substring(0, 16);
-      const age = getAge(m.birth_date);
-      const bday = formatBirthDay(m.birth_date);
-      const ageStr = bday !== "-" ? `${bday} ${age !== null ? `(${age}a)` : ""}` : "-";
       const phone = m.phone || "-";
-      const cong = (m.congregacao || "Geral").substring(0, 10);
+      const cong = (m.congregacao || "Geral").substring(0, 16);
 
       // Coluna 1: #
       pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(7.5);
-      pdf.setTextColor(100, 116, 139);
-      pdf.text((idx + 1).toString().padStart(2, "0"), margin + 2.5, currentY + 5.5);
+      pdf.setFontSize(8);
+      pdf.setTextColor(148, 163, 184);
+      pdf.text((idx + 1).toString().padStart(2, "0"), margin + 3, currentY + 6.2);
 
-      // Coluna 2: Nome
+      // Coluna 2: Nome Completo (com 90mm de largura para evitar cortes)
       pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8.5);
       pdf.setTextColor(15, 23, 42);
-      pdf.text(truncate(name, 34), margin + 9, currentY + 5.5);
+      pdf.text(truncate(name, 50), margin + 12, currentY + 6.2);
 
       // Coluna 3: Categoria com cor distintiva
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
       if (cat === "Mulher") pdf.setTextColor(157, 23, 77); // rosa
-      else if (cat === "Homem") pdf.setTextColor(3, 105, 161); // azul
+      else if (cat === "Homem") pdf.setTextColor(2, 132, 199); // azul
       else if (cat === "Adolescente") pdf.setTextColor(14, 116, 144); // ciano
       else if (cat === "Criança") pdf.setTextColor(4, 120, 87); // verde
       else pdf.setTextColor(71, 85, 105);
-      pdf.text(cat, margin + 70, currentY + 5.5);
+      pdf.text(cat, margin + 104, currentY + 6.2);
 
-      // Colunas restantes
+      // Coluna 4: Telefone / WhatsApp
       pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(7.5);
+      pdf.setFontSize(8);
+      pdf.setTextColor(51, 65, 85);
+      pdf.text(phone, margin + 134, currentY + 6.2);
+
+      // Coluna 5: Congregação
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8);
       pdf.setTextColor(71, 85, 105);
-      pdf.text(role, margin + 96, currentY + 5.5);
-      pdf.text(ageStr, margin + 128, currentY + 5.5);
-      pdf.text(phone, margin + 148, currentY + 5.5);
-      pdf.text(cong, margin + 171, currentY + 5.5);
+      pdf.text(cong, margin + 162, currentY + 6.2);
 
       currentY += rowHeight;
     });
@@ -1283,7 +1288,7 @@ export default function RelatorioMembros() {
     pdf.setFont("helvetica", "normal");
     pdf.setFontSize(7.5);
     pdf.setTextColor(148, 163, 184);
-    pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+    pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão da Secretaria", margin, pdfHeight - 8);
     pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
 
     const safeCongName = congregacaoFilter.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
