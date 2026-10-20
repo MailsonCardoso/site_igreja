@@ -348,12 +348,615 @@ export default function RelatorioMembros() {
     return brackets;
   }, [baseMembers]);
 
-  // Exportar PDF
+  const truncate = (str: string, max: number) => {
+    if (!str) return "-";
+    return str.length > max ? str.substring(0, max - 1) + "…" : str;
+  };
+
+  // Gerador de PDF Vetorial para Casais
+  const generateCasaisPDF = () => {
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const margin = 12;
+    const contentWidth = pdfWidth - 2 * margin; // 186mm
+    const dateStr = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    let currentY = 0;
+    let pageNumber = 1;
+
+    const drawHeader = (page: number) => {
+      pdf.setFillColor(15, 23, 42); // slate-900
+      pdf.rect(0, 0, pdfWidth, 24, "F");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text("RELATÓRIO DO MINISTÉRIO DE CASAIS", margin, 11);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(203, 213, 225);
+      pdf.text(
+        `Congregação: ${congregacaoFilter.toUpperCase()}   •   Emissão: ${dateStr}   •   Página ${page}`,
+        margin,
+        18
+      );
+
+      pdf.setFillColor(248, 250, 252);
+      pdf.rect(margin, 28, contentWidth, 10, "F");
+      pdf.setDrawColor(226, 232, 240);
+      pdf.rect(margin, 28, contentWidth, 10, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(30, 41, 59);
+      const totalVinculados = casaisList.filter((c) => c.temConjugeCadastrado).length;
+      const totalPendentes = casaisList.filter((c) => !c.temConjugeCadastrado).length;
+      pdf.text(
+        `Total de Registros: ${casaisList.length}   |   Casais Vinculados: ${totalVinculados}   |   Cônjuge Pendente de Cadastro: ${totalPendentes}`,
+        margin + 4,
+        34.5
+      );
+
+      currentY = 42;
+      pdf.setFillColor(241, 245, 249);
+      pdf.rect(margin, currentY, contentWidth, 8, "F");
+      pdf.setDrawColor(203, 213, 225);
+      pdf.rect(margin, currentY, contentWidth, 8, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(51, 65, 85);
+
+      pdf.text("#", margin + 2.5, currentY + 5.5);
+      pdf.text("ESPOSO / MEMBRO", margin + 10, currentY + 5.5);
+      pdf.text("ESPOSA / CÔNJUGE", margin + 68, currentY + 5.5);
+      pdf.text("CONGREGAÇÃO", margin + 126, currentY + 5.5);
+      pdf.text("SITUAÇÃO", margin + 162, currentY + 5.5);
+
+      currentY += 8;
+    };
+
+    drawHeader(pageNumber);
+
+    casaisList.forEach((c, idx) => {
+      if (currentY + 13 > pdfHeight - 16) {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(148, 163, 184);
+        pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+        pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+        pdf.addPage();
+        pageNumber++;
+        drawHeader(pageNumber);
+      }
+
+      const rowHeight = 12;
+      const isEven = idx % 2 === 0;
+
+      if (isEven) {
+        pdf.setFillColor(255, 255, 255);
+      } else {
+        pdf.setFillColor(248, 250, 252);
+      }
+      pdf.rect(margin, currentY, contentWidth, rowHeight, "F");
+      pdf.setDrawColor(241, 245, 249);
+      pdf.line(margin, currentY + rowHeight, margin + contentWidth, currentY + rowHeight);
+
+      const m1 = c.membro1;
+      const m2 = c.membro2;
+
+      const husbandName =
+        c.temConjugeCadastrado && c.marido
+          ? c.marido.name || c.marido.nome
+          : m1.name || m1.nome || "Membro";
+      const husbandPhone =
+        c.temConjugeCadastrado && c.marido
+          ? c.marido.phone || "-"
+          : m1.phone || "-";
+
+      const wifeName =
+        c.temConjugeCadastrado && c.esposa
+          ? c.esposa.name || c.esposa.nome
+          : m2
+          ? m2.name || m2.nome
+          : "Não vinculado(a)";
+      const wifePhone =
+        c.temConjugeCadastrado && c.esposa
+          ? c.esposa.phone || "-"
+          : m2?.phone || "-";
+
+      const congregacao = (
+        m1.congregacao ||
+        c.marido?.congregacao ||
+        "Geral"
+      ).substring(0, 20);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text(
+        (idx + 1).toString().padStart(2, "0"),
+        margin + 2.5,
+        currentY + 5.5
+      );
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(truncate(husbandName, 30), margin + 10, currentY + 4.5);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7);
+      pdf.setTextColor(71, 85, 105);
+      pdf.text(`Tel: ${husbandPhone}`, margin + 10, currentY + 9);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      if (c.temConjugeCadastrado) {
+        pdf.setTextColor(15, 23, 42);
+      } else {
+        pdf.setTextColor(148, 163, 184);
+      }
+      pdf.text(truncate(wifeName, 30), margin + 68, currentY + 4.5);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7);
+      pdf.setTextColor(71, 85, 105);
+      pdf.text(
+        c.temConjugeCadastrado ? `Tel: ${wifePhone}` : "* Cônjuge não vinculado",
+        margin + 68,
+        currentY + 9
+      );
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(51, 65, 85);
+      pdf.text(congregacao, margin + 126, currentY + 6.5);
+
+      if (c.temConjugeCadastrado) {
+        pdf.setTextColor(16, 185, 129);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("● Vinculado", margin + 162, currentY + 6.5);
+      } else {
+        pdf.setTextColor(217, 119, 6);
+        pdf.setFont("helvetica", "normal");
+        pdf.text("○ Pendente", margin + 162, currentY + 6.5);
+      }
+
+      currentY += rowHeight;
+    });
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(148, 163, 184);
+    pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+    pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+    pdf.save(`relatorio-casais-${Date.now()}.pdf`);
+  };
+
+  // Gerador de PDF Vetorial para Mulheres
+  const generateMulheresPDF = () => {
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const margin = 12;
+    const contentWidth = pdfWidth - 2 * margin;
+    const dateStr = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    let currentY = 0;
+    let pageNumber = 1;
+
+    const drawHeader = (page: number) => {
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pdfWidth, 24, "F");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text("RELATÓRIO DO MINISTÉRIO DE MULHERES", margin, 11);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(203, 213, 225);
+      pdf.text(
+        `Congregação: ${congregacaoFilter.toUpperCase()}   •   Emissão: ${dateStr}   •   Página ${page}`,
+        margin,
+        18
+      );
+
+      pdf.setFillColor(253, 242, 248);
+      pdf.rect(margin, 28, contentWidth, 10, "F");
+      pdf.setDrawColor(251, 207, 232);
+      pdf.rect(margin, 28, contentWidth, 10, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(157, 23, 77);
+      pdf.text(`TOTAL DE MULHERES CADASTRADAS: ${mulheresList.length}`, margin + 4, 34.5);
+
+      currentY = 42;
+      pdf.setFillColor(241, 245, 249);
+      pdf.rect(margin, currentY, contentWidth, 8, "F");
+      pdf.setDrawColor(203, 213, 225);
+      pdf.rect(margin, currentY, contentWidth, 8, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(51, 65, 85);
+
+      pdf.text("#", margin + 2.5, currentY + 5.5);
+      pdf.text("NOME DA MEMBRO", margin + 10, currentY + 5.5);
+      pdf.text("CARGO / MINISTÉRIO", margin + 72, currentY + 5.5);
+      pdf.text("ANIV. / IDADE", margin + 108, currentY + 5.5);
+      pdf.text("WHATSAPP / TEL", margin + 136, currentY + 5.5);
+      pdf.text("CONGREGAÇÃO", margin + 166, currentY + 5.5);
+
+      currentY += 8;
+    };
+
+    drawHeader(pageNumber);
+
+    mulheresList.forEach((m, idx) => {
+      if (currentY + 9 > pdfHeight - 16) {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(148, 163, 184);
+        pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+        pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+        pdf.addPage();
+        pageNumber++;
+        drawHeader(pageNumber);
+      }
+
+      const rowHeight = 9;
+      const isEven = idx % 2 === 0;
+
+      pdf.setFillColor(isEven ? 255 : 248, isEven ? 255 : 250, isEven ? 255 : 252);
+      pdf.rect(margin, currentY, contentWidth, rowHeight, "F");
+      pdf.setDrawColor(241, 245, 249);
+      pdf.line(margin, currentY + rowHeight, margin + contentWidth, currentY + rowHeight);
+
+      const name = m.name || m.nome || "-";
+      const role = (m.role || "Membro").substring(0, 18);
+      const age = getAge(m.birth_date);
+      const bday = formatBirthDay(m.birth_date);
+      const ageStr = bday !== "-" ? `${bday} ${age !== null ? `(${age}a)` : ""}` : "-";
+      const phone = m.phone || "-";
+      const cong = (m.congregacao || "Geral").substring(0, 12);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text((idx + 1).toString().padStart(2, "0"), margin + 2.5, currentY + 5.5);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(truncate(name, 34), margin + 10, currentY + 5.5);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(71, 85, 105);
+      pdf.text(role, margin + 72, currentY + 5.5);
+      pdf.text(ageStr, margin + 108, currentY + 5.5);
+      pdf.text(phone, margin + 136, currentY + 5.5);
+      pdf.text(cong, margin + 166, currentY + 5.5);
+
+      currentY += rowHeight;
+    });
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(148, 163, 184);
+    pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+    pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+    pdf.save(`relatorio-mulheres-${Date.now()}.pdf`);
+  };
+
+  // Gerador de PDF Vetorial para Homens
+  const generateHomensPDF = () => {
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const margin = 12;
+    const contentWidth = pdfWidth - 2 * margin;
+    const dateStr = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    let currentY = 0;
+    let pageNumber = 1;
+
+    const drawHeader = (page: number) => {
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pdfWidth, 24, "F");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text("RELATÓRIO DO MINISTÉRIO DE HOMENS", margin, 11);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(203, 213, 225);
+      pdf.text(
+        `Congregação: ${congregacaoFilter.toUpperCase()}   •   Emissão: ${dateStr}   •   Página ${page}`,
+        margin,
+        18
+      );
+
+      pdf.setFillColor(240, 249, 255);
+      pdf.rect(margin, 28, contentWidth, 10, "F");
+      pdf.setDrawColor(186, 230, 253);
+      pdf.rect(margin, 28, contentWidth, 10, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(3, 105, 161);
+      pdf.text(`TOTAL DE HOMENS CADASTRADOS: ${homensList.length}`, margin + 4, 34.5);
+
+      currentY = 42;
+      pdf.setFillColor(241, 245, 249);
+      pdf.rect(margin, currentY, contentWidth, 8, "F");
+      pdf.setDrawColor(203, 213, 225);
+      pdf.rect(margin, currentY, contentWidth, 8, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(51, 65, 85);
+
+      pdf.text("#", margin + 2.5, currentY + 5.5);
+      pdf.text("NOME DO MEMBRO", margin + 10, currentY + 5.5);
+      pdf.text("CARGO / MINISTÉRIO", margin + 72, currentY + 5.5);
+      pdf.text("ANIV. / IDADE", margin + 108, currentY + 5.5);
+      pdf.text("WHATSAPP / TEL", margin + 136, currentY + 5.5);
+      pdf.text("CONGREGAÇÃO", margin + 166, currentY + 5.5);
+
+      currentY += 8;
+    };
+
+    drawHeader(pageNumber);
+
+    homensList.forEach((m, idx) => {
+      if (currentY + 9 > pdfHeight - 16) {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(148, 163, 184);
+        pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+        pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+        pdf.addPage();
+        pageNumber++;
+        drawHeader(pageNumber);
+      }
+
+      const rowHeight = 9;
+      const isEven = idx % 2 === 0;
+
+      pdf.setFillColor(isEven ? 255 : 248, isEven ? 255 : 250, isEven ? 255 : 252);
+      pdf.rect(margin, currentY, contentWidth, rowHeight, "F");
+      pdf.setDrawColor(241, 245, 249);
+      pdf.line(margin, currentY + rowHeight, margin + contentWidth, currentY + rowHeight);
+
+      const name = m.name || m.nome || "-";
+      const role = (m.role || "Membro").substring(0, 18);
+      const age = getAge(m.birth_date);
+      const bday = formatBirthDay(m.birth_date);
+      const ageStr = bday !== "-" ? `${bday} ${age !== null ? `(${age}a)` : ""}` : "-";
+      const phone = m.phone || "-";
+      const cong = (m.congregacao || "Geral").substring(0, 12);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text((idx + 1).toString().padStart(2, "0"), margin + 2.5, currentY + 5.5);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(truncate(name, 34), margin + 10, currentY + 5.5);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(71, 85, 105);
+      pdf.text(role, margin + 72, currentY + 5.5);
+      pdf.text(ageStr, margin + 108, currentY + 5.5);
+      pdf.text(phone, margin + 136, currentY + 5.5);
+      pdf.text(cong, margin + 166, currentY + 5.5);
+
+      currentY += rowHeight;
+    });
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(148, 163, 184);
+    pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+    pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+    pdf.save(`relatorio-homens-${Date.now()}.pdf`);
+  };
+
+  // Gerador de PDF Vetorial para Crianças
+  const generateCriancasPDF = () => {
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const margin = 12;
+    const contentWidth = pdfWidth - 2 * margin;
+    const dateStr = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    let currentY = 0;
+    let pageNumber = 1;
+
+    const drawHeader = (page: number) => {
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pdfWidth, 24, "F");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text("RELATÓRIO DO DEPARTAMENTO INFANTIL", margin, 11);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(203, 213, 225);
+      pdf.text(
+        `Congregação: ${congregacaoFilter.toUpperCase()}   •   Emissão: ${dateStr}   •   Página ${page}`,
+        margin,
+        18
+      );
+
+      pdf.setFillColor(236, 253, 245);
+      pdf.rect(margin, 28, contentWidth, 10, "F");
+      pdf.setDrawColor(167, 243, 208);
+      pdf.rect(margin, 28, contentWidth, 10, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(4, 120, 87);
+      pdf.text(`TOTAL DE CRIANÇAS (0-12 ANOS): ${criancasList.length}`, margin + 4, 34.5);
+
+      currentY = 42;
+      pdf.setFillColor(241, 245, 249);
+      pdf.rect(margin, currentY, contentWidth, 8, "F");
+      pdf.setDrawColor(203, 213, 225);
+      pdf.rect(margin, currentY, contentWidth, 8, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(51, 65, 85);
+
+      pdf.text("#", margin + 2.5, currentY + 5.5);
+      pdf.text("NOME DA CRIANÇA", margin + 10, currentY + 5.5);
+      pdf.text("IDADE / ANIV.", margin + 68, currentY + 5.5);
+      pdf.text("PAIS RESPONSÁVEIS", margin + 102, currentY + 5.5);
+      pdf.text("CONTATO RESPONSÁVEL", margin + 150, currentY + 5.5);
+
+      currentY += 8;
+    };
+
+    drawHeader(pageNumber);
+
+    criancasList.forEach((m, idx) => {
+      if (currentY + 9 > pdfHeight - 16) {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(148, 163, 184);
+        pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+        pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+        pdf.addPage();
+        pageNumber++;
+        drawHeader(pageNumber);
+      }
+
+      const rowHeight = 9;
+      const isEven = idx % 2 === 0;
+
+      pdf.setFillColor(isEven ? 255 : 248, isEven ? 255 : 250, isEven ? 255 : 252);
+      pdf.rect(margin, currentY, contentWidth, rowHeight, "F");
+      pdf.setDrawColor(241, 245, 249);
+      pdf.line(margin, currentY + rowHeight, margin + contentWidth, currentY + rowHeight);
+
+      const name = m.name || m.nome || "-";
+      const age = getAge(m.birth_date);
+      const bday = formatBirthDay(m.birth_date);
+      const ageStr = `${age === 0 ? "< 1 ano" : `${age} anos`} (${bday})`;
+
+      const father = m.father_id ? membersById.get(m.father_id.toString()) : null;
+      const mother = m.mother_id ? membersById.get(m.mother_id.toString()) : null;
+      const fatherName = father ? father.name || father.nome : m.father_name;
+      const motherName = mother ? mother.name || mother.nome : m.mother_name;
+      const parentsStr = [fatherName, motherName].filter(Boolean).join(" e ") || "-";
+      const contactPhone = mother?.phone || father?.phone || m.phone || "-";
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text((idx + 1).toString().padStart(2, "0"), margin + 2.5, currentY + 5.5);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(truncate(name, 30), margin + 10, currentY + 5.5);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(71, 85, 105);
+      pdf.text(ageStr, margin + 68, currentY + 5.5);
+      pdf.text(truncate(parentsStr, 28), margin + 102, currentY + 5.5);
+      pdf.text(contactPhone, margin + 150, currentY + 5.5);
+
+      currentY += rowHeight;
+    });
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(148, 163, 184);
+    pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+    pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+    pdf.save(`relatorio-criancas-${Date.now()}.pdf`);
+  };
+
+  // Exportar PDF Principal
   const handleExportPDF = async (title: string, elementId?: string) => {
     try {
       setIsExporting(true);
       toast.info(`Gerando relatório de ${title}...`);
 
+      const lower = title.toLowerCase();
+
+      if (lower.includes("casal") || lower.includes("casais")) {
+        generateCasaisPDF();
+        toast.success("Relatório de Casais gerado com sucesso!");
+        return;
+      }
+
+      if (lower.includes("mulher")) {
+        generateMulheresPDF();
+        toast.success("Relatório de Mulheres gerado com sucesso!");
+        return;
+      }
+
+      if (lower.includes("homem")) {
+        generateHomensPDF();
+        toast.success("Relatório de Homens gerado com sucesso!");
+        return;
+      }
+
+      if (lower.includes("crian")) {
+        generateCriancasPDF();
+        toast.success("Relatório de Crianças gerado com sucesso!");
+        return;
+      }
+
+      // Fallback para painel de gráficos do Resumo Geral
       const target = elementId
         ? document.getElementById(elementId)
         : printAreaRef.current;
@@ -377,7 +980,6 @@ export default function RelatorioMembros() {
       });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
       const margin = 12;
       const contentWidth = pdfWidth - 2 * margin;
 
@@ -389,16 +991,15 @@ export default function RelatorioMembros() {
         minute: "2-digit",
       });
 
-      // Cabeçalho Oficial
-      pdf.setFillColor(15, 23, 42); // slate-900
+      pdf.setFillColor(15, 23, 42);
       pdf.rect(0, 0, pdfWidth, 24, "F");
 
       pdf.setFontSize(14);
       pdf.setTextColor(255, 255, 255);
-      pdf.text(`RELATÓRIO DE MEMBROS - ${title.toUpperCase()}`, margin, 12);
+      pdf.text(`RELATÓRIO GERAL - VISÃO DEMOGRÁFICA`, margin, 12);
 
       pdf.setFontSize(9);
-      pdf.setTextColor(203, 213, 225); // slate-300
+      pdf.setTextColor(203, 213, 225);
       pdf.text(
         `Congregação: ${congregacaoFilter.toUpperCase()} | Gerado em: ${dateStr}`,
         margin,
@@ -406,70 +1007,10 @@ export default function RelatorioMembros() {
       );
 
       const imgHeight = (canvas.height * contentWidth) / canvas.width;
-      const availableSpace = pdfHeight - 34;
+      pdf.addImage(imgData, "PNG", margin, 28, contentWidth, imgHeight);
 
-      if (imgHeight <= availableSpace) {
-        pdf.addImage(imgData, "PNG", margin, 28, contentWidth, imgHeight);
-      } else {
-        // Multi-page slicing
-        let currentY = 0;
-        let page = 1;
-        while (currentY < canvas.height) {
-          if (page > 1) {
-            pdf.addPage();
-            pdf.setFillColor(15, 23, 42);
-            pdf.rect(0, 0, pdfWidth, 16, "F");
-            pdf.setFontSize(10);
-            pdf.setTextColor(255, 255, 255);
-            pdf.text(
-              `RELATÓRIO: ${title.toUpperCase()} (Pág. ${page})`,
-              margin,
-              11
-            );
-          }
-
-          const sliceHeight = Math.min(
-            (availableSpace * canvas.width) / contentWidth,
-            canvas.height - currentY
-          );
-          const sliceCanvas = document.createElement("canvas");
-          sliceCanvas.width = canvas.width;
-          sliceCanvas.height = sliceHeight;
-
-          const ctx = sliceCanvas.getContext("2d");
-          if (ctx) {
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, sliceCanvas.width, sliceCanvas.height);
-            ctx.drawImage(
-              canvas,
-              0,
-              currentY,
-              canvas.width,
-              sliceHeight,
-              0,
-              0,
-              canvas.width,
-              sliceHeight
-            );
-            const sliceData = sliceCanvas.toDataURL("image/png");
-            const renderedHeight = (sliceHeight * contentWidth) / canvas.width;
-            pdf.addImage(
-              sliceData,
-              "PNG",
-              margin,
-              page === 1 ? 28 : 20,
-              contentWidth,
-              renderedHeight
-            );
-          }
-
-          currentY += sliceHeight;
-          page++;
-        }
-      }
-
-      pdf.save(`relatorio-${title.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}.pdf`);
-      toast.success("Relatório gerado com sucesso!");
+      pdf.save(`relatorio-geral-${Date.now()}.pdf`);
+      toast.success("Relatório Geral gerado com sucesso!");
     } catch (err) {
       console.error(err);
       toast.error("Erro ao gerar PDF.");
@@ -804,7 +1345,7 @@ export default function RelatorioMembros() {
                     </Badge>
                   </div>
 
-                  <div className="h-64">
+                  <div className="h-72">
                     {isLoading ? (
                       <div className="flex h-full items-center justify-center">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -819,21 +1360,19 @@ export default function RelatorioMembros() {
                           <Pie
                             data={genderChartData}
                             cx="50%"
-                            cy="50%"
-                            innerRadius={55}
-                            outerRadius={85}
-                            paddingAngle={5}
+                            cy="42%"
+                            innerRadius={50}
+                            outerRadius={75}
+                            paddingAngle={4}
                             dataKey="value"
                             nameKey="name"
-                            label={({ name, percent }) =>
-                              `${name}: ${(percent * 100).toFixed(0)}%`
-                            }
                           >
                             {genderChartData.map((entry, index) => (
                               <Cell
                                 key={`cell-${index}`}
                                 fill={entry.color}
                                 strokeWidth={2}
+                                stroke="transparent"
                               />
                             ))}
                           </Pie>
@@ -843,7 +1382,24 @@ export default function RelatorioMembros() {
                               "Quantidade",
                             ]}
                           />
-                          <Legend verticalAlign="bottom" height={36} />
+                          <Legend
+                            verticalAlign="bottom"
+                            height={40}
+                            iconType="circle"
+                            iconSize={8}
+                            formatter={(value) => {
+                              const item = genderChartData.find((d) => d.name === value);
+                              const pct =
+                                stats.total > 0 && item
+                                  ? Math.round((item.value / stats.total) * 100)
+                                  : 0;
+                              return (
+                                <span className="text-xs font-semibold text-foreground ml-1">
+                                  {value}: <span className="font-bold">{item?.value}</span> ({pct}%)
+                                </span>
+                              );
+                            }}
+                          />
                         </PieChart>
                       </ResponsiveContainer>
                     )}
@@ -863,7 +1419,7 @@ export default function RelatorioMembros() {
                     </div>
                   </div>
 
-                  <div className="h-64">
+                  <div className="h-72">
                     {isLoading ? (
                       <div className="flex h-full items-center justify-center">
                         <Loader2 className="h-8 w-8 animate-spin text-primary" />
