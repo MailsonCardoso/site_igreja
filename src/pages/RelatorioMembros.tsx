@@ -99,6 +99,25 @@ export default function RelatorioMembros() {
     }
   };
 
+  // Classificador de categoria demográfica do membro
+  const getMemberCategory = (m: any): string => {
+    const age = getAge(m.birth_date);
+    const isFem =
+      m.sex?.toLowerCase() === "feminino" ||
+      m.sex?.toLowerCase() === "f" ||
+      m.sex?.toLowerCase() === "mulher";
+    const isMasc =
+      m.sex?.toLowerCase() === "masculino" ||
+      m.sex?.toLowerCase() === "m" ||
+      m.sex?.toLowerCase() === "homem";
+
+    if (age !== null && age <= 12) return "Criança";
+    if (age !== null && age >= 13 && age <= 17) return "Adolescente";
+    if (isFem) return "Mulher";
+    if (isMasc) return "Homem";
+    return "Membro";
+  };
+
   // Base filtrada por congregação e status
   const baseMembers = useMemo(() => {
     return members.filter((m) => {
@@ -211,6 +230,30 @@ export default function RelatorioMembros() {
       });
   }, [baseMembers, searchTerm]);
 
+  // Lista Geral de Membros (Ordenada Alfabeticamente por Nome para Relatório Geral)
+  const todosMembrosList = useMemo(() => {
+    return [...baseMembers]
+      .filter((m) => {
+        if (!searchTerm) return true;
+        const term = searchTerm.toLowerCase();
+        const name = (m.name || m.nome || "").toLowerCase();
+        const phone = (m.phone || "").toLowerCase();
+        const role = (m.role || "").toLowerCase();
+        const cong = (m.congregacao || "").toLowerCase();
+        return (
+          name.includes(term) ||
+          phone.includes(term) ||
+          role.includes(term) ||
+          cong.includes(term)
+        );
+      })
+      .sort((a, b) =>
+        (a.name || a.nome || "").localeCompare(b.name || b.nome || "", "pt-BR", {
+          sensitivity: "base",
+        })
+      );
+  }, [baseMembers, searchTerm]);
+
   // Mapa de membros por ID para busca rápida
   const membersById = useMemo(() => {
     const map = new Map<number | string, any>();
@@ -279,16 +322,22 @@ export default function RelatorioMembros() {
         // Membro casado, porém cônjuge não vinculado diretamente no sistema
         processedIds.add(memberId);
         const name = member.name || member.nome || "Membro";
+        const spouseName = member.spouse?.name || member.spouse_name;
+        const displayCasal = spouseName
+          ? `${name} & ${spouseName}`
+          : `${name} & (Cônjuge Pendente)`;
+
         if (
           !searchTerm ||
           name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (spouseName && spouseName.toLowerCase().includes(searchTerm.toLowerCase())) ||
           (member.phone || "").includes(searchTerm)
         ) {
           couples.push({
             id: `single-couple-${member.id}`,
             membro1: member,
             temConjugeCadastrado: false,
-            nomeCasal: name,
+            nomeCasal: displayCasal,
           });
         }
       }
@@ -497,7 +546,7 @@ export default function RelatorioMembros() {
           ? c.esposa.name || c.esposa.nome
           : m2
           ? m2.name || m2.nome
-          : "Não vinculado(a)";
+          : m1.spouse?.name || m1.spouse_name || "Não vinculado(a)";
       const wifePhone =
         c.temConjugeCadastrado && c.esposa
           ? c.esposa.phone || "-"
@@ -1086,6 +1135,161 @@ export default function RelatorioMembros() {
     pdf.save(`relatorio-adolescentes-${Date.now()}.pdf`);
   };
 
+  // Gerador de PDF Vetorial para Todos os Membros (Lista Geral da Congregação)
+  const generateMembrosGeralPDF = () => {
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const margin = 10;
+    const contentWidth = pdfWidth - 2 * margin; // 190mm
+    const dateStr = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    let currentY = 0;
+    let pageNumber = 1;
+
+    const drawHeader = (page: number) => {
+      // Top Dark Banner
+      pdf.setFillColor(15, 23, 42); // slate-900
+      pdf.rect(0, 0, pdfWidth, 24, "F");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text("RELATÓRIO GERAL DE MEMBROS", margin, 11);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(203, 213, 225);
+      const congLabel =
+        congregacaoFilter === "todas"
+          ? "TODAS AS CONGREGAÇÕES"
+          : congregacaoFilter.toUpperCase();
+      pdf.text(
+        `Congregação: ${congLabel}   •   Emissão: ${dateStr}   •   Página ${page}`,
+        margin,
+        18
+      );
+
+      // Resumo Executivo apenas na Página 1
+      if (page === 1) {
+        pdf.setFillColor(248, 250, 252);
+        pdf.rect(margin, 28, contentWidth, 11, "F");
+        pdf.setDrawColor(226, 232, 240);
+        pdf.rect(margin, 28, contentWidth, 11, "S");
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(8);
+        pdf.setTextColor(30, 41, 59);
+
+        const summaryText = `TOTAL: ${todosMembrosList.length}   |   HOMENS (18+): ${stats.totalHomens}   |   MULHERES (18+): ${stats.totalMulheres}   |   ADOLESCENTES (13-17): ${stats.totalAdolescentes}   |   CRIANÇAS (0-12): ${stats.totalCriancas}`;
+        pdf.text(summaryText, margin + 4, 35);
+
+        currentY = 43;
+      } else {
+        currentY = 28;
+      }
+
+      // Cabeçalho da Tabela
+      pdf.setFillColor(241, 245, 249);
+      pdf.rect(margin, currentY, contentWidth, 8, "F");
+      pdf.setDrawColor(203, 213, 225);
+      pdf.rect(margin, currentY, contentWidth, 8, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(51, 65, 85);
+
+      pdf.text("#", margin + 2.5, currentY + 5.5);
+      pdf.text("NOME DO MEMBRO", margin + 9, currentY + 5.5);
+      pdf.text("CATEGORIA", margin + 70, currentY + 5.5);
+      pdf.text("CARGO / MINISTÉRIO", margin + 96, currentY + 5.5);
+      pdf.text("ANIV. / IDADE", margin + 128, currentY + 5.5);
+      pdf.text("WHATSAPP / TEL", margin + 148, currentY + 5.5);
+      pdf.text("CONGREGAÇÃO", margin + 171, currentY + 5.5);
+
+      currentY += 8;
+    };
+
+    drawHeader(pageNumber);
+
+    todosMembrosList.forEach((m, idx) => {
+      if (currentY + 9 > pdfHeight - 16) {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(148, 163, 184);
+        pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+        pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+        pdf.addPage();
+        pageNumber++;
+        drawHeader(pageNumber);
+      }
+
+      const rowHeight = 8.5;
+      const isEven = idx % 2 === 0;
+
+      pdf.setFillColor(isEven ? 255 : 248, isEven ? 255 : 250, isEven ? 255 : 252);
+      pdf.rect(margin, currentY, contentWidth, rowHeight, "F");
+      pdf.setDrawColor(241, 245, 249);
+      pdf.line(margin, currentY + rowHeight, margin + contentWidth, currentY + rowHeight);
+
+      const name = m.name || m.nome || "-";
+      const cat = getMemberCategory(m);
+      const role = (m.role || "Membro").substring(0, 16);
+      const age = getAge(m.birth_date);
+      const bday = formatBirthDay(m.birth_date);
+      const ageStr = bday !== "-" ? `${bday} ${age !== null ? `(${age}a)` : ""}` : "-";
+      const phone = m.phone || "-";
+      const cong = (m.congregacao || "Geral").substring(0, 10);
+
+      // Coluna 1: #
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text((idx + 1).toString().padStart(2, "0"), margin + 2.5, currentY + 5.5);
+
+      // Coluna 2: Nome
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(truncate(name, 34), margin + 9, currentY + 5.5);
+
+      // Coluna 3: Categoria com cor distintiva
+      if (cat === "Mulher") pdf.setTextColor(157, 23, 77); // rosa
+      else if (cat === "Homem") pdf.setTextColor(3, 105, 161); // azul
+      else if (cat === "Adolescente") pdf.setTextColor(14, 116, 144); // ciano
+      else if (cat === "Criança") pdf.setTextColor(4, 120, 87); // verde
+      else pdf.setTextColor(71, 85, 105);
+      pdf.text(cat, margin + 70, currentY + 5.5);
+
+      // Colunas restantes
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(71, 85, 105);
+      pdf.text(role, margin + 96, currentY + 5.5);
+      pdf.text(ageStr, margin + 128, currentY + 5.5);
+      pdf.text(phone, margin + 148, currentY + 5.5);
+      pdf.text(cong, margin + 171, currentY + 5.5);
+
+      currentY += rowHeight;
+    });
+
+    // Rodapé da última página
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(148, 163, 184);
+    pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+    pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+    const safeCongName = congregacaoFilter.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
+    pdf.save(`relatorio-geral-membros-${safeCongName}-${Date.now()}.pdf`);
+  };
+
   // Exportar PDF Principal
   const handleExportPDF = async (title: string, elementId?: string) => {
     try {
@@ -1124,61 +1328,9 @@ export default function RelatorioMembros() {
         return;
       }
 
-      // Fallback para painel de gráficos do Resumo Geral
-      const target = elementId
-        ? document.getElementById(elementId)
-        : printAreaRef.current;
-
-      if (!target) {
-        toast.error("Área de impressão não encontrada.");
-        return;
-      }
-
-      const canvas = await html2canvas(target, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-      });
-
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
-
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const margin = 12;
-      const contentWidth = pdfWidth - 2 * margin;
-
-      const dateStr = new Date().toLocaleDateString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-
-      pdf.setFillColor(15, 23, 42);
-      pdf.rect(0, 0, pdfWidth, 24, "F");
-
-      pdf.setFontSize(14);
-      pdf.setTextColor(255, 255, 255);
-      pdf.text(`RELATÓRIO GERAL - VISÃO DEMOGRÁFICA`, margin, 12);
-
-      pdf.setFontSize(9);
-      pdf.setTextColor(203, 213, 225);
-      pdf.text(
-        `Congregação: ${congregacaoFilter.toUpperCase()} | Gerado em: ${dateStr}`,
-        margin,
-        18
-      );
-
-      const imgHeight = (canvas.height * contentWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", margin, 28, contentWidth, imgHeight);
-
-      pdf.save(`relatorio-geral-${Date.now()}.pdf`);
-      toast.success("Relatório Geral gerado com sucesso!");
+      // Padrão para "resumo" / "geral" / lista de membros
+      generateMembrosGeralPDF();
+      toast.success("Relatório Geral de Membros gerado com sucesso!");
     } catch (err) {
       console.error(err);
       toast.error("Erro ao gerar PDF.");
@@ -1224,7 +1376,7 @@ export default function RelatorioMembros() {
             ) : (
               <FileDown className="h-4 w-4" />
             )}
-            Exportar PDF ({activeTab.toUpperCase()})
+            Exportar PDF ({activeTab === "resumo" ? "LISTA GERAL" : activeTab.toUpperCase()})
           </Button>
         </div>
       }
@@ -1761,6 +1913,37 @@ export default function RelatorioMembros() {
                     Ver casais vinculados lado a lado →
                   </p>
                 </div>
+              </div>
+
+              {/* Banner de Exportação da Lista Geral de Membros */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-primary/20 bg-primary/5 p-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <FileDown className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-foreground">
+                      Lista Geral de Membros ({todosMembrosList.length})
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      Relatório completo com todos os membros da congregação selecionada, com categoria, contatos e cargos em ordem alfabética.
+                    </p>
+                  </div>
+                </div>
+
+                <Button
+                  size="sm"
+                  onClick={() => handleExportPDF("Resumo")}
+                  disabled={isExporting}
+                  className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shrink-0"
+                >
+                  {isExporting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
+                  Exportar Lista Geral (PDF)
+                </Button>
               </div>
             </div>
           </TabsContent>
@@ -2303,29 +2486,42 @@ export default function RelatorioMembros() {
                       className="flex flex-col justify-between rounded-2xl border border-border/60 bg-card p-5 shadow-sm hover:border-amber-500/40 transition-all"
                     >
                       <div>
-                        {/* Header do Card */}
-                        <div className="flex items-center justify-between border-b border-border/40 pb-3 mb-3">
-                          <div className="flex items-center gap-2">
-                            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600">
+                        {/* Header do Card com Nome dos Cônjuges (Opção A) */}
+                        <div className="flex items-start sm:items-center justify-between gap-3 border-b border-border/40 pb-3 mb-3">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600">
                               <Heart className="h-4 w-4" />
                             </div>
-                            <span className="font-bold text-sm text-foreground">
-                              Casal #{(index + 1).toString().padStart(2, "0")}
-                            </span>
+                            <div className="min-w-0">
+                              <h3
+                                className="font-bold text-sm text-foreground truncate"
+                                title={couple.nomeCasal}
+                              >
+                                {couple.nomeCasal}
+                              </h3>
+                              <p className="text-[11px] text-muted-foreground truncate">
+                                {couple.temConjugeCadastrado
+                                  ? "Casal Vinculado"
+                                  : "Cônjuge Pendente de Cadastro"}
+                              </p>
+                            </div>
                           </div>
 
-                          <Badge
-                            variant={couple.temConjugeCadastrado ? "default" : "outline"}
-                            className={
-                              couple.temConjugeCadastrado
-                                ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px]"
-                                : "text-[10px] text-muted-foreground"
-                            }
-                          >
-                            {couple.temConjugeCadastrado
-                              ? "Casal Vinculado"
-                              : "Cônjuge Pendente"}
-                          </Badge>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md">
+                              #{(index + 1).toString().padStart(2, "0")}
+                            </span>
+                            <Badge
+                              variant={couple.temConjugeCadastrado ? "default" : "outline"}
+                              className={
+                                couple.temConjugeCadastrado
+                                  ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-500/30 text-[10px]"
+                                  : "text-[10px] text-muted-foreground"
+                              }
+                            >
+                              {couple.temConjugeCadastrado ? "Vinculado" : "Pendente"}
+                            </Badge>
+                          </div>
                         </div>
 
                         {/* Se tem ambos vinculados */}
