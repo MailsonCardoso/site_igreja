@@ -123,7 +123,7 @@ export default function RelatorioMembros() {
     });
   }, [members, congregacaoFilter, statusFilter]);
 
-  // Lista de Mulheres (Adultas / Jovens com sexo feminino)
+  // Lista de Mulheres (Adultas 18+ com sexo feminino)
   const mulheresList = useMemo(() => {
     return baseMembers
       .filter((m) => {
@@ -132,21 +132,21 @@ export default function RelatorioMembros() {
           m.sex?.toLowerCase() === "f" ||
           m.sex?.toLowerCase() === "mulher";
         const age = getAge(m.birth_date);
-        // Exclui crianças <= 12 que vão para a aba Crianças
-        const isNotChild = age === null || age > 12;
+        // Mulheres adultas (18+ ou sem nascimento informado)
+        const isAdult = age === null || age >= 18;
         const matchesSearch =
           !searchTerm ||
           (m.name || m.nome || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
           (m.phone || "").includes(searchTerm) ||
           (m.role || "").toLowerCase().includes(searchTerm.toLowerCase());
-        return isFem && isNotChild && matchesSearch;
+        return isFem && isAdult && matchesSearch;
       })
       .sort((a, b) =>
         (a.name || a.nome || "").localeCompare(b.name || b.nome || "")
       );
   }, [baseMembers, searchTerm]);
 
-  // Lista de Homens (Adultos / Jovens com sexo masculino)
+  // Lista de Homens (Adultos 18+ com sexo masculino)
   const homensList = useMemo(() => {
     return baseMembers
       .filter((m) => {
@@ -155,18 +155,39 @@ export default function RelatorioMembros() {
           m.sex?.toLowerCase() === "m" ||
           m.sex?.toLowerCase() === "homem";
         const age = getAge(m.birth_date);
-        // Exclui crianças <= 12 que vão para a aba Crianças
-        const isNotChild = age === null || age > 12;
+        // Homens adultos (18+ ou sem nascimento informado)
+        const isAdult = age === null || age >= 18;
         const matchesSearch =
           !searchTerm ||
           (m.name || m.nome || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
           (m.phone || "").includes(searchTerm) ||
           (m.role || "").toLowerCase().includes(searchTerm.toLowerCase());
-        return isMasc && isNotChild && matchesSearch;
+        return isMasc && isAdult && matchesSearch;
       })
       .sort((a, b) =>
         (a.name || a.nome || "").localeCompare(b.name || b.nome || "")
       );
+  }, [baseMembers, searchTerm]);
+
+  // Lista de Adolescentes (Idade de 13 a 17 anos)
+  const adolescentesList = useMemo(() => {
+    return baseMembers
+      .filter((m) => {
+        const age = getAge(m.birth_date);
+        const isTeen = age !== null && age >= 13 && age <= 17;
+        const matchesSearch =
+          !searchTerm ||
+          (m.name || m.nome || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (m.phone || "").includes(searchTerm) ||
+          (m.father_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (m.mother_name || "").toLowerCase().includes(searchTerm.toLowerCase());
+        return isTeen && matchesSearch;
+      })
+      .sort((a, b) => {
+        const ageA = getAge(a.birth_date) ?? 0;
+        const ageB = getAge(b.birth_date) ?? 0;
+        return ageA - ageB;
+      });
   }, [baseMembers, searchTerm]);
 
   // Lista de Crianças (Idade <= 12 anos)
@@ -285,7 +306,7 @@ export default function RelatorioMembros() {
         m.sex?.toLowerCase() === "f" ||
         m.sex?.toLowerCase() === "mulher";
       const age = getAge(m.birth_date);
-      return isFem && (age === null || age > 12);
+      return isFem && (age === null || age >= 18);
     }).length;
 
     const totalHomens = baseMembers.filter((m) => {
@@ -294,7 +315,12 @@ export default function RelatorioMembros() {
         m.sex?.toLowerCase() === "m" ||
         m.sex?.toLowerCase() === "homem";
       const age = getAge(m.birth_date);
-      return isMasc && (age === null || age > 12);
+      return isMasc && (age === null || age >= 18);
+    }).length;
+
+    const totalAdolescentes = baseMembers.filter((m) => {
+      const age = getAge(m.birth_date);
+      return age !== null && age >= 13 && age <= 17;
     }).length;
 
     const totalCriancas = baseMembers.filter((m) => {
@@ -308,10 +334,12 @@ export default function RelatorioMembros() {
       total,
       totalMulheres,
       totalHomens,
+      totalAdolescentes,
       totalCriancas,
       totalCasais: totalCasaisPares,
       pctMulheres: total > 0 ? Math.round((totalMulheres / total) * 100) : 0,
       pctHomens: total > 0 ? Math.round((totalHomens / total) * 100) : 0,
+      pctAdolescentes: total > 0 ? Math.round((totalAdolescentes / total) * 100) : 0,
       pctCriancas: total > 0 ? Math.round((totalCriancas / total) * 100) : 0,
     };
   }, [baseMembers, casaisList]);
@@ -319,9 +347,10 @@ export default function RelatorioMembros() {
   // Gráficos demográficos
   const genderChartData = useMemo(() => {
     return [
-      { name: "Mulheres", value: stats.totalMulheres, color: "#ec4899" },
-      { name: "Homens", value: stats.totalHomens, color: "#0284c7" },
-      { name: "Crianças", value: stats.totalCriancas, color: "#10b981" },
+      { name: "Mulheres (18+)", value: stats.totalMulheres, color: "#ec4899" },
+      { name: "Homens (18+)", value: stats.totalHomens, color: "#0284c7" },
+      { name: "Adolescentes (13-17)", value: stats.totalAdolescentes, color: "#06b6d4" },
+      { name: "Crianças (0-12)", value: stats.totalCriancas, color: "#10b981" },
     ].filter((d) => d.value > 0);
   }, [stats]);
 
@@ -525,11 +554,11 @@ export default function RelatorioMembros() {
       if (c.temConjugeCadastrado) {
         pdf.setTextColor(16, 185, 129);
         pdf.setFont("helvetica", "bold");
-        pdf.text("● Vinculado", margin + 162, currentY + 6.5);
+        pdf.text("Vinculado", margin + 162, currentY + 6.5);
       } else {
         pdf.setTextColor(217, 119, 6);
         pdf.setFont("helvetica", "normal");
-        pdf.text("○ Pendente", margin + 162, currentY + 6.5);
+        pdf.text("Pendente", margin + 162, currentY + 6.5);
       }
 
       currentY += rowHeight;
@@ -924,6 +953,139 @@ export default function RelatorioMembros() {
     pdf.save(`relatorio-criancas-${Date.now()}.pdf`);
   };
 
+  // Gerador de PDF Vetorial para Adolescentes (13 a 17 anos)
+  const generateAdolescentesPDF = () => {
+    const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+    const margin = 12;
+    const contentWidth = pdfWidth - 2 * margin; // 186mm
+    const dateStr = new Date().toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    let currentY = 0;
+    let pageNumber = 1;
+
+    const drawHeader = (page: number) => {
+      pdf.setFillColor(15, 23, 42);
+      pdf.rect(0, 0, pdfWidth, 24, "F");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(13);
+      pdf.setTextColor(255, 255, 255);
+      pdf.text("RELATÓRIO DO MINISTÉRIO DE ADOLESCENTES", margin, 11);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(203, 213, 225);
+      pdf.text(
+        `Congregação: ${congregacaoFilter.toUpperCase()}   •   Emissão: ${dateStr}   •   Página ${page}`,
+        margin,
+        18
+      );
+
+      // Card Resumo
+      pdf.setFillColor(236, 254, 255); // cyan-50
+      pdf.rect(margin, 28, contentWidth, 10, "F");
+      pdf.setDrawColor(165, 243, 252); // cyan-200
+      pdf.rect(margin, 28, contentWidth, 10, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(14, 116, 144); // cyan-700
+      pdf.text(`TOTAL DE ADOLESCENTES (13-17 ANOS): ${adolescentesList.length}`, margin + 4, 34.5);
+
+      // Cabeçalho da Tabela
+      currentY = 42;
+      pdf.setFillColor(241, 245, 249);
+      pdf.rect(margin, currentY, contentWidth, 8, "F");
+      pdf.setDrawColor(203, 213, 225);
+      pdf.rect(margin, currentY, contentWidth, 8, "S");
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(51, 65, 85);
+
+      pdf.text("#", margin + 2.5, currentY + 5.5);
+      pdf.text("NOME DO ADOLESCENTE", margin + 10, currentY + 5.5);
+      pdf.text("IDADE / ANIV.", margin + 68, currentY + 5.5);
+      pdf.text("PAIS RESPONSÁVEIS", margin + 102, currentY + 5.5);
+      pdf.text("WHATSAPP / TEL", margin + 144, currentY + 5.5);
+      pdf.text("CONGR.", margin + 170, currentY + 5.5);
+
+      currentY += 8;
+    };
+
+    drawHeader(pageNumber);
+
+    adolescentesList.forEach((m, idx) => {
+      if (currentY + 9 > pdfHeight - 16) {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(7.5);
+        pdf.setTextColor(148, 163, 184);
+        pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+        pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+        pdf.addPage();
+        pageNumber++;
+        drawHeader(pageNumber);
+      }
+
+      const rowHeight = 9;
+      const isEven = idx % 2 === 0;
+
+      pdf.setFillColor(isEven ? 255 : 248, isEven ? 255 : 250, isEven ? 255 : 252);
+      pdf.rect(margin, currentY, contentWidth, rowHeight, "F");
+      pdf.setDrawColor(241, 245, 249);
+      pdf.line(margin, currentY + rowHeight, margin + contentWidth, currentY + rowHeight);
+
+      const name = m.name || m.nome || "-";
+      const age = getAge(m.birth_date);
+      const bday = formatBirthDay(m.birth_date);
+      const ageStr = `${age} anos (${bday})`;
+
+      const father = m.father_id ? membersById.get(m.father_id.toString()) : null;
+      const mother = m.mother_id ? membersById.get(m.mother_id.toString()) : null;
+      const fatherName = father ? father.name || father.nome : m.father_name;
+      const motherName = mother ? mother.name || mother.nome : m.mother_name;
+      const parentsStr = [fatherName, motherName].filter(Boolean).join(" e ") || "-";
+      const phone = m.phone || mother?.phone || father?.phone || "-";
+      const cong = (m.congregacao || "Geral").substring(0, 8);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(8);
+      pdf.setTextColor(100, 116, 139);
+      pdf.text((idx + 1).toString().padStart(2, "0"), margin + 2.5, currentY + 5.5);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setTextColor(15, 23, 42);
+      pdf.text(truncate(name, 28), margin + 10, currentY + 5.5);
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(7.5);
+      pdf.setTextColor(71, 85, 105);
+      pdf.text(ageStr, margin + 68, currentY + 5.5);
+      pdf.text(truncate(parentsStr, 24), margin + 102, currentY + 5.5);
+      pdf.text(phone, margin + 144, currentY + 5.5);
+      pdf.text(cong, margin + 170, currentY + 5.5);
+
+      currentY += rowHeight;
+    });
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(7.5);
+    pdf.setTextColor(148, 163, 184);
+    pdf.text("Igreja Presbiteriana Renovada • Sistema de Gestão", margin, pdfHeight - 8);
+    pdf.text(`Página ${pageNumber}`, pdfWidth - margin - 15, pdfHeight - 8);
+
+    pdf.save(`relatorio-adolescentes-${Date.now()}.pdf`);
+  };
+
   // Exportar PDF Principal
   const handleExportPDF = async (title: string, elementId?: string) => {
     try {
@@ -947,6 +1109,12 @@ export default function RelatorioMembros() {
       if (lower.includes("homem")) {
         generateHomensPDF();
         toast.success("Relatório de Homens gerado com sucesso!");
+        return;
+      }
+
+      if (lower.includes("adolescent")) {
+        generateAdolescentesPDF();
+        toast.success("Relatório de Adolescentes gerado com sucesso!");
         return;
       }
 
@@ -1063,7 +1231,7 @@ export default function RelatorioMembros() {
     >
       <div className="space-y-6 pb-12">
         {/* Banner de Topo com KPIs */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {/* Total Geral */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -1187,13 +1355,46 @@ export default function RelatorioMembros() {
             </div>
           </motion.div>
 
+          {/* Adolescentes */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.17 }}
+            onClick={() => setActiveTab("adolescentes")}
+            className={`cursor-pointer rounded-2xl border p-5 shadow-sm transition-all hover:border-cyan-500/50 ${
+              activeTab === "adolescentes"
+                ? "border-cyan-500 bg-cyan-500/5 ring-2 ring-cyan-500/20"
+                : "border-border/50 bg-card"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600 dark:text-cyan-400">
+                Adolescentes (13-17)
+              </span>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+                <UserCheck className="h-5 w-5" />
+              </div>
+            </div>
+            <div className="mt-2 flex items-baseline gap-2">
+              <span className="text-3xl font-black tracking-tight text-foreground">
+                {stats.totalAdolescentes}
+              </span>
+              <Badge
+                variant="outline"
+                className="border-cyan-500/20 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 text-[10px] font-bold"
+              >
+                {stats.pctAdolescentes}%
+              </Badge>
+            </div>
+          </motion.div>
+
           {/* Casais */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.22 }}
             onClick={() => setActiveTab("casais")}
-            className={`col-span-2 cursor-pointer rounded-2xl border p-5 shadow-sm transition-all sm:col-span-1 hover:border-amber-500/50 ${
+            className={`cursor-pointer rounded-2xl border p-5 shadow-sm transition-all hover:border-amber-500/50 ${
               activeTab === "casais"
                 ? "border-amber-500 bg-amber-500/5 ring-2 ring-amber-500/20"
                 : "border-border/50 bg-card"
@@ -1236,7 +1437,7 @@ export default function RelatorioMembros() {
               value={congregacaoFilter}
               onValueChange={setCongregacaoFilter}
             >
-              <SelectTrigger className="w-[180px] rounded-xl border-border/60">
+              <SelectTrigger className="min-w-[245px] shrink-0 rounded-xl border-border/60">
                 <Building2 className="mr-2 h-4 w-4 text-muted-foreground" />
                 <SelectValue placeholder="Congregação" />
               </SelectTrigger>
@@ -1261,7 +1462,7 @@ export default function RelatorioMembros() {
 
             {/* Filtro Status */}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[140px] rounded-xl border-border/60">
+              <SelectTrigger className="min-w-[185px] shrink-0 rounded-xl border-border/60">
                 <Filter className="mr-2 h-4 w-4 text-muted-foreground" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
@@ -1277,13 +1478,13 @@ export default function RelatorioMembros() {
 
         {/* Abas Principais */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 rounded-2xl bg-muted/60 p-1.5 h-auto">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 rounded-2xl bg-muted/60 p-1.5 h-auto">
             <TabsTrigger
               value="resumo"
-              className="rounded-xl py-2.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+              className="rounded-xl py-3 px-3 text-sm font-bold gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-md"
             >
               <PieChartIcon className="h-4 w-4" />
-              <span className="hidden sm:inline">Visão</span> Geral
+              Visão Geral
             </TabsTrigger>
 
             <TabsTrigger
@@ -1308,6 +1509,14 @@ export default function RelatorioMembros() {
             >
               <Baby className="h-4 w-4 text-emerald-500" />
               Crianças ({criancasList.length})
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="adolescentes"
+              className="rounded-xl py-2.5 text-xs font-semibold gap-1.5 data-[state=active]:bg-background data-[state=active]:text-cyan-600 data-[state=active]:shadow-sm"
+            >
+              <UserCheck className="h-4 w-4 text-cyan-500" />
+              Adolescentes ({adolescentesList.length})
             </TabsTrigger>
 
             <TabsTrigger
@@ -1462,7 +1671,7 @@ export default function RelatorioMembros() {
               </div>
 
               {/* Quadro Rápido de Acesso aos Grupos */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
                 <div
                   onClick={() => setActiveTab("mulheres")}
                   className="cursor-pointer rounded-2xl border border-pink-500/20 bg-pink-500/5 p-5 transition-all hover:shadow-md"
@@ -1514,6 +1723,24 @@ export default function RelatorioMembros() {
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Crianças até 12 anos e responsáveis →
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => setActiveTab("adolescentes")}
+                  className="cursor-pointer rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5 transition-all hover:shadow-md"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-cyan-700 dark:text-cyan-300">
+                      Ministério de Adolescentes
+                    </span>
+                    <UserCheck className="h-5 w-5 text-cyan-500" />
+                  </div>
+                  <p className="mt-2 text-2xl font-black text-cyan-600 dark:text-cyan-400">
+                    {stats.totalAdolescentes}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Adolescentes de 13 a 17 anos →
                   </p>
                 </div>
 
@@ -1885,6 +2112,134 @@ export default function RelatorioMembros() {
                           ) : (
                             <span className="text-xs text-muted-foreground italic">
                               Sem contato dos pais
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          {/* ========================================================= */}
+          {/* ABA: ADOLESCENTES (13-17)                                  */}
+          {/* ========================================================= */}
+          <TabsContent value="adolescentes" className="space-y-4">
+            <div className="flex items-center justify-between rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-600">
+                  <UserCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground">
+                    Ministério de Adolescentes ({adolescentesList.length})
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Adolescentes de 13 a 17 anos, contatos e responsáveis
+                  </p>
+                </div>
+              </div>
+
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleExportPDF("Adolescentes", "adolescentes-print-area")}
+                className="gap-2 border-cyan-500/30 text-cyan-600 hover:bg-cyan-500/10 rounded-xl"
+              >
+                <Download className="h-4 w-4" />
+                Baixar Lista em PDF
+              </Button>
+            </div>
+
+            <div
+              id="adolescentes-print-area"
+              className="rounded-2xl border border-border/50 bg-card overflow-hidden shadow-sm"
+            >
+              {adolescentesList.length === 0 ? (
+                <div className="py-12 text-center text-muted-foreground">
+                  Nenhum adolescente cadastrado (13 a 17 anos) nos filtros atuais.
+                </div>
+              ) : (
+                <div className="divide-y divide-border/40">
+                  {adolescentesList.map((m, index) => {
+                    const age = getAge(m.birth_date);
+                    const bday = formatBirthDay(m.birth_date);
+
+                    const father = m.father_id
+                      ? membersById.get(m.father_id.toString())
+                      : null;
+                    const mother = m.mother_id
+                      ? membersById.get(m.mother_id.toString())
+                      : null;
+
+                    const fatherName = father
+                      ? father.name || father.nome
+                      : m.father_name;
+                    const motherName = mother
+                      ? mother.name || mother.nome
+                      : m.mother_name;
+
+                    const contactPhone =
+                      m.phone || mother?.phone || father?.phone;
+
+                    return (
+                      <div
+                        key={m.id || index}
+                        className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between hover:bg-muted/40 transition-colors"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="w-6 text-xs font-mono text-muted-foreground font-semibold">
+                            {(index + 1).toString().padStart(2, "0")}
+                          </span>
+                          <Avatar className="h-10 w-10 border border-cyan-500/20">
+                            <AvatarFallback className="bg-cyan-500/10 text-cyan-600 font-bold text-xs">
+                              {(m.name || m.nome || "A").substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-foreground text-sm">
+                                {m.name || m.nome}
+                              </span>
+                              <Badge className="bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border-cyan-500/20 text-[10px]">
+                                {age} anos
+                              </Badge>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                              {bday !== "-" && (
+                                <span className="flex items-center gap-1 font-medium text-slate-700 dark:text-slate-300">
+                                  <Cake className="h-3 w-3 text-cyan-500" />
+                                  Aniversário: {bday}
+                                </span>
+                              )}
+                              {(fatherName || motherName) && (
+                                <span className="text-slate-500">
+                                  Pais:{" "}
+                                  {[fatherName, motherName]
+                                    .filter(Boolean)
+                                    .join(" e ")}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 pl-9 sm:pl-0">
+                          {contactPhone ? (
+                            <a
+                              href={`https://wa.me/55${contactPhone.replace(/\D/g, "")}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 text-xs font-semibold hover:bg-cyan-500/20 transition-all"
+                            >
+                              <Phone className="h-3.5 w-3.5" />
+                              {contactPhone}
+                            </a>
+                          ) : (
+                            <span className="text-xs text-muted-foreground italic">
+                              Sem contato
                             </span>
                           )}
                         </div>
