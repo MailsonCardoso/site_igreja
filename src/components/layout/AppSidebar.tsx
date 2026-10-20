@@ -20,6 +20,7 @@ import {
   Lightbulb,
   BarChart3,
   Package,
+  FileSpreadsheet,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -37,6 +38,7 @@ const navigationItems = [
   { name: "Ensino", href: "/ensino", icon: GraduationCap },
   { name: "Células", href: "/celulas", icon: CircleDot },
   { name: "Membros", href: "/secretaria", icon: Users },
+  { name: "Relatórios de Membros", href: "/secretaria/relatorios", icon: FileSpreadsheet },
   { name: "Inventário", href: "/inventario", icon: Package },
   { name: "Financeiro", href: "/financeiro", icon: DollarSign },
   { name: "Análise Financeira", href: "/financeiro/analise", icon: BarChart3 },
@@ -73,12 +75,12 @@ function SidebarContent({ collapsed = false, onCollapse, currentPath }: SidebarC
     }
 
     if (normalizedRole === "pastor") {
-      return ["Dashboard", "Pastoral", "Séries", "Insights", "Agenda", "Agenda Pastoral", "Ensino", "Células", "Membros", "Financeiro", "Análise Financeira", "Ministérios", "Inventário"].includes(item.name);
+      return ["Dashboard", "Pastoral", "Séries", "Insights", "Agenda", "Agenda Pastoral", "Ensino", "Células", "Membros", "Relatórios de Membros", "Financeiro", "Análise Financeira", "Ministérios", "Inventário"].includes(item.name);
     }
 
     if (normalizedRole === "secretaria" || normalizedRole === "secretária" || normalizedRole === "secretário") {
-      // Secretaria vê: Dashboard, Membros, Inventário, Células, Agenda, Ministérios, Ensino, Agenda Pastoral
-      return ["Dashboard", "Membros", "Inventário", "Células", "Agenda", "Ministérios", "Ensino", "Agenda Pastoral"].includes(item.name);
+      // Secretaria vê: Dashboard, Membros, Relatórios de Membros, Inventário, Células, Agenda, Ministérios, Ensino, Agenda Pastoral
+      return ["Dashboard", "Membros", "Relatórios de Membros", "Inventário", "Células", "Agenda", "Ministérios", "Ensino", "Agenda Pastoral"].includes(item.name);
     }
 
     if (normalizedRole === "financeiro") {

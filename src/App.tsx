@@ -22,6 +22,7 @@ import Pulpito from "./pages/pastor/Pulpito";
 import Series from "./pages/pastor/Series";
 import Insights from "./pages/pastor/Insights";
 import AgendaPastoral from "./pages/pastor/AgendaPastoral";
+import RelatorioMembros from "./pages/RelatorioMembros";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -138,6 +139,18 @@ const App = () => (
               <Route path="/secretaria" element={
                 <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
                   <Secretaria />
+                </RoleRoute>
+              } />
+
+              <Route path="/secretaria/relatorios" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+                  <RelatorioMembros />
+                </RoleRoute>
+              } />
+
+              <Route path="/membros/relatorios" element={
+                <RoleRoute allowedRoles={["Administrador", "Pastor", "Secretaria"]}>
+                  <RelatorioMembros />
                 </RoleRoute>
               } />
 

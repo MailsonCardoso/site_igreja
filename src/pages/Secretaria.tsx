@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Search, Plus, MoreHorizontal, Eye, Pencil, Loader2, User, Phone, MapPin, Church, Users, Trash2, UserMinus, UserCheck, FileChartColumn } from "lucide-react";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -128,6 +129,7 @@ const ROLES = [
 ];
 
 export default function Secretaria() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("todos");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -370,17 +372,14 @@ export default function Secretaria() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Sheet open={isReportOpen} onOpenChange={setIsReportOpen}>
-              <SheetTrigger asChild>
-                <Button variant="outline" className="gap-2 border-primary/20 hover:bg-primary/5 text-primary">
-                  <FileChartColumn className="h-4 w-4" />
-                  Relatório
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="sm:max-w-2xl w-full h-full p-0 border-none shadow-2xl">
-                <MembersReport members={members} isLoading={isLoading} />
-              </SheetContent>
-            </Sheet>
+            <Button
+              variant="outline"
+              onClick={() => navigate("/secretaria/relatorios")}
+              className="gap-2 border-primary/20 hover:bg-primary/5 text-primary"
+            >
+              <FileChartColumn className="h-4 w-4" />
+              Relatórios Detalhados
+            </Button>
 
             <Sheet open={isDialogOpen} onOpenChange={(open) => {
               setIsDialogOpen(open);
