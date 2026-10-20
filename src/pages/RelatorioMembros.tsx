@@ -1199,7 +1199,7 @@ export default function RelatorioMembros() {
         currentY = 30;
       }
 
-      // Cabeçalho da Tabela Limpo e Espaçoso
+      // Cabeçalho da Tabela Limpo e Espaçoso (4 Colunas)
       pdf.setFillColor(241, 245, 249);
       pdf.rect(margin, currentY, contentWidth, 9, "F");
       pdf.setDrawColor(203, 213, 225);
@@ -1211,9 +1211,8 @@ export default function RelatorioMembros() {
 
       pdf.text("#", margin + 3, currentY + 6);
       pdf.text("NOME COMPLETO DO MEMBRO", margin + 12, currentY + 6);
-      pdf.text("CATEGORIA", margin + 104, currentY + 6);
-      pdf.text("TELEFONE / WHATSAPP", margin + 134, currentY + 6);
-      pdf.text("CONGREGAÇÃO", margin + 162, currentY + 6);
+      pdf.text("TELEFONE / WHATSAPP", margin + 122, currentY + 6);
+      pdf.text("CONGREGAÇÃO", margin + 155, currentY + 6);
 
       currentY += 9;
     };
@@ -1243,9 +1242,8 @@ export default function RelatorioMembros() {
       pdf.line(margin, currentY + rowHeight, margin + contentWidth, currentY + rowHeight);
 
       const name = m.name || m.nome || "-";
-      const cat = getMemberCategory(m);
       const phone = m.phone || "-";
-      const cong = (m.congregacao || "Geral").substring(0, 16);
+      const cong = (m.congregacao || "Geral").substring(0, 20);
 
       // Coluna 1: #
       pdf.setFont("helvetica", "bold");
@@ -1253,33 +1251,23 @@ export default function RelatorioMembros() {
       pdf.setTextColor(148, 163, 184);
       pdf.text((idx + 1).toString().padStart(2, "0"), margin + 3, currentY + 6.2);
 
-      // Coluna 2: Nome Completo (com 90mm de largura para evitar cortes)
+      // Coluna 2: Nome Completo (com mais de 105mm de largura livre)
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(8.5);
       pdf.setTextColor(15, 23, 42);
-      pdf.text(truncate(name, 50), margin + 12, currentY + 6.2);
+      pdf.text(truncate(name, 58), margin + 12, currentY + 6.2);
 
-      // Coluna 3: Categoria com cor distintiva
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(8);
-      if (cat === "Mulher") pdf.setTextColor(157, 23, 77); // rosa
-      else if (cat === "Homem") pdf.setTextColor(2, 132, 199); // azul
-      else if (cat === "Adolescente") pdf.setTextColor(14, 116, 144); // ciano
-      else if (cat === "Criança") pdf.setTextColor(4, 120, 87); // verde
-      else pdf.setTextColor(71, 85, 105);
-      pdf.text(cat, margin + 104, currentY + 6.2);
-
-      // Coluna 4: Telefone / WhatsApp
+      // Coluna 3: Telefone / WhatsApp
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(8);
       pdf.setTextColor(51, 65, 85);
-      pdf.text(phone, margin + 134, currentY + 6.2);
+      pdf.text(phone, margin + 122, currentY + 6.2);
 
-      // Coluna 5: Congregação
+      // Coluna 4: Congregação
       pdf.setFont("helvetica", "normal");
       pdf.setFontSize(8);
       pdf.setTextColor(71, 85, 105);
-      pdf.text(cong, margin + 162, currentY + 6.2);
+      pdf.text(cong, margin + 155, currentY + 6.2);
 
       currentY += rowHeight;
     });
