@@ -102,14 +102,17 @@ export default function RelatorioMembros() {
   // Classificador de categoria demográfica do membro
   const getMemberCategory = (m: any): string => {
     const age = getAge(m.birth_date);
+    const sex = m.sex?.toString().toLowerCase().trim();
     const isFem =
-      m.sex?.toLowerCase() === "feminino" ||
-      m.sex?.toLowerCase() === "f" ||
-      m.sex?.toLowerCase() === "mulher";
+      sex === "feminino" ||
+      sex === "f" ||
+      sex === "mulher" ||
+      sex === "mulheres";
     const isMasc =
-      m.sex?.toLowerCase() === "masculino" ||
-      m.sex?.toLowerCase() === "m" ||
-      m.sex?.toLowerCase() === "homem";
+      sex === "masculino" ||
+      sex === "m" ||
+      sex === "homem" ||
+      sex === "homens";
 
     if (age !== null && age <= 12) return "Criança";
     if (age !== null && age >= 13 && age <= 17) return "Adolescente";
@@ -146,10 +149,12 @@ export default function RelatorioMembros() {
   const mulheresList = useMemo(() => {
     return baseMembers
       .filter((m) => {
+        const sex = m.sex?.toString().toLowerCase().trim();
         const isFem =
-          m.sex?.toLowerCase() === "feminino" ||
-          m.sex?.toLowerCase() === "f" ||
-          m.sex?.toLowerCase() === "mulher";
+          sex === "feminino" ||
+          sex === "f" ||
+          sex === "mulher" ||
+          sex === "mulheres";
         const age = getAge(m.birth_date);
         // Mulheres adultas (18+ ou sem nascimento informado)
         const isAdult = age === null || age >= 18;
@@ -169,10 +174,12 @@ export default function RelatorioMembros() {
   const homensList = useMemo(() => {
     return baseMembers
       .filter((m) => {
+        const sex = m.sex?.toString().toLowerCase().trim();
         const isMasc =
-          m.sex?.toLowerCase() === "masculino" ||
-          m.sex?.toLowerCase() === "m" ||
-          m.sex?.toLowerCase() === "homem";
+          sex === "masculino" ||
+          sex === "m" ||
+          sex === "homem" ||
+          sex === "homens";
         const age = getAge(m.birth_date);
         // Homens adultos (18+ ou sem nascimento informado)
         const isAdult = age === null || age >= 18;
@@ -350,19 +357,23 @@ export default function RelatorioMembros() {
   const stats = useMemo(() => {
     const total = baseMembers.length;
     const totalMulheres = baseMembers.filter((m) => {
+      const sex = m.sex?.toString().toLowerCase().trim();
       const isFem =
-        m.sex?.toLowerCase() === "feminino" ||
-        m.sex?.toLowerCase() === "f" ||
-        m.sex?.toLowerCase() === "mulher";
+        sex === "feminino" ||
+        sex === "f" ||
+        sex === "mulher" ||
+        sex === "mulheres";
       const age = getAge(m.birth_date);
       return isFem && (age === null || age >= 18);
     }).length;
 
     const totalHomens = baseMembers.filter((m) => {
+      const sex = m.sex?.toString().toLowerCase().trim();
       const isMasc =
-        m.sex?.toLowerCase() === "masculino" ||
-        m.sex?.toLowerCase() === "m" ||
-        m.sex?.toLowerCase() === "homem";
+        sex === "masculino" ||
+        sex === "m" ||
+        sex === "homem" ||
+        sex === "homens";
       const age = getAge(m.birth_date);
       return isMasc && (age === null || age >= 18);
     }).length;
@@ -1297,13 +1308,13 @@ export default function RelatorioMembros() {
         return;
       }
 
-      if (lower.includes("mulher")) {
+      if (lower.includes("mulher") || lower.includes("mulheres")) {
         generateMulheresPDF();
         toast.success("Relatório de Mulheres gerado com sucesso!");
         return;
       }
 
-      if (lower.includes("homem")) {
+      if (lower.includes("homem") || lower.includes("homens")) {
         generateHomensPDF();
         toast.success("Relatório de Homens gerado com sucesso!");
         return;
@@ -1315,7 +1326,7 @@ export default function RelatorioMembros() {
         return;
       }
 
-      if (lower.includes("crian")) {
+      if (lower.includes("crian") || lower.includes("infantil")) {
         generateCriancasPDF();
         toast.success("Relatório de Crianças gerado com sucesso!");
         return;
