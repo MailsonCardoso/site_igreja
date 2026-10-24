@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Plus, MoreHorizontal, Eye, Pencil, Loader2, User, Phone, MapPin, Church, Users, Trash2, UserMinus, UserCheck, FileChartColumn } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Eye, Pencil, Loader2, User, Phone, MapPin, Church, Users, Trash2, UserMinus, UserCheck, FileChartColumn, FileSpreadsheet } from "lucide-react";
+import { exportToExcelCsv } from "@/lib/exportExcel";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -356,6 +357,42 @@ export default function Secretaria() {
     return matchesSearch && matchesStatus;
   });
 
+  const handleExportExcel = () => {
+    const dateStr = new Date().toISOString().split("T")[0];
+    const ok = exportToExcelCsv(
+      filteredMembros,
+      [
+        { header: "ID", formatter: (m) => m.id || "" },
+        { header: "Nome Completo", formatter: (m) => m.name || m.nome || "" },
+        { header: "Sexo", formatter: (m) => m.sex || "" },
+        { header: "Data de Nascimento", formatter: (m) => m.birth_date ? m.birth_date.split("T")[0] : "" },
+        { header: "CPF", formatter: (m) => m.cpf || "" },
+        { header: "Estado Civil", formatter: (m) => m.marital_status || "" },
+        { header: "WhatsApp / Telefone", formatter: (m) => m.phone || "" },
+        { header: "E-mail", formatter: (m) => m.email || "" },
+        { header: "Status / Situação", formatter: (m) => m.status || "membro" },
+        { header: "Função / Cargo", formatter: (m) => m.role || "Membro" },
+        { header: "Congregação", formatter: (m) => m.congregacao || "" },
+        { header: "Célula", formatter: (m) => m.cell?.name || m.cell_name || "" },
+        { header: "Cônjuge", formatter: (m) => m.spouse?.name || m.spouse_name || "" },
+        { header: "Pai", formatter: (m) => m.father_name || "" },
+        { header: "Mãe", formatter: (m) => m.mother_name || "" },
+        { header: "CEP", formatter: (m) => m.cep || "" },
+        { header: "Logradouro", formatter: (m) => m.logradouro || "" },
+        { header: "Bairro", formatter: (m) => m.bairro || "" },
+        { header: "Cidade", formatter: (m) => m.cidade || "" },
+        { header: "UF", formatter: (m) => m.uf || "" },
+      ],
+      `membros_${statusFilter}_${dateStr}`
+    );
+
+    if (ok) {
+      toast.success(`${filteredMembros.length} membros exportados para Excel!`);
+    } else {
+      toast.error("Nenhum membro encontrado para exportar.");
+    }
+  };
+
   return (
     <MainLayout title="Membros" breadcrumbs={[{ label: "Membros" }]}>
       <motion.div
@@ -372,6 +409,16 @@ export default function Secretaria() {
           </div>
 
           <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={handleExportExcel}
+              disabled={filteredMembros.length === 0}
+              className="gap-2 border-emerald-600/30 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-500/30 dark:hover:bg-emerald-950/30"
+            >
+              <FileSpreadsheet className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              Exportar Excel
+            </Button>
+
             <Button
               variant="outline"
               onClick={() => navigate("/secretaria/relatorios")}

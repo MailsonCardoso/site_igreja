@@ -21,7 +21,9 @@ import {
   UserCheck,
   Building2,
   PieChart as PieChartIcon,
+  FileSpreadsheet,
 } from "lucide-react";
+import { exportToExcelCsv } from "@/lib/exportExcel";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
@@ -66,6 +68,7 @@ export default function RelatorioMembros() {
   const [congregacaoFilter, setCongregacaoFilter] = useState("todas");
   const [statusFilter, setStatusFilter] = useState("membro"); // 'membro', 'todos', 'visitante'
   const [isExporting, setIsExporting] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
 
   // Buscar membros
   const { data: members = [], isLoading } = useQuery<any[]>({
@@ -1343,6 +1346,146 @@ export default function RelatorioMembros() {
     }
   };
 
+  // Exportar Excel / Planilha
+  const handleExportExcel = (tab: string) => {
+    setIsExportingExcel(true);
+    const dateStr = new Date().toISOString().split("T")[0];
+
+    try {
+      if (tab === "mulheres") {
+        const ok = exportToExcelCsv(
+          mulheresList,
+          [
+            { header: "Nome", formatter: (m) => m.name || m.nome || "" },
+            { header: "Telefone / WhatsApp", formatter: (m) => m.phone || "" },
+            { header: "Data de Nascimento", formatter: (m) => m.birth_date ? m.birth_date.split("T")[0] : "" },
+            { header: "Idade", formatter: (m) => getAge(m.birth_date) ?? "" },
+            { header: "Congregação", formatter: (m) => m.congregacao || "Não informada" },
+            { header: "Cargo / Função", formatter: (m) => m.role || "Membro" },
+            { header: "Cônjuge", formatter: (m) => m.spouse?.name || m.spouse_name || "" },
+            { header: "Status", formatter: (m) => m.status || "Ativo" },
+          ],
+          `relatorio_mulheres_${dateStr}`
+        );
+        if (ok) toast.success("Planilha de Mulheres exportada com sucesso!");
+        else toast.error("Nenhum dado encontrado para exportar.");
+        return;
+      }
+
+      if (tab === "homens") {
+        const ok = exportToExcelCsv(
+          homensList,
+          [
+            { header: "Nome", formatter: (m) => m.name || m.nome || "" },
+            { header: "Telefone / WhatsApp", formatter: (m) => m.phone || "" },
+            { header: "Data de Nascimento", formatter: (m) => m.birth_date ? m.birth_date.split("T")[0] : "" },
+            { header: "Idade", formatter: (m) => getAge(m.birth_date) ?? "" },
+            { header: "Congregação", formatter: (m) => m.congregacao || "Não informada" },
+            { header: "Cargo / Função", formatter: (m) => m.role || "Membro" },
+            { header: "Cônjuge", formatter: (m) => m.spouse?.name || m.spouse_name || "" },
+            { header: "Status", formatter: (m) => m.status || "Ativo" },
+          ],
+          `relatorio_homens_${dateStr}`
+        );
+        if (ok) toast.success("Planilha de Homens exportada com sucesso!");
+        else toast.error("Nenhum dado encontrado para exportar.");
+        return;
+      }
+
+      if (tab === "criancas") {
+        const ok = exportToExcelCsv(
+          criancasList,
+          [
+            { header: "Nome da Criança", formatter: (m) => m.name || m.nome || "" },
+            { header: "Idade", formatter: (m) => getAge(m.birth_date) ?? "" },
+            { header: "Data de Nascimento", formatter: (m) => m.birth_date ? m.birth_date.split("T")[0] : "" },
+            { header: "Nome do Pai", formatter: (m) => m.father_name || "" },
+            { header: "Nome da Mãe", formatter: (m) => m.mother_name || "" },
+            { header: "Telefone de Contato", formatter: (m) => m.phone || "" },
+            { header: "Congregação", formatter: (m) => m.congregacao || "Não informada" },
+          ],
+          `relatorio_criancas_${dateStr}`
+        );
+        if (ok) toast.success("Planilha de Crianças exportada com sucesso!");
+        else toast.error("Nenhum dado encontrado para exportar.");
+        return;
+      }
+
+      if (tab === "adolescentes") {
+        const ok = exportToExcelCsv(
+          adolescentesList,
+          [
+            { header: "Nome do Adolescente", formatter: (m) => m.name || m.nome || "" },
+            { header: "Idade", formatter: (m) => getAge(m.birth_date) ?? "" },
+            { header: "Data de Nascimento", formatter: (m) => m.birth_date ? m.birth_date.split("T")[0] : "" },
+            { header: "Telefone", formatter: (m) => m.phone || "" },
+            { header: "Nome do Pai", formatter: (m) => m.father_name || "" },
+            { header: "Nome da Mãe", formatter: (m) => m.mother_name || "" },
+            { header: "Congregação", formatter: (m) => m.congregacao || "Não informada" },
+          ],
+          `relatorio_adolescentes_${dateStr}`
+        );
+        if (ok) toast.success("Planilha de Adolescentes exportada com sucesso!");
+        else toast.error("Nenhum dado encontrado para exportar.");
+        return;
+      }
+
+      if (tab === "casais") {
+        const ok = exportToExcelCsv(
+          casaisList,
+          [
+            { header: "Nome do Casal", formatter: (c) => c.nomeCasal || "" },
+            { header: "Esposo", formatter: (c) => c.marido?.name || c.membro1?.name || "" },
+            { header: "Telefone Esposo", formatter: (c) => c.marido?.phone || c.membro1?.phone || "" },
+            { header: "Esposa", formatter: (c) => c.esposa?.name || c.membro2?.name || c.membro1?.spouse?.name || c.membro1?.spouse_name || "" },
+            { header: "Telefone Esposa", formatter: (c) => c.esposa?.phone || c.membro2?.phone || "" },
+            { header: "Data de Casamento", formatter: (c) => c.marriage_date ? c.marriage_date.split("T")[0] : "" },
+            { header: "Congregação", formatter: (c) => c.membro1?.congregacao || c.marido?.congregacao || "Geral" },
+            { header: "Situação", formatter: (c) => c.temConjugeCadastrado ? "Casal Vinculado" : "Cônjuge Pendente" },
+          ],
+          `relatorio_casais_${dateStr}`
+        );
+        if (ok) toast.success("Planilha de Casais exportada com sucesso!");
+        else toast.error("Nenhum dado encontrado para exportar.");
+        return;
+      }
+
+      // Padrão: Geral / Resumo
+      const ok = exportToExcelCsv(
+        todosMembrosList,
+        [
+          { header: "ID", formatter: (m) => m.id || "" },
+          { header: "Nome Completo", formatter: (m) => m.name || m.nome || "" },
+          { header: "Sexo", formatter: (m) => m.sex || "" },
+          { header: "Data de Nascimento", formatter: (m) => m.birth_date ? m.birth_date.split("T")[0] : "" },
+          { header: "Idade", formatter: (m) => getAge(m.birth_date) ?? "" },
+          { header: "Telefone / WhatsApp", formatter: (m) => m.phone || "" },
+          { header: "E-mail", formatter: (m) => m.email || "" },
+          { header: "CPF", formatter: (m) => m.cpf || "" },
+          { header: "Estado Civil", formatter: (m) => m.marital_status || "" },
+          { header: "Cônjuge", formatter: (m) => m.spouse?.name || m.spouse_name || "" },
+          { header: "Cargo / Função", formatter: (m) => m.role || "Membro" },
+          { header: "Situação / Status", formatter: (m) => m.status || "membro" },
+          { header: "Congregação", formatter: (m) => m.congregacao || "Não informada" },
+          { header: "Célula", formatter: (m) => m.cell?.name || m.cell_name || "" },
+          { header: "CEP", formatter: (m) => m.cep || "" },
+          { header: "Logradouro", formatter: (m) => m.logradouro || "" },
+          { header: "Bairro", formatter: (m) => m.bairro || "" },
+          { header: "Cidade", formatter: (m) => m.cidade || "" },
+          { header: "UF", formatter: (m) => m.uf || "" },
+        ],
+        `relatorio_membros_geral_${dateStr}`
+      );
+      if (ok) toast.success("Planilha Geral de Membros exportada com sucesso!");
+      else toast.error("Nenhum dado encontrado para exportar.");
+    } catch (err) {
+      console.error("Erro ao exportar Excel:", err);
+      toast.error("Erro ao gerar arquivo Excel.");
+    } finally {
+      setIsExportingExcel(false);
+    }
+  };
+
   const congregacoesDisponiveis = useMemo(() => {
     const set = new Set<string>();
     members.forEach((m) => {
@@ -1368,6 +1511,20 @@ export default function RelatorioMembros() {
           >
             <ArrowLeft className="h-4 w-4" />
             Voltar para Membros
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => handleExportExcel(activeTab)}
+            disabled={isExportingExcel || isLoading}
+            className="gap-2 border-emerald-600/30 text-emerald-700 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-500/30 dark:hover:bg-emerald-950/30 rounded-xl shadow-sm"
+          >
+            {isExportingExcel ? (
+              <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
+            ) : (
+              <FileSpreadsheet className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            )}
+            Exportar Excel ({activeTab === "resumo" ? "LISTA GERAL" : activeTab.toUpperCase()})
           </Button>
           <Button
             size="sm"
